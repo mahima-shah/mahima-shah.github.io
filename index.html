@@ -67,10 +67,7 @@
       -webkit-font-smoothing: antialiased;
     }
 
-    /* ── CURSOR DOT ── 
-       Uses pointer events API — only shown on fine pointer devices.
-       Starts off-screen, jumps to mouse on first move via JS.
-    */
+    /* ── CURSOR DOT ── */
     #cdot {
       display: none;
       position: fixed;
@@ -79,15 +76,16 @@
       background: var(--accent);
       pointer-events: none;
       z-index: 9999;
+      opacity: 0;
       transform: translate(-50%, -50%);
-      transition: width 0.2s ease, height 0.2s ease, opacity 0.2s ease;
+      transition: width 0.2s ease, height 0.2s ease, opacity 0.15s ease;
       will-change: left, top;
     }
     @media (pointer: fine) {
       #cdot { display: block; }
-      body  { cursor: none; }
-      a, button, .card, .pill { cursor: none; }
     }
+    body.cursor-ready { cursor: none; }
+    body.cursor-ready a, body.cursor-ready button, body.cursor-ready .card, body.cursor-ready .pill { cursor: none; }
     #cdot.expand { width: 28px; height: 28px; opacity: 0.2; }
 
     /* ── NAV ── */
@@ -224,24 +222,17 @@
        animation-play-state: paused by default, running when .visible is added.
        This is pure CSS-driven, JS only adds the class.
     */
-    .reveal {
-      animation-fill-mode: both;
-      animation-duration: 0.8s;
-      animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
-      animation-play-state: paused;
-    }
-    .reveal.visible { animation-play-state: running; }
-    .reveal-up   { animation-name: revealUp; }
-    .reveal-left { animation-name: revealLeft; }
-    .reveal-right{ animation-name: revealRight; }
-    .delay-1 { animation-delay: 0.08s; }
-    .delay-2 { animation-delay: 0.18s; }
-    .delay-3 { animation-delay: 0.28s; }
-    .delay-4 { animation-delay: 0.4s; }
-
-    @keyframes revealUp   { from { opacity:0; transform:translateY(30px); } to { opacity:1; transform:none; } }
-    @keyframes revealLeft { from { opacity:0; transform:translateX(-30px); } to { opacity:1; transform:none; } }
-    @keyframes revealRight{ from { opacity:0; transform:translateX(30px); } to { opacity:1; transform:none; } }
+    /* Reveal: visible by default so nothing ever disappears if JS fails */
+    .reveal { opacity: 1; transform: none; }
+    /* JS will add .will-animate before observer fires, then .visible to trigger transition */
+    .reveal.will-animate { opacity: 0; transform: translateY(24px); transition: opacity 0.8s cubic-bezier(0.16,1,0.3,1), transform 0.8s cubic-bezier(0.16,1,0.3,1); }
+    .reveal.will-animate.reveal-left { transform: translateX(-24px); }
+    .reveal.will-animate.reveal-right { transform: translateX(24px); }
+    .reveal.will-animate.visible { opacity: 1; transform: none; }
+    .delay-1 { transition-delay: 0.08s; }
+    .delay-2 { transition-delay: 0.18s; }
+    .delay-3 { transition-delay: 0.28s; }
+    .delay-4 { transition-delay: 0.4s; }
 
     /* ── ABOUT ── */
     #about { border-top: 1px solid var(--border); }
@@ -537,7 +528,7 @@
     <p class="foot-name reveal reveal-up">Mahima Shah</p>
     <p class="foot-sub reveal reveal-up delay-1">always learning</p>
     <ul class="foot-links reveal reveal-up delay-2">
-      <li><a href="/cdn-cgi/l/email-protection#284549404145495b404940505152684f45494144064b4745">Email</a></li>
+      <li><a href="mailto:mahimashahxyz@gmail.com">Email</a></li>
       <li><a href="https://www.linkedin.com/in/shahmahima/" target="_blank" rel="noopener">LinkedIn</a></li>
       <li><a href="https://github.com/mahima-shah" target="_blank" rel="noopener">GitHub</a></li>
       <li><a href="https://www.youtube.com/@mahimashah" target="_blank" rel="noopener">YouTube</a></li>
@@ -546,106 +537,97 @@
   </div>
 </footer>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
-  // ── Scroll reveal ──
-  // Uses animation-play-state: paused → running
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(e => {
-      if (e.isIntersecting) {
-        e.target.classList.add('visible');
-        observer.unobserve(e.target);
-      }
+<script>
+  // Scroll reveal — JS hides then reveals. If observer fails, everything stays visible.
+  if ('IntersectionObserver' in window) {
+    const revealEls = document.querySelectorAll('.reveal');
+    revealEls.forEach(el => {
+      el.style.opacity = '0';
+      el.style.transform = 'translateY(24px)';
+      el.style.transition = 'opacity 0.8s cubic-bezier(0.16,1,0.3,1), transform 0.8s cubic-bezier(0.16,1,0.3,1)';
     });
-  }, { threshold: 0.05 });
-  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+    const io = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.style.opacity = '1';
+          e.target.style.transform = 'none';
+          io.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.05 });
+    revealEls.forEach(el => io.observe(el));
+  }
 
-  // ── Orb cursor tracking (hero only) ──
+  // Orb mouse tracking
   const hero = document.getElementById('hero');
   const orb1 = document.querySelector('.orb-1');
   const orb2 = document.querySelector('.orb-2');
   const orb3 = document.querySelector('.orb-3');
   if (hero && orb1) {
     let c1x, c1y, c2x, c2y, c3x, c3y;
-    let t1x = null, t1y = null; // null = not yet positioned
+    let t1x = null, t1y = null, t2x = 0, t2y = 0, t3x = 0, t3y = 0;
     let loopActive = false;
-
-    function setTargets(mx, my) {
-      // offsets relative to hero center
-      t1x = mx * 0.4;  t1y = my * 0.4;
-      t2x = mx * -0.25; t2y = my * -0.25;
-      t3x = mx * 0.6;  t3y = my * 0.6;
-    }
-
-    let t2x = 0, t2y = 0, t3x = 0, t3y = 0;
-
     hero.addEventListener('mousemove', e => {
       const r = hero.getBoundingClientRect();
-      const mx = e.clientX - r.left - r.width  / 2;
-      const my = e.clientY - r.top  - r.height / 2;
-      setTargets(mx, my);
-      // Snap to position on very first move
-      if (c1x === undefined) {
-        c1x = t1x; c1y = t1y;
-        c2x = t2x; c2y = t2y;
-        c3x = t3x; c3y = t3y;
-      }
+      const mx = e.clientX - r.left - r.width / 2;
+      const my = e.clientY - r.top - r.height / 2;
+      t1x = mx * 0.4; t1y = my * 0.4;
+      t2x = mx * -0.25; t2y = my * -0.25;
+      t3x = mx * 0.6; t3y = my * 0.6;
+      if (c1x === undefined) { c1x=t1x; c1y=t1y; c2x=t2x; c2y=t2y; c3x=t3x; c3y=t3y; }
       if (!loopActive) { loopActive = true; orbLoop(); }
     });
-
     function orbLoop() {
       if (t1x === null) { requestAnimationFrame(orbLoop); return; }
-      // Faster lerp — 0.12-0.16 feels snappy but still smooth
-      c1x += (t1x - c1x) * 0.13;
-      c1y += (t1y - c1y) * 0.13;
-      c2x += (t2x - c2x) * 0.10;
-      c2y += (t2y - c2y) * 0.10;
-      c3x += (t3x - c3x) * 0.16;
-      c3y += (t3y - c3y) * 0.16;
-      orb1.style.transform = `translate(calc(-50% + ${c1x}px), calc(-50% + ${c1y}px))`;
-      orb2.style.transform = `translate(calc(-50% + ${c2x}px), calc(-50% + ${c2y}px))`;
-      orb3.style.transform = `translate(calc(-50% + ${c3x}px), calc(-50% + ${c3y}px))`;
+      c1x += (t1x-c1x)*0.13; c1y += (t1y-c1y)*0.13;
+      c2x += (t2x-c2x)*0.10; c2y += (t2y-c2y)*0.10;
+      c3x += (t3x-c3x)*0.16; c3y += (t3y-c3y)*0.16;
+      orb1.style.transform = 'translate(calc(-50% + '+c1x+'px), calc(-50% + '+c1y+'px))';
+      orb2.style.transform = 'translate(calc(-50% + '+c2x+'px), calc(-50% + '+c2y+'px))';
+      orb3.style.transform = 'translate(calc(-50% + '+c3x+'px), calc(-50% + '+c3y+'px))';
       requestAnimationFrame(orbLoop);
     }
-
-    // Show/hide orbs based on whether hero is in view
-    const heroObserver = new IntersectionObserver(entries => {
-      entries.forEach(e => {
-        const vis = e.isIntersecting ? '1' : '0';
-        [orb1, orb2, orb3].forEach(o => o.style.opacity = vis);
-      });
-    }, { threshold: 0.1 });
-    heroObserver.observe(hero);
+    new IntersectionObserver(entries => {
+      entries.forEach(e => { [orb1,orb2,orb3].forEach(o => o.style.opacity = e.isIntersecting ? '1' : '0'); });
+    }, { threshold: 0.1 }).observe(hero);
   }
-  const scrollInd = document.getElementById('scrollInd');
-  const scrollIndObserver = new IntersectionObserver(entries => {
-    entries.forEach(e => {
-      scrollInd.style.transition = 'opacity 0.5s ease';
-      scrollInd.style.opacity = e.isIntersecting ? '1' : '0';
-      scrollInd.style.pointerEvents = e.isIntersecting ? '' : 'none';
-    });
-  }, { threshold: 0.7 });
-  scrollIndObserver.observe(document.getElementById('hero'));
 
-  // ── Cursor dot ──
-  // Only runs on fine pointer devices. Dot stays off-screen until first mousemove.
+  // Scroll indicator show/hide
+  const scrollInd = document.getElementById('scrollInd');
+  if (scrollInd && hero) {
+    new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        scrollInd.style.transition = 'opacity 0.5s ease';
+        scrollInd.style.opacity = e.isIntersecting ? '' : '0';
+        scrollInd.style.pointerEvents = e.isIntersecting ? '' : 'none';
+      });
+    }, { threshold: 0.7 }).observe(hero);
+  }
+
+  // Cursor dot — stays off screen until first mouse move
   const cdot = document.getElementById('cdot');
-  if (window.matchMedia('(pointer: fine)').matches && cdot) {
-    let active = false;
+  if (cdot && window.matchMedia('(pointer: fine)').matches) {
+    // Start completely off screen so it never shows at 0,0
+    cdot.style.left = '-200px';
+    cdot.style.top = '-200px';
     document.addEventListener('mousemove', e => {
       cdot.style.left = e.clientX + 'px';
-      cdot.style.top  = e.clientY + 'px';
-      if (!active) { active = true; } // just ensure position is set
-    });
+      cdot.style.top = e.clientY + 'px';
+    }, { passive: true });
     document.querySelectorAll('a, .card, .pill').forEach(el => {
       el.addEventListener('mouseenter', () => cdot.classList.add('expand'));
       el.addEventListener('mouseleave', () => cdot.classList.remove('expand'));
     });
   }
 
-  // ── Nav active highlight ──
+  // Nav active highlight
   const secs = document.querySelectorAll('section[id], footer[id]');
   const navAs = document.querySelectorAll('.nav-links a');
   window.addEventListener('scroll', () => {
     let current = '';
     secs.forEach(s => { if (window.scrollY >= s.offsetTop - 80) current = s.id; });
-    n
+    navAs.forEach(a => { a.style.color = a.getAttribute('href') === '#' + current ? 'var(--text)' : ''; });
+  }, { passive: true });
+</script>
+</body>
+</html>
