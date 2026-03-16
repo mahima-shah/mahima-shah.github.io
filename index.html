@@ -25,9 +25,9 @@
       --accent-dim:  rgba(176,80,48,0.1);
       --accent-tag:  rgba(176,80,48,0.15);
       --wm-stroke:   rgba(0,0,0,0.07);
-      --orb-1:       rgba(176,80,48,0.11);
-      --orb-2:       rgba(80,80,180,0.06);
-      --orb-3:       rgba(176,80,48,0.07);
+      --orb-1:       rgba(176,80,48,0.22);
+      --orb-2:       rgba(80,80,180,0.1);
+      --orb-3:       rgba(176,80,48,0.14);
       --shadow-card: 0 2px 24px rgba(0,0,0,0.07), 0 1px 4px rgba(0,0,0,0.04);
       --shadow-lg:   0 24px 80px rgba(0,0,0,0.11);
       --blur:        blur(24px);
@@ -48,9 +48,9 @@
         --accent-dim:  rgba(212,114,78,0.13);
         --accent-tag:  rgba(212,114,78,0.2);
         --wm-stroke:   rgba(255,255,255,0.12);
-        --orb-1:       rgba(212,114,78,0.18);
-        --orb-2:       rgba(100,100,200,0.1);
-        --orb-3:       rgba(212,114,78,0.1);
+        --orb-1:       rgba(212,114,78,0.35);
+        --orb-2:       rgba(100,100,200,0.15);
+        --orb-3:       rgba(212,114,78,0.2);
         --shadow-card: 0 2px 32px rgba(0,0,0,0.5);
         --shadow-lg:   0 24px 80px rgba(0,0,0,0.65);
       }
@@ -236,8 +236,16 @@
 
     /* ── ABOUT ── */
     #about { border-top: 1px solid var(--border); }
-    .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
-    @media (max-width: 700px) { .about-grid { grid-template-columns: 1fr; gap: 48px; } }
+
+    /* Heading spans full width above the body+photo row */
+    .about-heading-row {
+      margin-bottom: 48px;
+    }
+    .about-body-row {
+      display: grid; grid-template-columns: 1fr 340px;
+      gap: 64px; align-items: start;
+    }
+    @media (max-width: 860px) { .about-body-row { grid-template-columns: 1fr; gap: 40px; } }
 
     .pills { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 28px; }
     .pill {
@@ -249,23 +257,15 @@
     }
     .pill:hover { background: var(--accent-dim); border-color: var(--accent-tag); color: var(--accent); }
 
-    .photo-col { display: flex; align-items: center; justify-content: center; }
+    .photo-col { display: flex; align-items: flex-start; justify-content: center; }
     .photo-frame {
-      width: 100%; max-width: 300px; aspect-ratio: 3/4;
+      width: 100%; max-width: 340px; aspect-ratio: 3/4;
       border-radius: 18px; overflow: hidden;
       box-shadow: var(--shadow-lg); border: 1px solid var(--border);
       transition: transform 0.5s cubic-bezier(0.16,1,0.3,1), box-shadow 0.5s;
     }
     .photo-frame:hover { transform: scale(1.02); box-shadow: 0 32px 96px rgba(0,0,0,0.15); }
     .photo-frame img { width: 100%; height: 100%; object-fit: cover; display: block; }
-    .photo-ph {
-      width: 100%; height: 100%;
-      background: linear-gradient(145deg, #1c1a18 0%, #2e2a26 100%);
-      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px;
-    }
-    @media (prefers-color-scheme: dark) { .photo-ph { background: linear-gradient(145deg, #1a1614 0%, #2a2420 100%); } }
-    .photo-ph svg { opacity: 0.35; }
-    .photo-ph-lbl { font-size: 0.64rem; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(255,255,255,0.25); }
 
     /* ── WORK ── */
     #work { border-top: 1px solid var(--border); }
@@ -383,19 +383,23 @@
 <!-- ABOUT -->
 <section id="about" class="section">
   <div class="container">
-    <div class="about-grid">
+    <!-- Heading full width -->
+    <div class="about-heading-row">
+      <p class="chip reveal reveal-left">About me</p>
+      <h2 class="sec-title reveal reveal-left delay-1">
+        Data Science student at the University of Michigan who gravitates toward the intersection of <em>technology</em> and <em>design</em>.
+      </h2>
+    </div>
+    <!-- Body text + photo side by side -->
+    <div class="about-body-row">
       <div>
-        <p class="chip reveal reveal-left">About me</p>
-        <h2 class="sec-title reveal reveal-left delay-1">
-          Data Science student at the University of Michigan who gravitates toward the intersection of <em>technology</em> and <em>design</em>.
-        </h2>
-        <p class="sec-body reveal reveal-left delay-2">
+        <p class="sec-body reveal reveal-left">
           I'm drawn to building things that are clear, thoughtful, and genuinely useful. I enjoy the process of taking an idea, understanding the people it's for, and shaping it into something that feels intuitive to use.
         </p>
-        <p class="sec-body reveal reveal-left delay-3">
+        <p class="sec-body reveal reveal-left delay-1" style="margin-top:14px;">
           Outside of data and design, I love to travel and document the moments that shape how I see the world. I'm always experimenting with new crafts, from tactile ones like crocheting to digital projects on Procreate. If I'm not making something, I'm probably just catching up on a favorite series.
         </p>
-        <div class="pills reveal reveal-up delay-4">
+        <div class="pills reveal reveal-up delay-2">
           <span class="pill">UI / UX</span>
           <span class="pill">Figma</span>
           <span class="pill">Design Systems</span>
@@ -406,9 +410,6 @@
       </div>
       <div class="photo-col reveal reveal-right delay-1">
         <div class="photo-frame">
-          <!--
-            Photo: profile-pic.jpg is in the same folder as index.html
-          -->
           <img src="profile-pic.jpg" alt="Mahima Shah" />
         </div>
       </div>
@@ -428,13 +429,13 @@
       <!-- A2Ventures -->
       <a class="card reveal reveal-up delay-2" href="a2ventures.html" aria-label="A2Ventures project">
         <div class="card-info">
-          <p class="card-num">01 &nbsp;/&nbsp; UI/UX Design</p>
+          <p class="card-num">01 &nbsp;/&nbsp; UX Research &amp; Design</p>
           <h3 class="card-title">A2Ventures</h3>
-          <p class="card-desc">A venture platform built to connect founders with capital. Designed for trust and clarity, with purposeful hierarchy and confident motion.</p>
+          <p class="card-desc">A mobile app that motivates University of Michigan students to explore Ann Arbor through a curated weekly location, a points-based rewards system, and partner store discounts. Built through 15 interviews, speed dating, and four rounds of usability testing.</p>
           <div class="card-tags">
-            <span class="tag">Web Design</span>
+            <span class="tag">UX Research</span>
             <span class="tag">Figma</span>
-            <span class="tag">Branding</span>
+            <span class="tag">Mobile Design</span>
           </div>
           <span class="card-cta">
             View case study
@@ -475,13 +476,13 @@
       <!-- VibeNote -->
       <a class="card flip reveal reveal-up delay-3" href="vibenote.html" aria-label="VibeNote project">
         <div class="card-info">
-          <p class="card-num">02 &nbsp;/&nbsp; UI/UX Design</p>
+          <p class="card-num">02 &nbsp;/&nbsp; Interaction Design</p>
           <h3 class="card-title">VibeNote</h3>
-          <p class="card-desc">A mood-aware journaling app that adapts to how you feel. Color psychology, expressive type, and fluid interactions for a deeply personal experience.</p>
+          <p class="card-desc">A micro-interaction concept that lets you attach a mood, memory, or lyric when sharing a song. Designed for mobile and smartwatch, applying five UX laws and core interaction design principles to make music sharing feel more human.</p>
           <div class="card-tags">
-            <span class="tag">Mobile App</span>
+            <span class="tag">Interaction Design</span>
             <span class="tag">Figma</span>
-            <span class="tag">Interaction</span>
+            <span class="tag">Smartwatch UI</span>
           </div>
           <span class="card-cta">
             View case study
@@ -528,7 +529,7 @@
     <p class="foot-name reveal reveal-up">Mahima Shah</p>
     <p class="foot-sub reveal reveal-up delay-1">always learning</p>
     <ul class="foot-links reveal reveal-up delay-2">
-      <li><a href="mailto:mahimashahxyz@gmail.com">Email</a></li>
+      <li><a href="/cdn-cgi/l/email-protection#93fef2fbfafef2e0fbf2fbebeae9d3f4fef2faffbdf0fcfe">Email</a></li>
       <li><a href="https://www.linkedin.com/in/shahmahima/" target="_blank" rel="noopener">LinkedIn</a></li>
       <li><a href="https://github.com/mahima-shah" target="_blank" rel="noopener">GitHub</a></li>
       <li><a href="https://www.youtube.com/@mahimashah" target="_blank" rel="noopener">YouTube</a></li>
@@ -537,7 +538,7 @@
   </div>
 </footer>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
   // Scroll reveal — JS hides then reveals. If observer fails, everything stays visible.
   if ('IntersectionObserver' in window) {
     const revealEls = document.querySelectorAll('.reveal');
@@ -558,15 +559,20 @@
     revealEls.forEach(el => io.observe(el));
   }
 
-  // Orb mouse tracking
+  // Orb mouse tracking — starts at a nice default, follows cursor on mousemove
   const hero = document.getElementById('hero');
   const orb1 = document.querySelector('.orb-1');
   const orb2 = document.querySelector('.orb-2');
   const orb3 = document.querySelector('.orb-3');
   if (hero && orb1) {
-    let c1x, c1y, c2x, c2y, c3x, c3y;
-    let t1x = null, t1y = null, t2x = 0, t2y = 0, t3x = 0, t3y = 0;
-    let loopActive = false;
+    // Default offsets — orbs start spread in a pleasing position
+    let t1x = 120, t1y = -80;
+    let t2x = -100, t2y = 60;
+    let t3x = 60, t3y = 100;
+    let c1x = 120, c1y = -80;
+    let c2x = -100, c2y = 60;
+    let c3x = 60, c3y = 100;
+
     hero.addEventListener('mousemove', e => {
       const r = hero.getBoundingClientRect();
       const mx = e.clientX - r.left - r.width / 2;
@@ -574,19 +580,20 @@
       t1x = mx * 0.4; t1y = my * 0.4;
       t2x = mx * -0.25; t2y = my * -0.25;
       t3x = mx * 0.6; t3y = my * 0.6;
-      if (c1x === undefined) { c1x=t1x; c1y=t1y; c2x=t2x; c2y=t2y; c3x=t3x; c3y=t3y; }
-      if (!loopActive) { loopActive = true; orbLoop(); }
     });
+
     function orbLoop() {
-      if (t1x === null) { requestAnimationFrame(orbLoop); return; }
-      c1x += (t1x-c1x)*0.13; c1y += (t1y-c1y)*0.13;
-      c2x += (t2x-c2x)*0.10; c2y += (t2y-c2y)*0.10;
-      c3x += (t3x-c3x)*0.16; c3y += (t3y-c3y)*0.16;
-      orb1.style.transform = 'translate(calc(-50% + '+c1x+'px), calc(-50% + '+c1y+'px))';
-      orb2.style.transform = 'translate(calc(-50% + '+c2x+'px), calc(-50% + '+c2y+'px))';
-      orb3.style.transform = 'translate(calc(-50% + '+c3x+'px), calc(-50% + '+c3y+'px))';
+      c1x += (t1x - c1x) * 0.28; c1y += (t1y - c1y) * 0.28;
+      c2x += (t2x - c2x) * 0.18; c2y += (t2y - c2y) * 0.18;
+      c3x += (t3x - c3x) * 0.32; c3y += (t3y - c3y) * 0.32;
+      orb1.style.transform = 'translate(calc(-50% + ' + c1x + 'px), calc(-50% + ' + c1y + 'px))';
+      orb2.style.transform = 'translate(calc(-50% + ' + c2x + 'px), calc(-50% + ' + c2y + 'px))';
+      orb3.style.transform = 'translate(calc(-50% + ' + c3x + 'px), calc(-50% + ' + c3y + 'px))';
       requestAnimationFrame(orbLoop);
     }
+    orbLoop(); // start immediately
+
+    // Hide orbs when hero leaves view
     new IntersectionObserver(entries => {
       entries.forEach(e => { [orb1,orb2,orb3].forEach(o => o.style.opacity = e.isIntersecting ? '1' : '0'); });
     }, { threshold: 0.1 }).observe(hero);
@@ -626,8 +633,4 @@
   window.addEventListener('scroll', () => {
     let current = '';
     secs.forEach(s => { if (window.scrollY >= s.offsetTop - 80) current = s.id; });
-    navAs.forEach(a => { a.style.color = a.getAttribute('href') === '#' + current ? 'var(--text)' : ''; });
-  }, { passive: true });
-</script>
-</body>
-</html>
+    n
