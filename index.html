@@ -76,17 +76,17 @@
       background: var(--accent);
       pointer-events: none;
       z-index: 9999;
-      opacity: 0;
       transform: translate(-50%, -50%);
-      transition: width 0.2s ease, height 0.2s ease, opacity 0.15s ease;
+      transition: width 0.2s ease, height 0.2s ease;
       will-change: left, top;
+      left: -100px; top: -100px;
     }
     @media (pointer: fine) {
       #cdot { display: block; }
+      body { cursor: none; }
+      a, button, .card, .pill { cursor: none; }
     }
-    body.cursor-ready { cursor: none; }
-    body.cursor-ready a, body.cursor-ready button, body.cursor-ready .card, body.cursor-ready .pill { cursor: none; }
-    #cdot.expand { width: 28px; height: 28px; opacity: 0.2; }
+    #cdot.expand { width: 28px; height: 28px; opacity: 0.18; }
 
     /* ── NAV ── */
     nav {
@@ -259,13 +259,13 @@
 
     .photo-col { display: flex; align-items: flex-start; justify-content: center; }
     .photo-frame {
-      width: 100%; max-width: 340px; aspect-ratio: 3/4;
+      width: 100%; max-width: 340px;
       border-radius: 18px; overflow: hidden;
       box-shadow: var(--shadow-lg); border: 1px solid var(--border);
       transition: transform 0.5s cubic-bezier(0.16,1,0.3,1), box-shadow 0.5s;
     }
     .photo-frame:hover { transform: scale(1.02); box-shadow: 0 32px 96px rgba(0,0,0,0.15); }
-    .photo-frame img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .photo-frame img { width: 100%; height: 100%; object-fit: cover; display: block; max-height: 420px; }
 
     /* ── WORK ── */
     #work { border-top: 1px solid var(--border); }
@@ -539,98 +539,93 @@
 </footer>
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
-  // Scroll reveal — JS hides then reveals. If observer fails, everything stays visible.
-  if ('IntersectionObserver' in window) {
-    const revealEls = document.querySelectorAll('.reveal');
-    revealEls.forEach(el => {
-      el.style.opacity = '0';
-      el.style.transform = 'translateY(24px)';
-      el.style.transition = 'opacity 0.8s cubic-bezier(0.16,1,0.3,1), transform 0.8s cubic-bezier(0.16,1,0.3,1)';
+  // ── Scroll reveal ──
+  // Elements start visible (opacity:1). JS hides them, then reveals on scroll.
+  // If observer never fires, everything stays visible.
+  var revEls = document.querySelectorAll('.reveal');
+  revEls.forEach(function(el) {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(22px)';
+    el.style.transition = 'opacity 0.75s cubic-bezier(0.16,1,0.3,1), transform 0.75s cubic-bezier(0.16,1,0.3,1)';
+  });
+  var io = new IntersectionObserver(function(entries) {
+    entries.forEach(function(e) {
+      if (e.isIntersecting) {
+        e.target.style.opacity = '1';
+        e.target.style.transform = 'none';
+        io.unobserve(e.target);
+      }
     });
-    const io = new IntersectionObserver(entries => {
-      entries.forEach(e => {
-        if (e.isIntersecting) {
-          e.target.style.opacity = '1';
-          e.target.style.transform = 'none';
-          io.unobserve(e.target);
-        }
-      });
-    }, { threshold: 0.05 });
-    revealEls.forEach(el => io.observe(el));
-  }
+  }, { threshold: 0.05 });
+  revEls.forEach(function(el) { io.observe(el); });
 
-  // Orb mouse tracking — starts at a nice default, follows cursor on mousemove
-  const hero = document.getElementById('hero');
-  const orb1 = document.querySelector('.orb-1');
-  const orb2 = document.querySelector('.orb-2');
-  const orb3 = document.querySelector('.orb-3');
+  // ── Orb tracking ──
+  var hero = document.getElementById('hero');
+  var orb1 = document.querySelector('.orb-1');
+  var orb2 = document.querySelector('.orb-2');
+  var orb3 = document.querySelector('.orb-3');
   if (hero && orb1) {
-    // Default offsets — orbs start spread in a pleasing position
-    let t1x = 120, t1y = -80;
-    let t2x = -100, t2y = 60;
-    let t3x = 60, t3y = 100;
-    let c1x = 120, c1y = -80;
-    let c2x = -100, c2y = 60;
-    let c3x = 60, c3y = 100;
-
-    hero.addEventListener('mousemove', e => {
-      const r = hero.getBoundingClientRect();
-      const mx = e.clientX - r.left - r.width / 2;
-      const my = e.clientY - r.top - r.height / 2;
-      t1x = mx * 0.4; t1y = my * 0.4;
-      t2x = mx * -0.25; t2y = my * -0.25;
-      t3x = mx * 0.6; t3y = my * 0.6;
+    var t1x=120,t1y=-80, t2x=-100,t2y=60, t3x=60,t3y=100;
+    var c1x=120,c1y=-80, c2x=-100,c2y=60, c3x=60,c3y=100;
+    hero.addEventListener('mousemove', function(e) {
+      var r = hero.getBoundingClientRect();
+      var mx = e.clientX - r.left - r.width/2;
+      var my = e.clientY - r.top  - r.height/2;
+      t1x = mx*0.4;  t1y = my*0.4;
+      t2x = mx*-0.25; t2y = my*-0.25;
+      t3x = mx*0.6;  t3y = my*0.6;
     });
-
     function orbLoop() {
-      c1x += (t1x - c1x) * 0.28; c1y += (t1y - c1y) * 0.28;
-      c2x += (t2x - c2x) * 0.18; c2y += (t2y - c2y) * 0.18;
-      c3x += (t3x - c3x) * 0.32; c3y += (t3y - c3y) * 0.32;
-      orb1.style.transform = 'translate(calc(-50% + ' + c1x + 'px), calc(-50% + ' + c1y + 'px))';
-      orb2.style.transform = 'translate(calc(-50% + ' + c2x + 'px), calc(-50% + ' + c2y + 'px))';
-      orb3.style.transform = 'translate(calc(-50% + ' + c3x + 'px), calc(-50% + ' + c3y + 'px))';
+      c1x+=(t1x-c1x)*0.28; c1y+=(t1y-c1y)*0.28;
+      c2x+=(t2x-c2x)*0.18; c2y+=(t2y-c2y)*0.18;
+      c3x+=(t3x-c3x)*0.32; c3y+=(t3y-c3y)*0.32;
+      orb1.style.transform='translate(calc(-50% + '+c1x+'px),calc(-50% + '+c1y+'px))';
+      orb2.style.transform='translate(calc(-50% + '+c2x+'px),calc(-50% + '+c2y+'px))';
+      orb3.style.transform='translate(calc(-50% + '+c3x+'px),calc(-50% + '+c3y+'px))';
       requestAnimationFrame(orbLoop);
     }
-    orbLoop(); // start immediately
-
-    // Hide orbs when hero leaves view
-    new IntersectionObserver(entries => {
-      entries.forEach(e => { [orb1,orb2,orb3].forEach(o => o.style.opacity = e.isIntersecting ? '1' : '0'); });
-    }, { threshold: 0.1 }).observe(hero);
+    orbLoop();
+    new IntersectionObserver(function(entries) {
+      entries.forEach(function(e) {
+        var v = e.isIntersecting ? '1' : '0';
+        orb1.style.opacity=v; orb2.style.opacity=v; orb3.style.opacity=v;
+      });
+    }, {threshold:0.1}).observe(hero);
   }
 
-  // Scroll indicator show/hide
-  const scrollInd = document.getElementById('scrollInd');
+  // ── Scroll indicator ──
+  var scrollInd = document.getElementById('scrollInd');
   if (scrollInd && hero) {
-    new IntersectionObserver(entries => {
-      entries.forEach(e => {
+    new IntersectionObserver(function(entries) {
+      entries.forEach(function(e) {
         scrollInd.style.transition = 'opacity 0.5s ease';
         scrollInd.style.opacity = e.isIntersecting ? '' : '0';
         scrollInd.style.pointerEvents = e.isIntersecting ? '' : 'none';
       });
-    }, { threshold: 0.7 }).observe(hero);
+    }, {threshold:0.7}).observe(hero);
   }
 
-  // Cursor dot — stays off screen until first mouse move
-  const cdot = document.getElementById('cdot');
-  if (cdot && window.matchMedia('(pointer: fine)').matches) {
-    // Start completely off screen so it never shows at 0,0
-    cdot.style.left = '-200px';
-    cdot.style.top = '-200px';
-    document.addEventListener('mousemove', e => {
+  // ── Cursor dot ──
+  var cdot = document.getElementById('cdot');
+  if (cdot) {
+    document.addEventListener('mousemove', function(e) {
       cdot.style.left = e.clientX + 'px';
-      cdot.style.top = e.clientY + 'px';
-    }, { passive: true });
-    document.querySelectorAll('a, .card, .pill').forEach(el => {
-      el.addEventListener('mouseenter', () => cdot.classList.add('expand'));
-      el.addEventListener('mouseleave', () => cdot.classList.remove('expand'));
+      cdot.style.top  = e.clientY + 'px';
+    }, {passive:true});
+    document.querySelectorAll('a,.card,.pill').forEach(function(el) {
+      el.addEventListener('mouseenter', function() { cdot.classList.add('expand'); });
+      el.addEventListener('mouseleave', function() { cdot.classList.remove('expand'); });
     });
   }
 
-  // Nav active highlight
-  const secs = document.querySelectorAll('section[id], footer[id]');
-  const navAs = document.querySelectorAll('.nav-links a');
-  window.addEventListener('scroll', () => {
-    let current = '';
-    secs.forEach(s => { if (window.scrollY >= s.offsetTop - 80) current = s.id; });
-    n
+  // ── Nav highlight ──
+  var secs = document.querySelectorAll('section[id],footer[id]');
+  var navAs = document.querySelectorAll('.nav-links a');
+  window.addEventListener('scroll', function() {
+    var current = '';
+    secs.forEach(function(s) { if (window.scrollY >= s.offsetTop-80) current=s.id; });
+    navAs.forEach(function(a) { a.style.color = a.getAttribute('href')==='#'+current ? 'var(--text)' : ''; });
+  }, {passive:true});
+</script>
+</body>
+</html>
