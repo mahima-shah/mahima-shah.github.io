@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>A2Ventures — Mahima Shah</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; font-size: 16px; }
+
+    /* ── TOKENS — identical to home page ── */
+    :root {
+      --bg:          #f5f5f7;
+      --bg-card:     rgba(255,255,255,0.68);
+      --bg-nav:      rgba(245,245,247,0.75);
+      --bg-tint:     rgba(176,80,48,0.04);
+      --border:      rgba(0,0,0,0.08);
+      --text:        #1d1d1f;
+      --text-2:      #515154;
+      --text-3:      #86868b;
+      --accent:      #B05030;
+      --accent-hi:   #C86040;
+      --accent-dim:  rgba(176,80,48,0.1);
+      --accent-tag:  rgba(176,80,48,0.15);
+      --shadow-sm:   0 2px 16px rgba(0,0,0,0.06);
+      --shadow-md:   0 4px 32px rgba(0,0,0,0.09);
+      --shadow-lg:   0 20px 60px rgba(0,0,0,0.11);
+      --blur:        blur(24px);
+      --radius:      18px;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg:          #000000;
+        --bg-card:     rgba(28,28,30,0.82);
+        --bg-nav:      rgba(0,0,0,0.75);
+        --bg-tint:     rgba(212,114,78,0.05);
+        --border:      rgba(255,255,255,0.1);
+        --text:        #f5f5f7;
+        --text-2:      #a1a1a6;
+        --text-3:      #636366;
+        --accent:      #D4724E;
+        --accent-hi:   #E08060;
+        --accent-dim:  rgba(212,114,78,0.13);
+        --accent-tag:  rgba(212,114,78,0.2);
+        --shadow-sm:   0 2px 16px rgba(0,0,0,0.35);
+        --shadow-md:   0 4px 32px rgba(0,0,0,0.45);
+        --shadow-lg:   0 20px 60px rgba(0,0,0,0.65);
+      }
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', -apple-system, sans-serif;
+      font-weight: 300;
+      line-height: 1.6;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 800;
+      height: 52px;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 44px;
+      background: var(--bg-nav);
+      backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur);
+      border-bottom: 1px solid var(--border);
+    }
+    @media (max-width:600px) { nav { padding: 0 22px; } }
+    .nav-name {
+      font-family: 'DM Serif Display', Georgia, serif;
+      font-size: 1.05rem; font-weight: 500;
+      color: var(--text); text-decoration: none;
+    }
+    .nav-links { display: flex; gap: 36px; list-style: none; align-items: center; }
+    .nav-links a {
+      font-size: 0.78rem; font-weight: 400; letter-spacing: 0.04em;
+      color: var(--text-3); text-decoration: none;
+      position: relative; transition: color 0.2s;
+    }
+    .nav-links a::after {
+      content: ''; position: absolute; bottom: -2px; left: 0;
+      width: 0; height: 1px; background: var(--accent);
+      transition: width 0.25s cubic-bezier(0.16,1,0.3,1);
+    }
+    .nav-links a:hover { color: var(--text); }
+    .nav-links a:hover::after { width: 100%; }
+    .nav-back {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 0.78rem; font-weight: 400; letter-spacing: 0.04em;
+      color: var(--text-3); text-decoration: none; transition: color 0.2s;
+    }
+    .nav-back:hover { color: var(--accent); }
+    .nav-back svg { transition: transform 0.2s; }
+    .nav-back:hover svg { transform: translateX(-3px); }
+    @media (max-width:600px) { .nav-links { gap: 16px; } }
+
+    /* ── LAYOUT ── */
+    .page { padding-top: 52px; }
+    .container { max-width: 860px; margin: 0 auto; padding: 0 24px; }
+    .container-wide { max-width: 1080px; margin: 0 auto; padding: 0 24px; }
+
+    /* ── HERO ── */
+    .cs-hero {
+      padding: 80px 24px 72px;
+      border-bottom: 1px solid var(--border);
+      position: relative; overflow: hidden;
+    }
+    .cs-hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse at 70% 50%, var(--accent-dim), transparent 65%);
+      pointer-events: none;
+    }
+    .cs-hero-inner {
+      max-width: 860px; margin: 0 auto;
+      position: relative; z-index: 1;
+    }
+    .cs-tag {
+      display: inline-block;
+      font-size: 0.64rem; font-weight: 500; letter-spacing: 0.16em; text-transform: uppercase;
+      color: var(--accent); background: var(--accent-dim); border: 1px solid var(--accent-tag);
+      padding: 4px 12px; border-radius: 100px; margin-bottom: 20px;
+    }
+    .cs-title {
+      font-family: 'DM Serif Display', Georgia, serif;
+      font-size: clamp(2.8rem, 7vw, 5.5rem);
+      font-weight: 600; line-height: 1.0; letter-spacing: -0.02em;
+      color: var(--text); margin-bottom: 20px;
+    }
+    .cs-subtitle {
+      font-size: clamp(1rem, 2vw, 1.15rem);
+      color: var(--text-2); line-height: 1.7; max-width: 580px;
+      margin-bottom: 0;
+    }
+
+    /* Meta row */
+    .cs-meta {
+      display: flex; flex-wrap: wrap; gap: 32px;
+      padding-top: 36px; border-top: 1px solid var(--border);
+      margin-top: 36px;
+    }
+    .cs-meta-item { display: flex; flex-direction: column; gap: 4px; }
+    .cs-meta-label {
+      font-size: 0.62rem; font-weight: 500; letter-spacing: 0.16em;
+      text-transform: uppercase; color: var(--text-3);
+    }
+    .cs-meta-value {
+      font-size: 0.88rem; font-weight: 400; color: var(--text);
+    }
+
+    /* Prototype link button */
+    .proto-btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--accent); color: #fff;
+      font-size: 0.8rem; font-weight: 500; letter-spacing: 0.04em;
+      text-decoration: none; padding: 10px 20px; border-radius: 100px;
+      transition: background 0.2s, transform 0.2s;
+      margin-top: 28px;
+    }
+    .proto-btn:hover { background: var(--accent-hi); transform: translateY(-1px); }
+
+    /* ── SECTION BASE ── */
+    .cs-section { padding: 80px 0; border-bottom: 1px solid var(--border); }
+    .cs-section:last-of-type { border-bottom: none; }
+
+    .section-label {
+      display: inline-block;
+      font-size: 0.62rem; font-weight: 500; letter-spacing: 0.18em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 12px;
+    }
+    .section-num {
+      font-size: 0.62rem; font-weight: 400; letter-spacing: 0.1em;
+      color: var(--text-3); margin-right: 10px;
+    }
+    .section-heading {
+      font-family: 'DM Serif Display', Georgia, serif;
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-weight: 500; line-height: 1.12; letter-spacing: -0.015em;
+      color: var(--text); margin-bottom: 24px;
+    }
+    .section-heading em { font-style: italic; color: var(--accent); }
+    .body-text {
+      font-size: 1rem; color: var(--text-2); line-height: 1.82; max-width: 640px;
+    }
+    .body-text + .body-text { margin-top: 14px; }
+
+    /* ── STAT STRIP ── */
+    .stat-strip {
+      display: flex; flex-wrap: wrap; gap: 2px;
+      margin: 40px 0;
+    }
+    .stat-card {
+      flex: 1; min-width: 140px;
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 24px 22px;
+      backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur);
+    }
+    .stat-val {
+      font-family: 'DM Serif Display', Georgia, serif;
+      font-size: 2.2rem; font-weight: 500; color: var(--accent);
+      line-height: 1; display: block; margin-bottom: 6px;
+    }
+    .stat-desc {
+      font-size: 0.8rem; font-weight: 400; color: var(--text-3);
+      line-height: 1.4;
+    }
+
+    /* ── NEED / BREAKPOINT CARDS ── */
+    .cards-2col {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 16px; margin-top: 36px;
+    }
+    @media (max-width:640px) { .cards-2col { grid-template-columns: 1fr; } }
+    .insight-card {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 28px 26px;
+      backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur);
+    }
+    .insight-card-icon {
+      width: 36px; height: 36px; border-radius: 10px;
+      background: var(--accent-dim); border: 1px solid var(--accent-tag);
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 14px;
+    }
+    .insight-card-title {
+      font-family: 'DM Serif Display', Georgia, serif;
+      font-size: 1.15rem; font-weight: 500;
+      color: var(--text); margin-bottom: 8px; line-height: 1.2;
+    }
+    .insight-card-body {
+      font-size: 0.88rem; color: var(--text-2); line-height: 1.72;
+    }
+
+    /* ── QUOTE PULL ── */
+    .pull-quote {
+      margin: 40px 0;
+      padding: 28px 32px;
+      border-left: 3px solid var(--accent);
+      background: var(--bg-tint);
+      border-radius: 0 var(--radius) var(--radius) 0;
+    }
+    .pull-quote p {
+      font-family: 'DM Serif Display', Georgia, serif;
+      font-style: italic; font-size: 1.15rem;
+      color: var(--text); line-height: 1.6; margin-bottom: 8px;
+    }
+    .pull-quote cite {
+      font-size: 0.75rem; font-weight: 400; letter-spacing: 0.06em;
+      color: var(--text-3); font-style: normal;
+    }
+
+    /* ── PROCESS STEPS ── */
+    .process-steps {
+      display: flex; flex-direction: column; gap: 2px;
+      margin-top: 36px;
+    }
+    .process-step {
+      display: grid; grid-template-columns: 48px 1fr;
+      gap: 20px; align-items: start;
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 32px 32px;
+      backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur);
+    }
+    .step-num {
+      font-family: 'DM Serif Display', Georgia, serif;
+      font-size: 1.6rem; font-weight: 500;
+      color: var(--accent); line-height: 1;
+      padding-top: 2px;
+    }
+    .step-content {}
+    .step-title {
+      font-family: 'DM Serif Display', Georgia, serif;
+      font-size: 1.05rem; font-weight: 500;
+      color: var(--text); margin-bottom: 6px;
+    }
+    .step-body {
+      font-size: 0.88rem; color: var(--text-2); line-height: 1.72;
+    }
+
+    /* ── FINDINGS ── */
+    .findings-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 16px; margin-top: 36px;
+    }
+    @media (max-width:640px) { .findings-grid { grid-template-columns: 1fr; } }
+    .finding-card {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 24px 22px;
+      backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur);
+    }
+    .finding-type {
+      font-size: 0.6rem; font-weight: 500; letter-spacing: 0.16em;
+      text-transform: uppercase; margin-bottom: 10px; display: block;
+    }
+    .finding-type.positive { color: #4caf7d; }
+    .finding-type.negative { color: var(--accent); }
+    .finding-title {
+      font-size: 0.9rem; font-weight: 500; color: var(--text);
+      margin-bottom: 6px; line-height: 1.3;
+    }
+    .finding-body {
+      font-size: 0.82rem; color: var(--text-2); line-height: 1.7;
+    }
+
+    /* ── ITERATION STRIP ── */
+    .iteration-list {
+      display: flex; flex-direction: column; gap: 2px; margin-top: 36px;
+    }
+    .iteration-item {
+      display: flex; align-items: flex-start; gap: 18px;
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 28px 32px;
+      backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur);
+    }
+    .iter-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--accent); flex-shrink: 0; margin-top: 6px;
+    }
+    .iter-text { font-size: 0.9rem; color: var(--text-2); line-height: 1.72; }
+    .iter-text strong { color: var(--text); font-weight: 500; }
+
+    /* ── REFLECTION ── */
+    .reflection-grid {
+      display: grid; grid-template-columns: 1fr 1fr 1fr;
+      gap: 16px; margin-top: 36px;
+    }
+    @media (max-width:720px) { .reflection-grid { grid-template-columns: 1fr; } }
+    .reflect-card {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 26px 22px;
+      backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur);
+    }
+    .reflect-icon {
+      font-size: 1.2rem; margin-bottom: 12px; display: block;
+    }
+    .reflect-title {
+      font-family: 'DM Serif Display', Georgia, serif;
+      font-size: 1rem; font-weight: 500; color: var(--text);
+      margin-bottom: 8px;
+    }
+    .reflect-body {
+      font-size: 0.84rem; color: var(--text-2); line-height: 1.7;
+    }
+
+    /* ── NEXT PROJECT ── */
+    .next-project {
+      padding: 72px 24px;
+      text-align: center;
+      border-top: 1px solid var(--border);
+    }
+    .next-label {
+      font-size: 0.64rem; font-weight: 500; letter-spacing: 0.18em;
+      text-transform: uppercase; color: var(--text-3); margin-bottom: 12px;
+    }
+    .next-title {
+      font-family: 'DM Serif Display', Georgia, serif;
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-weight: 500; color: var(--text); margin-bottom: 24px;
+    }
+    .next-link {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-size: 0.82rem; font-weight: 400; color: var(--text);
+      text-decoration: none; transition: gap 0.25s;
+    }
+    .next-link:hover { gap: 14px; }
+    .next-link-arrow {
+      width: 30px; height: 30px; border-radius: 50%;
+      background: var(--accent);
+      display: flex; align-items: center; justify-content: center;
+      transition: transform 0.25s;
+    }
+    .next-link:hover .next-link-arrow { transform: scale(1.1); }
+
+    /* ── REVEAL ── */
+    .reveal { opacity: 1; transform: none; transition: opacity 0.8s cubic-bezier(0.16,1,0.3,1), transform 0.8s cubic-bezier(0.16,1,0.3,1); }
+    .delay-1 { transition-delay: 0.08s; }
+    .delay-2 { transition-delay: 0.18s; }
+    .delay-3 { transition-delay: 0.28s; }
+
+    /* ── FOOTER ── */
+    footer { border-top: 1px solid var(--border); padding: 48px 24px 36px; text-align: center; }
+    .foot-inner { max-width: 860px; margin: 0 auto; }
+    .foot-name { font-family:'DM Serif Display',Georgia,serif;font-size:1.5rem;font-weight:500;color:var(--text);margin-bottom:4px; }
+    .foot-sub { font-family:'DM Serif Display',Georgia,serif;font-style:italic;font-weight:300;font-size:0.9rem;color:var(--text-3);margin-bottom:24px; }
+    .foot-links { display:flex;gap:28px;justify-content:center;list-style:none;flex-wrap:wrap;margin-bottom:20px; }
+    .foot-links a { font-size:0.78rem;font-weight:400;letter-spacing:0.04em;color:var(--text-2);text-decoration:none;transition:color 0.2s; }
+    .foot-links a:hover { color:var(--accent); }
+    .foot-copy { font-size:0.64rem;color:var(--text-3);letter-spacing:0.06em; }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <!-- NAV -->
+  <nav>
+    <a href="index.html" class="nav-back">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+        <path d="M9 2L4 7l5 5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      Back
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html#about">About</a></li>
+      <li><a href="index.html#work">Work</a></li>
+      <li><a href="index.html#contact">Contact</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <header class="cs-hero">
+    <div class="cs-hero-inner">
+      <span class="cs-tag">UX / Product Design</span>
+      <h1 class="cs-title">A2Ventures</h1>
+      <p class="cs-subtitle">A mobile app that motivates University of Michigan students to explore Ann Arbor through a weekly curated location, a points-based rewards system, and social coordination tools.</p>
+      <a href="https://www.figma.com/proto/Aamadz1WADkBS1KoQncmNy/A2Ventures-Hi-Fi?page-id=0%3A1&node-id=2-2&scaling=scale-down&content-scaling=fixed&starting-point-node-id=2%3A2&show-proto-sidebar=1" target="_blank" rel="noopener" class="proto-btn">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+          <path d="M2 7h10M7 2l5 5-5 5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        View Figma Prototype
+      </a>
+      <div class="cs-meta">
+        <div class="cs-meta-item">
+          <span class="cs-meta-label">Role</span>
+          <span class="cs-meta-value">UX Designer &amp; Researcher</span>
+        </div>
+        <div class="cs-meta-item">
+          <span class="cs-meta-label">Team</span>
+          <span class="cs-meta-value">4 designers</span>
+        </div>
+        <div class="cs-meta-item">
+          <span class="cs-meta-label">Timeline</span>
+          <span class="cs-meta-value">Sep to Dec 2025</span>
+        </div>
+        <div class="cs-meta-item">
+          <span class="cs-meta-label">Tools</span>
+          <span class="cs-meta-value">Figma, Miro</span>
+        </div>
+        <div class="cs-meta-item">
+          <span class="cs-meta-label">Methods</span>
+          <span class="cs-meta-value">Interviews, Speed Dating, UFTs, Affinity Diagrams</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- 01 OVERVIEW -->
+  <section class="cs-section">
+    <div class="container">
+      <span class="section-label reveal reveal-left"><span class="section-num">01</span>Overview</span>
+      <h2 class="section-heading reveal reveal-up delay-1">The problem, <em>and the opportunity.</em></h2>
+      <p class="body-text reveal reveal-up delay-2">University of Michigan students consistently underexplore Ann Arbor. Not because they lack curiosity, but because the friction of planning, finding reliable information, and coordinating with friends makes trying something new feel harder than it's worth.</p>
+      <p class="body-text reveal reveal-up delay-3">A2Ventures addresses this directly: a mobile app that surfaces one curated location each week, rewards students for visiting, and makes group coordination effortless. The goal was to reduce the cost of exploration without reducing the reward.</p>
+
+      <div class="stat-strip reveal reveal-up delay-1">
+        <div class="stat-card">
+          <span class="stat-val">15</span>
+          <span class="stat-desc">in-depth interviews conducted across diverse majors and living situations</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-val">80+</span>
+          <span class="stat-desc">ideas generated during IDEO ideation, narrowed to 8 for speed dating</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-val">4</span>
+          <span class="stat-desc">rounds of user testing across milestones with think-aloud protocols</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-val">100%</span>
+          <span class="stat-desc">of test users successfully completed both primary tasks in final prototype</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 02 RESEARCH -->
+  <section class="cs-section">
+    <div class="container">
+      <span class="section-label reveal reveal-left"><span class="section-num">02</span>Research</span>
+      <h2 class="section-heading reveal reveal-up delay-1">Understanding how students <em>actually</em> explore.</h2>
+      <p class="body-text reveal reveal-up delay-2">We conducted 15 semi-structured interviews in September 2025, each lasting 20 to 35 minutes. Participants were University of Michigan students across diverse years, majors, hometowns, and living situations, from first-year dorm residents to seniors in off-campus apartments.</p>
+      <p class="body-text reveal reveal-up delay-3">We asked about motivation, barriers, information-finding habits, transportation, social dynamics, and what would make exploration feel more worthwhile. From there, we synthesised findings into an affinity diagram to identify patterns.</p>
+
+      <div class="pull-quote reveal reveal-up delay-1">
+        <p>"I only have a certain amount of free time and want to use it wisely."</p>
+        <cite>— Interview participant, Junior</cite>
+      </div>
+
+      <div class="pull-quote reveal reveal-up delay-1">
+        <p>"I'm more likely to check out a spot if I'm already nearby than if I have to make a plan for it."</p>
+        <cite>— Interview participant, Senior</cite>
+      </div>
+
+      <p class="body-text reveal reveal-up delay-2" style="margin-top: 32px;">Two clear themes surfaced repeatedly: motivation was tied to social context, and the barrier to exploring wasn't lack of interest. It was the perceived cost in time, money, and effort. Students weren't incurious. They were rationally cautious with limited resources.</p>
+    </div>
+  </section>
+
+  <!-- 03 DEFINE -->
+  <section class="cs-section">
+    <div class="container">
+      <span class="section-label reveal reveal-left"><span class="section-num">03</span>Define</span>
+      <h2 class="section-heading reveal reveal-up delay-1">Two needs. <em>Two breakpoints.</em></h2>
+      <p class="body-text reveal reveal-up delay-2">After synthesising our interview data into an affinity diagram, we identified two core user needs and two major breakpoints that shaped every design decision that followed.</p>
+
+      <div class="cards-2col" style="margin-top: 32px;">
+        <div class="insight-card reveal reveal-up delay-1">
+          <div class="insight-card-icon">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M8 2C8 2 3 5.5 3 9.5C3 12.5 5.24 14 8 14C10.76 14 13 12.5 13 9.5C13 5.5 8 2 8 2Z" stroke="var(--accent)" stroke-width="1.2"/>
+              <circle cx="8" cy="9.5" r="2" fill="var(--accent)" opacity="0.6"/>
+            </svg>
+          </div>
+          <h3 class="insight-card-title">Need 1: Motivation without friends</h3>
+          <p class="insight-card-body">Students need a way to stay motivated and feel supported even when they cannot coordinate with friends. Exploration was deeply tied to social context. If friends weren't available or interested, exploration didn't happen.</p>
+        </div>
+        <div class="insight-card reveal reveal-up delay-2">
+          <div class="insight-card-icon">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <circle cx="8" cy="8" r="6" stroke="var(--accent)" stroke-width="1.2"/>
+              <path d="M8 5v3.5l2.5 1.5" stroke="var(--accent)" stroke-width="1.2" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <h3 class="insight-card-title">Need 2: Confident, low-cost discovery</h3>
+          <p class="insight-card-body">Students need to discover affordable, enjoyable, accessible places that match their schedules and budgets so they can explore confidently without worrying about wasted time or money.</p>
+        </div>
+        <div class="insight-card reveal reveal-up delay-1">
+          <div class="insight-card-icon">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M3 8h10M8 3l5 5-5 5" stroke="var(--accent)" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <h3 class="insight-card-title">Breakpoint 1: Transportation barriers</h3>
+          <p class="insight-card-body">Students without cars relied on friends for rides. Distance significantly impacted willingness to explore. Students defaulted to walkable destinations and were far less likely to visit spots that required active planning to reach.</p>
+        </div>
+        <div class="insight-card reveal reveal-up delay-2">
+          <div class="insight-card-icon">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <rect x="2" y="4" width="12" height="8" rx="1.5" stroke="var(--accent)" stroke-width="1.2"/>
+              <path d="M5 4V3M11 4V3" stroke="var(--accent)" stroke-width="1.2" stroke-linecap="round"/>
+              <path d="M5 8h6" stroke="var(--accent)" stroke-width="1.2" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <h3 class="insight-card-title">Breakpoint 2: Fragmented information</h3>
+          <p class="insight-card-body">Event and location information was scattered across social media, flyers, emails, and newsletters. Students often discovered opportunities after the fact, or couldn't tell from brief posts whether an event fit their interests or budget.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 04 IDEATION -->
+  <section class="cs-section">
+    <div class="container">
+      <span class="section-label reveal reveal-left"><span class="section-num">04</span>Ideation</span>
+      <h2 class="section-heading reveal reveal-up delay-1">From 80 ideas <em>to 2.</em></h2>
+      <p class="body-text reveal reveal-up delay-2">Using the IDEO ideation process, we generated over 80 concepts before filtering down to 8 storyboards for speed dating sessions. Each storyboard showed a problem, a proposed solution, and an outcome. We then ran 20-minute sessions with University of Michigan students to validate which ideas actually resonated.</p>
+
+      <div class="process-steps reveal reveal-up delay-1">
+        <div class="process-step">
+          <span class="step-num">✓</span>
+          <div class="step-content">
+            <h4 class="step-title">Rewards for visiting new places</h4>
+            <p class="step-body">All four speed dating participants responded positively. Even small, tangible incentives like discounts, points, and perks shifted the calculus of whether a new place was "worth it." This became the backbone of our final design.</p>
+          </div>
+        </div>
+        <div class="process-step">
+          <span class="step-num">✓</span>
+          <div class="step-content">
+            <h4 class="step-title">Location of the Week</h4>
+            <p class="step-body">Consistently validated. Students liked having a single curated recommendation rather than an overwhelming list. It removed decision fatigue. The key ask was making it social, with a way to go with friends.</p>
+          </div>
+        </div>
+        <div class="process-step">
+          <span class="step-num">✗</span>
+          <div class="step-content">
+            <h4 class="step-title">Calendar integration &amp; forums</h4>
+            <p class="step-body">Participants didn't want another app when Google Calendar already existed. Student forums felt redundant given Reddit and existing social media. We deprioritised features that duplicated tools students already used daily.</p>
+          </div>
+        </div>
+        <div class="process-step">
+          <span class="step-num">~</span>
+          <div class="step-content">
+            <h4 class="step-title">Gamified unlockable stories</h4>
+            <p class="step-body">Mixed feedback. In-class participants were more receptive; speed dating participants were not. The narrative element felt low-value compared to tangible rewards. We kept the gamification logic but stripped the storytelling layer.</p>
+          </div>
+        </div>
+      </div>
+
+      <p class="body-text reveal reveal-up delay-2" style="margin-top: 32px;">The final direction combined Location of the Week with a rewards system, tying a curated weekly recommendation to real, redeemable incentives at partner stores, with social coordination built in to address the friends barrier directly.</p>
+    </div>
+  </section>
+
+  <!-- 05 DESIGN -->
+  <section class="cs-section">
+    <div class="container">
+      <span class="section-label reveal reveal-left"><span class="section-num">05</span>Design</span>
+      <h2 class="section-heading reveal reveal-up delay-1">The solution: <em>explore, earn, redeem.</em></h2>
+      <p class="body-text reveal reveal-up delay-2">A2Ventures is built around two primary flows: planning a visit to the Location of the Week to earn points, and redeeming those points at partner stores for real discounts. The design prioritises clarity, low friction, and tangible value at every step.</p>
+
+      <div class="cards-2col" style="margin-top: 36px;">
+        <div class="insight-card reveal reveal-up delay-1">
+          <div class="insight-card-icon">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M8 2C8 2 3 5.5 3 9.5C3 12.5 5.24 14 8 14C10.76 14 13 12.5 13 9.5C13 5.5 8 2 8 2Z" stroke="var(--accent)" stroke-width="1.2"/>
+            </svg>
+          </div>
+          <h3 class="insight-card-title">Location of the Week</h3>
+          <p class="insight-card-body">A single curated spot on the home screen each week, tagged with vibe indicators (Chill, Social, Lively, Cozy) so students know what to expect before committing. Planning a visit earns 100 points.</p>
+        </div>
+        <div class="insight-card reveal reveal-up delay-2">
+          <div class="insight-card-icon">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <rect x="3" y="3" width="10" height="10" rx="2" stroke="var(--accent)" stroke-width="1.2"/>
+              <path d="M6 8h4M8 6v4" stroke="var(--accent)" stroke-width="1.2" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <h3 class="insight-card-title">Points &amp; Rewards</h3>
+          <p class="insight-card-body">Visit the Location of the Week and earn 100 points redeemable at partner stores including M-36 and Rock Paper Scissors. Partner store visits earn 20 points. Points stack in a Point Bank with full history.</p>
+        </div>
+        <div class="insight-card reveal reveal-up delay-1">
+          <div class="insight-card-icon">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <rect x="3" y="2" width="10" height="12" rx="1.5" stroke="var(--accent)" stroke-width="1.2"/>
+              <path d="M6 6h4M6 9h4" stroke="var(--accent)" stroke-width="1.2" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <h3 class="insight-card-title">QR Code Collection</h3>
+          <p class="insight-card-body">After planning a visit, users receive a QR code saved to their collection, accessible any time. An info overlay explains exactly how to use it, addressing instructor feedback about clarity for first-time users.</p>
+        </div>
+        <div class="insight-card reveal reveal-up delay-2">
+          <div class="insight-card-icon">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <circle cx="5" cy="8" r="2.5" stroke="var(--accent)" stroke-width="1.2"/>
+              <circle cx="11" cy="8" r="2.5" stroke="var(--accent)" stroke-width="1.2"/>
+              <path d="M7.5 8h1" stroke="var(--accent)" stroke-width="1.2" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <h3 class="insight-card-title">Location History</h3>
+          <p class="insight-card-body">A profile-level log of every place visited, with points earned or redeemed per visit. Introduced in the final milestone to support recognition, continuity, and a sense of personal exploration history.</p>
+        </div>
+      </div>
+
+      <div style="margin-top: 40px; text-align: center;">
+        <a href="https://www.figma.com/proto/Aamadz1WADkBS1KoQncmNy/A2Ventures-Hi-Fi?page-id=0%3A1&node-id=2-2&scaling=scale-down&content-scaling=fixed&starting-point-node-id=2%3A2&show-proto-sidebar=1" target="_blank" rel="noopener" class="proto-btn reveal reveal-up">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+            <path d="M2 7h10M7 2l5 5-5 5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          Explore the Prototype
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 06 TESTING -->
+  <section class="cs-section">
+    <div class="container">
+      <span class="section-label reveal reveal-left"><span class="section-num">06</span>Testing</span>
+      <h2 class="section-heading reveal reveal-up delay-1">What we found, <em>and what we fixed.</em></h2>
+      <p class="body-text reveal reveal-up delay-2">We ran think-aloud usability tests across multiple milestones, each testing two primary tasks: planning a visit to earn points, and redeeming those points at a partner store. By the final milestone, all participants successfully completed both tasks.</p>
+
+      <div class="findings-grid reveal reveal-up delay-1">
+        <div class="finding-card">
+          <span class="finding-type negative">Issue Found</span>
+          <h4 class="finding-title">Ambiguous vibe selector</h4>
+          <p class="finding-body">Users were unsure whether "vibe" referred to the place or their own mood. Abstract labels like "chill" and "lively" caused hesitation on first use. We relocated vibes to location cards so the app tells the user what to expect, rather than asking them to define it.</p>
+        </div>
+        <div class="finding-card">
+          <span class="finding-type negative">Issue Found</span>
+          <h4 class="finding-title">Back button skipped a step</h4>
+          <p class="finding-body">Tapping back on the Confirm Visit screen sent users to the home screen instead of the previous step. This violated user control and forced a full restart. Fixed so the back button moves exactly one frame back.</p>
+        </div>
+        <div class="finding-card">
+          <span class="finding-type negative">Issue Found</span>
+          <h4 class="finding-title">QR code confusion</h4>
+          <p class="finding-body">Visit QR codes and redemption QR codes looked identical, causing uncertainty about which to use and when. Added an info overlay explaining usage, with differentiated visual treatments planned for future iterations.</p>
+        </div>
+        <div class="finding-card">
+          <span class="finding-type negative">Issue Found</span>
+          <h4 class="finding-title">No way to save the QR code</h4>
+          <p class="finding-body">Users received a QR code immediately after confirming a visit, but had no way to access it later. We introduced a QR Code Collection accessible from the profile, so codes persist until used.</p>
+        </div>
+        <div class="finding-card">
+          <span class="finding-type positive">What Worked</span>
+          <h4 class="finding-title">Labels aided learnability</h4>
+          <p class="finding-body">Even users unfamiliar with "Location of the Week" understood it from the label and description on the home screen. Clear inline labelling reduced the need for onboarding and bridged the gulf of evaluation quickly.</p>
+        </div>
+        <div class="finding-card">
+          <span class="finding-type positive">What Worked</span>
+          <h4 class="finding-title">Multi-layer rewards confirmation</h4>
+          <p class="finding-body">After redemption, the app showed a confetti animation, an updated point balance, and a rewards history entry. Users explicitly noticed all three layers, citing them as confidence-building. Redundant feedback reduced doubt.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 07 ITERATIONS -->
+  <section class="cs-section">
+    <div class="container">
+      <span class="section-label reveal reveal-left"><span class="section-num">07</span>Iterations</span>
+      <h2 class="section-heading reveal reveal-up delay-1">Changes made <em>across milestones.</em></h2>
+      <p class="body-text reveal reveal-up delay-2">Each round of testing produced concrete changes. Here are the major iterations from Milestone 3 to the final prototype.</p>
+
+      <div class="iteration-list reveal reveal-up delay-1">
+        <div class="iteration-item">
+          <div class="iter-dot"></div>
+          <p class="iter-text"><strong>Moved vibe from user input to location tag.</strong> The vibe selector was removed from the planning flow. Instead, location cards now display vibe tags (Social, Chill, Lively, Cozy) so users understand the atmosphere before committing.</p>
+        </div>
+        <div class="iteration-item">
+          <div class="iter-dot"></div>
+          <p class="iter-text"><strong>Fixed back button routing.</strong> The back button on Confirm Visit now returns users one frame back to time selection, not two frames back to the home screen. A small fix with significant impact on user control.</p>
+        </div>
+        <div class="iteration-item">
+          <div class="iter-dot"></div>
+          <p class="iter-text"><strong>Added QR Code Collection.</strong> Users can now save QR codes and access them any time from their profile, solving the problem of codes being inaccessible after leaving the confirmation screen.</p>
+        </div>
+        <div class="iteration-item">
+          <div class="iter-dot"></div>
+          <p class="iter-text"><strong>Expanded partner store flows.</strong> Added complete visit-planning flows for Pinball Pete's and Miss Kim's, making the Explore page functional rather than disabled. Partner visits earn 20 points.</p>
+        </div>
+        <div class="iteration-item">
+          <div class="iter-dot"></div>
+          <p class="iter-text"><strong>Added Rock Paper Scissors redemption flow.</strong> Includes a redemption denial state so users can see what happens if they attempt to redeem more points than they have, adding robustness to the rewards system.</p>
+        </div>
+        <div class="iteration-item">
+          <div class="iter-dot"></div>
+          <p class="iter-text"><strong>Introduced Location History.</strong> A new profile feature showing every place visited, when, and how many points were earned or redeemed. Gives users a sense of their exploration over time.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 08 REFLECTION -->
+  <section class="cs-section">
+    <div class="container">
+      <span class="section-label reveal reveal-left"><span class="section-num">08</span>Reflection</span>
+      <h2 class="section-heading reveal reveal-up delay-1">What I took away <em>from this.</em></h2>
+
+      <div class="reflection-grid reveal reveal-up delay-1">
+        <div class="reflect-card">
+          <span class="reflect-icon">🔍</span>
+          <h4 class="reflect-title">Research shapes everything</h4>
+          <p class="reflect-body">Every major design decision traced back to something a user said in an interview. The discovery that motivation was social rather than individual completely changed how we framed the product. Without the research, we'd have built the wrong thing.</p>
+        </div>
+        <div class="reflect-card">
+          <span class="reflect-icon">⚡</span>
+          <h4 class="reflect-title">Small friction is real friction</h4>
+          <p class="reflect-body">A single confusing back button was enough to make a user restart an entire flow. This project reinforced that UX debt compounds quickly. The tiniest ambiguity in a high-frequency interaction is worth spending time on.</p>
+        </div>
+        <div class="reflect-card">
+          <span class="reflect-icon">🔄</span>
+          <h4 class="reflect-title">Iteration over perfection</h4>
+          <p class="reflect-body">The final prototype was meaningfully better than the first not because of clever initial design, but because of systematic testing and honest prioritisation of what to fix. The process was the work.</p>
+        </div>
+      </div>
+
+      <div class="pull-quote reveal reveal-up delay-2" style="margin-top: 40px;">
+        <p>"The solution meaningfully addresses the core user need of making Ann Arbor exploration more accessible and motivating. Students plan visits, earn points, and redeem rewards."</p>
+        <cite>— Project analysis, Milestone 4</cite>
+      </div>
+    </div>
+  </section>
+
+  <!-- NEXT PROJECT -->
+  <div class="next-project">
+    <p class="next-label reveal reveal-up">Next project</p>
+    <h2 class="next-title reveal reveal-up delay-1">VibeNote</h2>
+    <a href="#" class="next-link reveal reveal-up delay-2">
+      View case study
+      <span class="next-link-arrow">
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+          <path d="M2 6h8M6 2l4 4-4 4" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </span>
+    </a>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="foot-inner">
+      <p class="foot-name">Mahima Shah</p>
+      <p class="foot-sub">always learning</p>
+      <ul class="foot-links">
+        <li><a href="/cdn-cgi/l/email-protection#0d606c6564606c7e656c657574774d6a606c6461236e6260">Email</a></li>
+        <li><a href="https://www.linkedin.com/in/shahmahima/" target="_blank" rel="noopener">LinkedIn</a></li>
+        <li><a href="https://github.com/mahima-shah" target="_blank" rel="noopener">GitHub</a></li>
+        <li><a href="https://www.youtube.com/@mahimashah" target="_blank" rel="noopener">YouTube</a></li>
+      </ul>
+      <p class="foot-copy">2025 Mahima Shah &nbsp;&middot;&nbsp; Designed with intention</p>
+    </div>
+  </footer>
+
+</div>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+  // JS hides elements first, then reveals on scroll — so if JS fails, everything stays visible
+  if ('IntersectionObserver' in window) {
+    const els = document.querySelectorAll('.reveal');
+    els.forEach(el => {
+      el.style.opacity = '0';
+      el.style.transform = el.classList.contains('reveal-left') ? 'translateX(-20px)' : 'translateY(24px)';
+    });
+    const io = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.style.opacity = '1';
+          e.target.style.transform = 'none'

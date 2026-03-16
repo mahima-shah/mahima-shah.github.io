@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VibeNote — Mahima Shah</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; font-size: 16px; }
+
+    :root {
+      --bg:          #f5f5f7;
+      --bg-card:     rgba(255,255,255,0.68);
+      --bg-nav:      rgba(245,245,247,0.75);
+      --bg-tint:     rgba(176,80,48,0.04);  /* terracotta shared with A2Ventures */
+      --border:      rgba(0,0,0,0.08);
+      --text:        #1d1d1f;
+      --text-2:      #515154;
+      --text-3:      #86868b;
+      --accent:      #B05030;
+      --accent-hi:   #C86040;
+      --accent-dim:  rgba(176,80,48,0.1);
+      --accent-tag:  rgba(176,80,48,0.15);
+      
+      --shadow-sm:   0 2px 16px rgba(0,0,0,0.06);
+      --shadow-md:   0 4px 32px rgba(0,0,0,0.09);
+      --shadow-lg:   0 20px 60px rgba(0,0,0,0.11);
+      --blur:        blur(24px);
+      --radius:      18px;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg:          #000000;
+        --bg-card:     rgba(28,28,30,0.82);
+        --bg-nav:      rgba(0,0,0,0.75);
+        --bg-tint:     rgba(212,114,78,0.05);
+        --border:      rgba(255,255,255,0.1);
+        --text:        #f5f5f7;
+        --text-2:      #a1a1a6;
+        --text-3:      #636366;
+        --accent:      #D4724E;
+        --accent-hi:   #E08060;
+        --accent-dim:  rgba(212,114,78,0.13);
+        --accent-tag:  rgba(212,114,78,0.2);
+        --shadow-sm:   0 2px 16px rgba(0,0,0,0.35);
+        --shadow-md:   0 4px 32px rgba(0,0,0,0.45);
+        --shadow-lg:   0 20px 60px rgba(0,0,0,0.65);
+      }
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', -apple-system, sans-serif;
+      font-weight: 300;
+      line-height: 1.6;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* NAV */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 800;
+      height: 52px;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 44px;
+      background: var(--bg-nav);
+      backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur);
+      border-bottom: 1px solid var(--border);
+    }
+    @media (max-width:600px) { nav { padding: 0 22px; } }
+    .nav-name {
+      font-family: 'DM Serif Display', Georgia, serif;
+      font-size: 1.05rem; font-weight: 500;
+      color: var(--text); text-decoration: none;
+    }
+    .nav-links { display: flex; gap: 36px; list-style: none; align-items: center; }
+    .nav-links a {
+      font-size: 0.78rem; font-weight: 400; letter-spacing: 0.04em;
+      color: var(--text-3); text-decoration: none;
+      position: relative; transition: color 0.2s;
+    }
+    .nav-links a::after {
+      content: ''; position: absolute; bottom: -2px; left: 0;
+      width: 0; height: 1px; background: var(--accent);
+      transition: width 0.25s cubic-bezier(0.16,1,0.3,1);
+    }
+    .nav-links a:hover { color: var(--text); }
+    .nav-links a:hover::after { width: 100%; }
+    .nav-back {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 0.78rem; font-weight: 400; letter-spacing: 0.04em;
+      color: var(--text-3); text-decoration: none; transition: color 0.2s;
+    }
+    .nav-back:hover { color: var(--accent); }
+    .nav-back svg { transition: transform 0.2s; }
+    .nav-back:hover svg { transform: translateX(-3px); }
+    @media (max-width:600px) { .nav-links { gap: 16px; } }
+
+    /* LAYOUT */
+    .page { padding-top: 52px; }
+    .container { max-width: 860px; margin: 0 auto; padding: 0 24px; }
+
+    /* HERO */
+    .cs-hero {
+      padding: 80px 24px 72px;
+      border-bottom: 1px solid var(--border);
+      position: relative; overflow: hidden;
+    }
+    .cs-hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse at 65% 50%, var(--accent-dim), transparent 65%);
+      pointer-events: none;
+    }
+    .cs-hero-inner { max-width: 860px; margin: 0 auto; position: relative; z-index: 1; }
+    .cs-tag {
+      display: inline-block;
+      font-size: 0.64rem; font-weight: 500; letter-spacing: 0.16em; text-transform: uppercase;
+      color: var(--accent); background: var(--accent-dim); border: 1px solid var(--accent-tag);
+      padding: 4px 12px; border-radius: 100px; margin-bottom: 20px;
+    }
+    .cs-title {
+      font-family: 'DM Serif Display', Georgia, serif;
+      font-size: clamp(2.8rem, 7vw, 5.5rem);
+      font-weight: 600; line-height: 1.0; letter-spacing: -0.02em;
+      color: var(--text); margin-bottom: 20px;
+    }
+    .cs-subtitle {
+      font-size: clamp(1rem, 2vw, 1.15rem);
+      color: var(--text-2); line-height: 1.7; max-width: 580px;
+      margin-bottom: 0;
+    }
+    .cs-meta {
+      display: flex; flex-wrap: wrap; gap: 32px;
+      padding-top: 36px; border-top: 1px solid var(--border); margin-top: 36px;
+    }
+    .cs-meta-item { display: flex; flex-direction: column; gap: 4px; }
+    .cs-meta-label {
+      font-size: 0.62rem; font-weight: 500; letter-spacing: 0.16em;
+      text-transform: uppercase; color: var(--text-3);
+    }
+    .cs-meta-value { font-size: 0.88rem; font-weight: 400; color: var(--text); }
+    .proto-btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--accent); color: #fff;
+      font-size: 0.8rem; font-weight: 500; letter-spacing: 0.04em;
+      text-decoration: none; padding: 10px 20px; border-radius: 100px;
+      transition: background 0.2s, transform 0.2s; margin-top: 28px;
+    }
+    .proto-btn:hover { background: var(--accent-hi); transform: translateY(-1px); }
+    .proto-btn.secondary {
+      background: transparent;
+      border: 1px solid var(--accent-tag);
+      color: var(--accent);
+      margin-left: 12px;
+    }
+    .proto-btn.secondary:hover { background: var(--accent-dim); transform: translateY(-1px); }
+
+    /* SECTIONS */
+    .cs-section { padding: 80px 0; border-bottom: 1px solid var(--border); }
+    .cs-section:last-of-type { border-bottom: none; }
+    .section-label {
+      display: inline-block;
+      font-size: 0.62rem; font-weight: 500; letter-spacing: 0.18em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 12px;
+    }
+    .section-num { font-size: 0.62rem; font-weight: 400; letter-spacing: 0.1em; color: var(--text-3); margin-right: 10px; }
+    .section-heading {
+      font-family: 'DM Serif Display', Georgia, serif;
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-weight: 500; line-height: 1.12; letter-spacing: -0.015em;
+      color: var(--text); margin-bottom: 24px;
+    }
+    .section-heading em { font-style: italic; color: var(--accent); }
+    .body-text { font-size: 1rem; color: var(--text-2); line-height: 1.82; max-width: 640px; }
+    .body-text + .body-text { margin-top: 14px; }
+
+    /* STAT STRIP */
+    .stat-strip { display: flex; flex-wrap: wrap; gap: 2px; margin: 40px 0; }
+    .stat-card {
+      flex: 1; min-width: 140px;
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 24px 22px;
+      backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur);
+    }
+    .stat-val {
+      font-family: 'DM Serif Display', Georgia, serif;
+      font-size: 2.2rem; font-weight: 500; color: var(--accent);
+      line-height: 1; display: block; margin-bottom: 6px;
+    }
+    .stat-desc { font-size: 0.8rem; font-weight: 400; color: var(--text-3); line-height: 1.4; }
+
+    /* CARDS 2COL */
+    .cards-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 36px; }
+    @media (max-width:640px) { .cards-2col { grid-template-columns: 1fr; } }
+    .insight-card {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 28px 26px;
+      backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur);
+    }
+    .insight-card-icon {
+      width: 36px; height: 36px; border-radius: 10px;
+      background: var(--accent-dim); border: 1px solid var(--accent-tag);
+      display: flex; align-items: center; justify-content: center; margin-bottom: 14px;
+    }
+    .insight-card-title {
+      font-family: 'DM Serif Display', Georgia, serif;
+      font-size: 1.1rem; font-weight: 500; color: var(--text); margin-bottom: 8px; line-height: 1.2;
+    }
+    .insight-card-body { font-size: 0.88rem; color: var(--text-2); line-height: 1.72; }
+
+    /* CARDS 3COL */
+    .cards-3col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-top: 36px; }
+    @media (max-width:720px) { .cards-3col { grid-template-columns: 1fr; } }
+    .reflect-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 26px 22px; backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur); }
+
+    /* PULL QUOTE */
+    .pull-quote {
+      margin: 40px 0; padding: 28px 32px;
+      border-left: 3px solid var(--accent);
+      background: var(--bg-tint);
+      border-radius: 0 var(--radius) var(--radius) 0;
+    }
+    .pull-quote p {
+      font-family: 'DM Serif Display', Georgia, serif;
+      font-style: italic; font-size: 1.15rem;
+      color: var(--text); line-height: 1.6; margin-bottom: 8px;
+    }
+    .pull-quote cite { font-size: 0.75rem; font-weight: 400; letter-spacing: 0.06em; color: var(--text-3); font-style: normal; }
+
+    /* PRINCIPLE CARDS */
+    .principle-list { display: flex; flex-direction: column; gap: 14px; margin-top: 36px; }
+    .principle-item {
+      display: grid; grid-template-columns: 160px 1fr; gap: 0;
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: var(--radius); overflow: hidden;
+      backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur);
+    }
+    @media (max-width:640px) { .principle-item { grid-template-columns: 1fr; } }
+    .principle-label-col {
+      padding: 28px 24px;
+      background: var(--accent-dim);
+      border-right: 1px solid var(--accent-tag);
+      display: flex; flex-direction: column; justify-content: center;
+    }
+    @media (max-width:640px) { .principle-label-col { border-right: none; border-bottom: 1px solid var(--accent-tag); } }
+    .principle-name {
+      font-family: 'DM Serif Display', Georgia, serif;
+      font-size: 1.1rem; font-weight: 500; color: var(--accent); line-height: 1.2;
+    }
+    .principle-body-col { padding: 28px 32px; }
+    .principle-body { font-size: 0.9rem; color: var(--text-2); line-height: 1.75; }
+
+    /* MICRO INTERACTION BREAKDOWN */
+    .mi-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-top: 36px; }
+    @media (max-width:640px) { .mi-grid { grid-template-columns: 1fr; } }
+    .mi-card {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 32px 32px;
+      backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur);
+    }
+    .mi-step {
+      font-size: 0.62rem; font-weight: 500; letter-spacing: 0.16em;
+      text-transform: uppercase; color: var(--accent); margin-bottom: 10px; display: block;
+    }
+    .mi-title {
+      font-family: 'DM Serif Display', Georgia, serif;
+      font-size: 1.1rem; font-weight: 500; color: var(--text); margin-bottom: 8px;
+    }
+    .mi-body { font-size: 0.85rem; color: var(--text-2); line-height: 1.72; }
+
+    /* ITERATION LIST */
+    .iteration-list { display: flex; flex-direction: column; gap: 2px; margin-top: 36px; }
+    .iteration-item {
+      display: flex; align-items: flex-start; gap: 18px;
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 28px 32px;
+      backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur);
+    }
+    .iter-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); flex-shrink: 0; margin-top: 6px; }
+    .iter-text { font-size: 0.9rem; color: var(--text-2); line-height: 1.72; }
+    .iter-text strong { color: var(--text); font-weight: 500; }
+
+    /* REFLECT */
+    .reflect-icon { font-size: 1.2rem; margin-bottom: 12px; display: block; }
+    .reflect-title { font-family: 'DM Serif Display', Georgia, serif; font-size: 1rem; font-weight: 500; color: var(--text); margin-bottom: 8px; }
+    .reflect-body { font-size: 0.84rem; color: var(--text-2); line-height: 1.7; }
+
+    /* NEXT PROJECT */
+    .next-project { padding: 72px 24px; text-align: center; border-top: 1px solid var(--border); }
+    .next-label { font-size: 0.64rem; font-weight: 500; letter-spacing: 0.18em; text-transform: uppercase; color: var(--text-3); margin-bottom: 12px; }
+    .next-title { font-family: 'DM Serif Display', Georgia, serif; font-size: clamp(1.8rem, 4vw, 2.8rem); font-weight: 500; color: var(--text); margin-bottom: 24px; }
+    .next-link { display: inline-flex; align-items: center; gap: 8px; font-size: 0.82rem; font-weight: 400; color: var(--text); text-decoration: none; transition: gap 0.25s; }
+    .next-link:hover { gap: 14px; }
+    .next-link-arrow { width: 30px; height: 30px; border-radius: 50%; background: var(--accent); display: flex; align-items: center; justify-content: center; transition: transform 0.25s; }
+    .next-link:hover .next-link-arrow { transform: scale(1.1); }
+
+    /* FOOTER */
+    footer { border-top: 1px solid var(--border); padding: 48px 24px 36px; text-align: center; }
+    .foot-inner { max-width: 860px; margin: 0 auto; }
+    .foot-name { font-family:'DM Serif Display',Georgia,serif;font-size:1.5rem;font-weight:500;color:var(--text);margin-bottom:4px; }
+    .foot-sub { font-family:'DM Serif Display',Georgia,serif;font-style:italic;font-weight:300;font-size:0.9rem;color:var(--text-3);margin-bottom:24px; }
+    .foot-links { display:flex;gap:28px;justify-content:center;list-style:none;flex-wrap:wrap;margin-bottom:20px; }
+    .foot-links a { font-size:0.78rem;font-weight:400;letter-spacing:0.04em;color:var(--text-2);text-decoration:none;transition:color 0.2s; }
+    .foot-links a:hover { color:var(--accent); }
+    .foot-copy { font-size:0.64rem;color:var(--text-3);letter-spacing:0.06em; }
+
+    /* REVEAL */
+    .reveal { opacity: 1; transform: none; transition: opacity 0.8s cubic-bezier(0.16,1,0.3,1), transform 0.8s cubic-bezier(0.16,1,0.3,1); }
+    .delay-1 { transition-delay: 0.08s; }
+    .delay-2 { transition-delay: 0.18s; }
+    .delay-3 { transition-delay: 0.28s; }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <!-- NAV -->
+  <nav>
+    <a href="index.html" class="nav-back">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+        <path d="M9 2L4 7l5 5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      Back
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html#about">About</a></li>
+      <li><a href="index.html#work">Work</a></li>
+      <li><a href="index.html#contact">Contact</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <header class="cs-hero">
+    <div class="cs-hero-inner">
+      <span class="cs-tag">Interaction Design</span>
+      <h1 class="cs-title">VibeNote</h1>
+      <p class="cs-subtitle">A micro-interaction concept that lets you attach a quick note (a mood, a memory, a lyric) when sharing a song. Designed for both mobile and smartwatch, with a focus on making music sharing feel more human.</p>
+      <div>
+        <a href="https://www.figma.com/proto/g0PZxHxms76gUzFE6JPOQO/SI-207-Expedition-2?node-id=0-1&t=uFR1U2jqHqlLKum7-1" target="_blank" rel="noopener" class="proto-btn">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+            <path d="M2 7h10M7 2l5 5-5 5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          View Figma Prototype
+        </a>
+        <a href="https://youtu.be/m6annYGGBCc" target="_blank" rel="noopener" class="proto-btn secondary">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+            <path d="M3 2l9 5-9 5V2z" fill="currentColor"/>
+          </svg>
+          Design Pitch Video
+        </a>
+      </div>
+      <div class="cs-meta">
+        <div class="cs-meta-item">
+          <span class="cs-meta-label">Role</span>
+          <span class="cs-meta-value">Solo / Interaction Designer</span>
+        </div>
+        <div class="cs-meta-item">
+          <span class="cs-meta-label">Course</span>
+          <span class="cs-meta-value">SI 207, Intro to Interaction Design</span>
+        </div>
+        <div class="cs-meta-item">
+          <span class="cs-meta-label">Tools</span>
+          <span class="cs-meta-value">Figma, Sketching</span>
+        </div>
+        <div class="cs-meta-item">
+          <span class="cs-meta-label">Scope</span>
+          <span class="cs-meta-value">Concept, sketch, Figma prototype</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- 01 OVERVIEW -->
+  <section class="cs-section">
+    <div class="container">
+      <span class="section-label reveal"><span class="section-num">01</span>Overview</span>
+      <h2 class="section-heading reveal delay-1">A song shared is better <em>with context.</em></h2>
+      <p class="body-text reveal delay-2">Sending someone a song is a deeply personal act. But most music-sharing flows treat it like any other link, with no context, no emotion, no story behind it. VibeNote asks: what if you could attach a feeling to a song before you send it?</p>
+      <p class="body-text reveal delay-3">The concept centers on a single micro-interaction: an "Add a Note" feature that lets users attach a quick Mood, Memory, or Lyric context tag before sharing. Designed for both mobile and smartwatch, the experience had to be frictionless: quick to use, emotionally resonant, and clear at every step.</p>
+
+      <div class="stat-strip reveal delay-1">
+        <div class="stat-card">
+          <span class="stat-val">3</span>
+          <span class="stat-desc">note types: Mood, Memory, and Lyric. Each adds a different layer of context to a shared song.</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-val">5</span>
+          <span class="stat-desc">UX laws applied directly to the VibeNote design as part of the course</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-val">2</span>
+          <span class="stat-desc">platforms: mobile sharing interface and smartwatch Now Playing screen</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 02 THE CONCEPT -->
+  <section class="cs-section">
+    <div class="container">
+      <span class="section-label reveal"><span class="section-num">02</span>The Concept</span>
+      <h2 class="section-heading reveal delay-1">From a plain link <em>to a meaningful moment.</em></h2>
+      <p class="body-text reveal delay-2">The "Add a Note" feature is triggered from the song card. A "+" button appears directly below the track details, paired with clear labelling so it's discoverable without any onboarding. Tapping it opens a compact panel with three context options and a short text field.</p>
+
+      <div class="cards-2col">
+        <div class="insight-card reveal delay-1">
+          <div class="insight-card-icon">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <circle cx="8" cy="8" r="5.5" stroke="var(--accent)" stroke-width="1.2"/>
+              <path d="M8 5v3l2 2" stroke="var(--accent)" stroke-width="1.2" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <h3 class="insight-card-title">The problem it solves</h3>
+          <p class="insight-card-body">Sending a song with no context feels impersonal. But adding a long caption feels effortful. VibeNote lives in between: one tap adds just enough meaning without slowing the interaction down.</p>
+        </div>
+        <div class="insight-card reveal delay-2">
+          <div class="insight-card-icon">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M4 8h8M8 4l4 4-4 4" stroke="var(--accent)" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <h3 class="insight-card-title">The flow</h3>
+          <p class="insight-card-body">User selects a song, taps Add Note, picks a context type (Mood, Memory, or Lyric), types a short note, and hits Send. A confirmation animation plays. The receiver gets a message card with the song and the note attached.</p>
+        </div>
+        <div class="insight-card reveal delay-1">
+          <div class="insight-card-icon">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <rect x="3" y="5" width="10" height="7" rx="1.5" stroke="var(--accent)" stroke-width="1.2"/>
+              <path d="M6 5V4a2 2 0 014 0v1" stroke="var(--accent)" stroke-width="1.2"/>
+            </svg>
+          </div>
+          <h3 class="insight-card-title">Mobile interface</h3>
+          <p class="insight-card-body">The song card sits at the top. Below it, a popup panel appears with the three note type icons, a text field, and a Send button. A smiling emoji plays as playful feedback once the note is sent. Light, warm, human.</p>
+        </div>
+        <div class="insight-card reveal delay-2">
+          <div class="insight-card-icon">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <circle cx="8" cy="8" r="6" stroke="var(--accent)" stroke-width="1.2"/>
+              <circle cx="8" cy="8" r="3" stroke="var(--accent)" stroke-width="1.2" opacity="0.4"/>
+            </svg>
+          </div>
+          <h3 class="insight-card-title">Smartwatch interface</h3>
+          <p class="insight-card-body">The Now Playing screen shows album art, song title, four large reaction emojis, a small "+ Note" button, and playback controls at the bottom. Visual hierarchy guides the eye: react first, note second, control third.</p>
+        </div>
+      </div>
+
+      <div class="pull-quote reveal delay-2">
+        <p>"Turning a plain link into a quick, meaningful connection."</p>
+        <cite>— Design brief, VibeNote concept</cite>
+      </div>
+    </div>
+  </section>
+
+  <!-- 03 MICRO-INTERACTION BREAKDOWN -->
+  <section class="cs-section">
+    <div class="container">
+      <span class="section-label reveal"><span class="section-num">03</span>Micro-Interaction</span>
+      <h2 class="section-heading reveal delay-1">How the emoji reaction <em>works.</em></h2>
+      <p class="body-text reveal delay-2">On the smartwatch interface, tapping a reaction emoji is its own micro-interaction with three distinct phases. Breaking it down this way helped ensure each moment felt intentional rather than accidental.</p>
+
+      <div class="mi-grid">
+        <div class="mi-card reveal delay-1">
+          <span class="mi-step">Trigger</span>
+          <h4 class="mi-title">Hover or tap</h4>
+          <p class="mi-body">Hovering over a reaction emoji makes it slightly enlarge, signalling that something will happen. Tapping begins the reaction animation. The trigger is intentional but lightweight, reducing accidental activations on the small circular display.</p>
+        </div>
+        <div class="mi-card reveal delay-2">
+          <span class="mi-step">Rules + Feedback</span>
+          <h4 class="mi-title">Sticker placement</h4>
+          <p class="mi-body">When tapped, a small version of the emoji slowly appears on top of the album cover, as if a sticker is being placed down. This visual feedback, combined with the hover scale-up and a short haptic tap, confirms to the user that their reaction was added successfully.</p>
+        </div>
+        <div class="mi-card reveal delay-3">
+          <span class="mi-step">Loop</span>
+          <h4 class="mi-title">Return to normal</h4>
+          <p class="mi-body">The sticker emoji settles on the album cover and stays there briefly, then the interface resets automatically. The user is not stuck in any mode and can immediately continue interacting: react again, add a note, or skip the track.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 04 UX LAWS APPLIED -->
+  <section class="cs-section">
+    <div class="container">
+      <span class="section-label reveal"><span class="section-num">04</span>UX Laws Applied</span>
+      <h2 class="section-heading reveal delay-1">Designing with <em>intention.</em></h2>
+      <p class="body-text reveal delay-2">As part of the course, I applied five UX laws directly to the VibeNote design. Each one shaped a specific decision in the interface, from how information is grouped to how users move through the flow.</p>
+
+      <div class="principle-list reveal delay-1">
+        <div class="principle-item">
+          <div class="principle-label-col">
+            <span class="principle-name">Chunking</span>
+          </div>
+          <div class="principle-body-col">
+            <p class="principle-body">The screen is divided into clear sections: song info at the top, preset reaction icons in the middle, and the note entry field at the bottom. These chunks let users process each part of the sharing flow one step at a time, reducing cognitive load on a small screen.</p>
+          </div>
+        </div>
+        <div class="principle-item">
+          <div class="principle-label-col">
+            <span class="principle-name">Similarity</span>
+          </div>
+          <div class="principle-body-col">
+            <p class="principle-body">The reaction icons all share the same size, color style, and circular container shape. Even though each represents a different context type, their visual similarity signals that these options behave the same way. They are all quick-add context tags.</p>
+          </div>
+        </div>
+        <div class="principle-item">
+          <div class="principle-label-col">
+            <span class="principle-name">Proximity</span>
+          </div>
+          <div class="principle-body-col">
+            <p class="principle-body">The confirmation message "Note Sent!" appears close to the note box where the user typed. This proximity connects the success state directly to the action just completed, reducing uncertainty and making the interaction feel clear and grounded.</p>
+          </div>
+        </div>
+        <div class="principle-item">
+          <div class="principle-label-col">
+            <span class="principle-name">Common Region</span>
+          </div>
+          <div class="principle-body-col">
+            <p class="principle-body">The note input area is enclosed within a bordered rectangle, creating a common region that separates it from the rest of the screen. This focuses attention on the message field and helps users clearly identify where to type without distraction.</p>
+          </div>
+        </div>
+        <div class="principle-item">
+          <div class="principle-label-col">
+            <span class="principle-name">Goal Gradient</span>
+          </div>
+          <div class="principle-body-col">
+            <p class="principle-body">After tapping "Add a Note," users move through small, clearly sequential steps: pick a note type, choose a contact, send. Each step feels like progress. The final confirmation screen with a clear completion state and a "Back to Listening" button reinforces that the goal was reached, motivating users to repeat the action.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 05 INTERACTION DESIGN PRINCIPLES -->
+  <section class="cs-section">
+    <div class="container">
+      <span class="section-label reveal"><span class="section-num">05</span>Design Principles</span>
+      <h2 class="section-heading reveal delay-1">Three principles <em>built into every screen.</em></h2>
+      <p class="body-text reveal delay-2">Beyond UX laws, three core interaction design principles shaped specific decisions in the watch interface, particularly around how the app guides users and confirms their actions.</p>
+
+      <div class="cards-3col">
+        <div class="insight-card reveal delay-1">
+          <div class="insight-card-icon">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <circle cx="8" cy="8" r="6" stroke="var(--accent)" stroke-width="1.2"/>
+              <path d="M8 5v3.5l2 1.5" stroke="var(--accent)" stroke-width="1.2" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <h3 class="insight-card-title">Discoverability</h3>
+          <p class="insight-card-body">The "+ Note" button appears directly below the song info, paired with clear labelling and an icon. It appears at exactly the right moment in the flow, so users understand what they can do without needing extra guidance or onboarding.</p>
+        </div>
+        <div class="insight-card reveal delay-2">
+          <div class="insight-card-icon">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M4 8l3 3 5-5" stroke="var(--accent)" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <h3 class="insight-card-title">Feedback</h3>
+          <p class="insight-card-body">After sending, a green checkmark appears with a short animation and haptic tap, giving visual and physical confirmation simultaneously. This immediate feedback reassures users the message was delivered without requiring them to navigate or guess what happened next.</p>
+        </div>
+        <div class="insight-card reveal delay-3">
+          <div class="insight-card-icon">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <rect x="3" y="3" width="4" height="4" rx="1" stroke="var(--accent)" stroke-width="1.2"/>
+              <rect x="9" y="3" width="4" height="4" rx="1" stroke="var(--accent)" stroke-width="1.2"/>
+              <rect x="3" y="9" width="4" height="4" rx="1" stroke="var(--accent)" stroke-width="1.2"/>
+              <rect x="9" y="9" width="4" height="4" rx="1" stroke="var(--accent)" stroke-width="1.2" opacity="0.4"/>
+            </svg>
+          </div>
+          <h3 class="insight-card-title">Consistency</h3>
+          <p class="insight-card-body">Every shared song appears as a structured message card: album art left, song title and artist right, sender's note below. This consistent layout means recipients can instantly recognise a shared song in any context, reducing cognitive load across the experience.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 06 CONSTRAINTS ON WATCH -->
+  <section class="cs-section">
+    <div class="container">
+      <span class="section-label reveal"><span class="section-num">06</span>Designing for the Watch</span>
+      <h2 class="section-heading reveal delay-1">Small screen, <em>big constraints.</em></h2>
+      <p class="body-text reveal delay-2">Designing for a circular smartwatch display introduced real constraints that shaped the interaction in useful ways. Typing on a smartwatch is slow and uncomfortable, so the note selection screen offers only a few short preset options: "This reminded me of you," "Listen to the lyrics," "I think you would like this," with a custom text field as a fallback. The constraint keeps the task simple and fast.</p>
+      <p class="body-text reveal delay-3">Visual hierarchy was equally critical. On a small display, every pixel matters. The album art anchors the screen. Reaction emojis are large because reacting is the primary action. The "+ Note" button is small and secondary. Playback controls sit at the very bottom, available but not dominant.</p>
+
+      <div class="cards-2col" style="margin-top:36px;">
+        <div class="insight-card reveal delay-1">
+          <div class="insight-card-icon">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <circle cx="8" cy="8" r="6" stroke="var(--accent)" stroke-width="1.2"/>
+              <path d="M8 5v3M8 10v.5" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <h3 class="insight-card-title">Constraints as design tools</h3>
+          <p class="insight-card-body">Limiting note options to a few preset phrases was not just a workaround for small screen typing. It actively reduced decision fatigue and kept the interaction feeling effortless. The constraint became a feature.</p>
+        </div>
+        <div class="insight-card reveal delay-2">
+          <div class="insight-card-icon">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M8 3C8 3 3 6.5 3 10C3 12.2 5.24 14 8 14C10.76 14 13 12.2 13 10C13 6.5 8 3 8 3Z" stroke="var(--accent)" stroke-width="1.2"/>
+            </svg>
+          </div>
+          <h3 class="insight-card-title">Hierarchy on a circle</h3>
+          <p class="insight-card-body">Laying out a circular interface forced a clear prioritisation: what does the user need to see first, second, third? The answer shaped every sizing and placement decision, and made the conceptual model immediately clear to first-time users.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 07 REFLECTION -->
+  <section class="cs-section">
+    <div class="container">
+      <span class="section-label reveal"><span class="section-num">07</span>Reflection</span>
+      <h2 class="section-heading reveal delay-1">What this project <em>taught me.</em></h2>
+
+      <div class="cards-3col">
+        <div class="reflect-card reveal delay-1">
+          <span class="reflect-icon">🎯</span>
+          <h4 class="reflect-title">Micro does not mean minor</h4>
+          <p class="reflect-body">A single micro-interaction can carry a lot of emotional weight. One button, one animation, one confirmation. Getting the VibeNote flow right meant thinking carefully about every state, even the ones that last under a second.</p>
+        </div>
+        <div class="reflect-card reveal delay-2">
+          <span class="reflect-icon">📐</span>
+          <h4 class="reflect-title">Constraints clarify</h4>
+          <p class="reflect-body">Designing for a tiny circular display forced decisions that actually made the design better. The limitations of the form factor pushed me toward clarity I might not have found on a larger canvas.</p>
+        </div>
+        <div class="reflect-card reveal delay-3">
+          <span class="reflect-icon">🔗</span>
+          <h4 class="reflect-title">Principles are not rules</h4>
+          <p class="reflect-body">Applying UX laws like Proximity and Goal Gradient felt mechanical at first. But working through how each one showed up in my own design made them feel intuitive rather than prescriptive. Now I reach for them naturally.</p>
+        </div>
+      </div>
+
+      <div class="pull-quote reveal delay-2" style="margin-top:40px;">
+        <p>"The more we design with inclusion in mind, the more natural and human our solutions become."</p>
+        <cite>— Personal reflection, SI 207</cite>
+      </div>
+    </div>
+  </section>
+
+  <!-- NEXT PROJECT -->
+  <div class="next-project">
+    <p class="next-label reveal">Next project</p>
+    <h2 class="next-title reveal delay-1">A2Ventures</h2>
+    <a href="a2ventures.html" class="next-link reveal delay-2">
+      View case study
+      <span class="next-link-arrow">
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+          <path d="M2 6h8M6 2l4 4-4 4" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </span>
+    </a>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="foot-inner">
+      <p class="foot-name">Mahima Shah</p>
+      <p class="foot-sub">always learning</p>
+      <ul class="foot-links">
+        <li><a href="mailto:mahimashahxyz@gmail.com">Email</a></li>
+        <li><a href="https://www.linkedin.com/in/shahmahima/" target="_blank" rel="noopener">LinkedIn</a></li>
+        <li><a href="https://github.com/mahima-shah" target="_blank" rel="noopener">GitHub</a></li>
+        <li><a href="https://www.youtube.com/@mahimashah" target="_blank" rel="noopener">YouTube</a></li>
+      </ul>
+      <p class="foot-copy">2025 Mahima Shah &nbsp;&middot;&nbsp; Designed with intention</p>
+    </div>
+  </footer>
+
+</div>
+
+<script>
+  if ('IntersectionObserver' in window) {
+    const els = document.querySelectorAll('.reveal');
+    els.forEach(el => {
+      el.style.opacity = '0';
+      el.style.transform = 'translateY(24px)';
+    });
+    const io = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.style.opacity = '1';
+          e.target.style.transform = 'none'
