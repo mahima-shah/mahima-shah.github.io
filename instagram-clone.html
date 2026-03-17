@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Instagram Clone — Mahima Shah</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; font-size: 16px; }
+
+    :root {
+      --bg:          #f5f5f7;
+      --bg-card:     rgba(255,255,255,0.68);
+      --bg-nav:      rgba(245,245,247,0.75);
+      --bg-tint:     rgba(176,80,48,0.04);
+      --border:      rgba(0,0,0,0.08);
+      --text:        #1d1d1f;
+      --text-2:      #515154;
+      --text-3:      #86868b;
+      --accent:      #B05030;
+      --accent-hi:   #C86040;
+      --accent-dim:  rgba(176,80,48,0.09);
+      --accent-tag:  rgba(176,80,48,0.16);
+      --shadow-lg:   0 20px 60px rgba(0,0,0,0.11);
+      --blur:        blur(24px);
+      --radius:      18px;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg:          #000000;
+        --bg-card:     rgba(28,28,30,0.82);
+        --bg-nav:      rgba(0,0,0,0.75);
+        --bg-tint:     rgba(212,114,78,0.07);
+        --border:      rgba(255,255,255,0.1);
+        --text:        #f5f5f7;
+        --text-2:      #a1a1a6;
+        --text-3:      #636366;
+        --accent:      #D4724E;
+        --accent-hi:   #E08060;
+        --accent-dim:  rgba(212,114,78,0.12);
+        --accent-tag:  rgba(212,114,78,0.2);
+        --shadow-lg:   0 20px 60px rgba(0,0,0,0.65);
+      }
+    }
+
+    body { background:var(--bg); color:var(--text); font-family:'DM Sans',-apple-system,sans-serif; font-weight:300; line-height:1.6; overflow-x:hidden; -webkit-font-smoothing:antialiased; }
+    @media (pointer:fine) { body { cursor:none; } a,button { cursor:none; } }
+
+    nav { position:fixed; top:0; left:0; right:0; z-index:800; height:52px; display:flex; align-items:center; justify-content:space-between; padding:0 52px; background:var(--bg-nav); backdrop-filter:var(--blur); -webkit-backdrop-filter:var(--blur); border-bottom:1px solid var(--border); }
+    @media (max-width:600px) { nav { padding:0 22px; } }
+    .nav-links { display:flex; gap:36px; list-style:none; align-items:center; }
+    .nav-links a { font-size:0.78rem; font-weight:400; letter-spacing:0.04em; color:var(--text-3); text-decoration:none; position:relative; transition:color 0.2s; }
+    .nav-links a::after { content:''; position:absolute; bottom:-2px; left:0; width:0; height:1px; background:var(--accent); transition:width 0.25s cubic-bezier(0.16,1,0.3,1); }
+    .nav-links a:hover { color:var(--text); }
+    .nav-links a:hover::after { width:100%; }
+    .nav-back { display:inline-flex; align-items:center; gap:6px; font-size:0.78rem; font-weight:400; letter-spacing:0.04em; color:var(--text-3); text-decoration:none; transition:color 0.2s; }
+    .nav-back:hover { color:var(--accent); }
+    .nav-back svg { transition:transform 0.2s; }
+    .nav-back:hover svg { transform:translateX(-3px); }
+
+    .page { padding-top:52px; }
+    .container { max-width:1100px; margin:0 auto; padding:0 40px; }
+
+    .cs-hero { padding:80px 40px 72px; border-bottom:1px solid var(--border); position:relative; overflow:hidden; }
+    .cs-hero::before { content:''; position:absolute; inset:0; background:radial-gradient(ellipse at 70% 50%, var(--accent-dim), transparent 65%); pointer-events:none; }
+    .cs-hero-inner { max-width:1100px; margin:0 auto; position:relative; z-index:1; }
+    .cs-tag { display:inline-block; font-size:0.64rem; font-weight:500; letter-spacing:0.16em; text-transform:uppercase; color:var(--accent); background:var(--accent-dim); border:1px solid var(--accent-tag); padding:4px 12px; border-radius:100px; margin-bottom:20px; }
+    .cs-title { font-family:'DM Serif Display',Georgia,serif; font-size:clamp(2.8rem,7vw,5.5rem); font-weight:600; line-height:1.0; letter-spacing:-0.02em; color:var(--text); margin-bottom:20px; }
+    .cs-subtitle { font-size:clamp(1rem,2vw,1.15rem); color:var(--text-2); line-height:1.7; max-width:600px; }
+    .cs-meta { display:flex; flex-wrap:wrap; gap:32px; padding-top:36px; border-top:1px solid var(--border); margin-top:36px; }
+    .cs-meta-item { display:flex; flex-direction:column; gap:4px; }
+    .cs-meta-label { font-size:0.62rem; font-weight:500; letter-spacing:0.16em; text-transform:uppercase; color:var(--text-3); }
+    .cs-meta-value { font-size:0.88rem; font-weight:400; color:var(--text); }
+
+    .cs-section { padding:80px 40px; border-bottom:1px solid var(--border); }
+    .cs-section:last-of-type { border-bottom:none; }
+    .container-inner { max-width:1100px; margin:0 auto; }
+    .section-label { display:inline-block; font-size:0.62rem; font-weight:500; letter-spacing:0.18em; text-transform:uppercase; color:var(--accent); margin-bottom:12px; }
+    .section-num { font-size:0.62rem; font-weight:400; letter-spacing:0.1em; color:var(--text-3); margin-right:10px; }
+    .section-heading { font-family:'DM Serif Display',Georgia,serif; font-size:clamp(1.8rem,4vw,2.8rem); font-weight:500; line-height:1.12; letter-spacing:-0.015em; color:var(--text); margin-bottom:24px; }
+    .section-heading em { font-style:italic; color:var(--accent); }
+    .body-text { font-size:1rem; color:var(--text-2); line-height:1.82; max-width:680px; }
+    .body-text + .body-text { margin-top:14px; }
+
+    .stat-strip { display:flex; flex-wrap:wrap; gap:2px; margin:40px 0; }
+    .stat-card { flex:1; min-width:140px; background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius); padding:24px 22px; backdrop-filter:var(--blur); -webkit-backdrop-filter:var(--blur); }
+    .stat-val { font-family:'DM Serif Display',Georgia,serif; font-size:2.2rem; font-weight:500; color:var(--accent); line-height:1; display:block; margin-bottom:6px; }
+    .stat-desc { font-size:0.8rem; font-weight:400; color:var(--text-3); line-height:1.4; }
+
+    .cards-2col { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:36px; }
+    @media (max-width:640px) { .cards-2col { grid-template-columns:1fr; } }
+    .cards-3col { display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; margin-top:36px; }
+    @media (max-width:720px) { .cards-3col { grid-template-columns:1fr; } }
+
+    .insight-card { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius); padding:28px 26px; backdrop-filter:var(--blur); -webkit-backdrop-filter:var(--blur); }
+    .insight-card-icon { width:36px; height:36px; border-radius:10px; background:var(--accent-dim); border:1px solid var(--accent-tag); display:flex; align-items:center; justify-content:center; margin-bottom:14px; }
+    .insight-card-title { font-family:'DM Serif Display',Georgia,serif; font-size:1.1rem; font-weight:500; color:var(--text); margin-bottom:8px; line-height:1.2; }
+    .insight-card-body { font-size:0.88rem; color:var(--text-2); line-height:1.72; }
+
+    .code-block { margin:28px 0; background:rgba(0,0,0,0.04); border:1px solid var(--border); border-radius:12px; padding:20px 24px; overflow-x:auto; font-family:'SF Mono','Fira Code',monospace; font-size:0.8rem; color:var(--text-2); line-height:1.7; }
+    @media (prefers-color-scheme:dark) { .code-block { background:rgba(255,255,255,0.04); } }
+    .code-block .kw { color:var(--accent); }
+    .code-block .cm { color:var(--text-3); font-style:italic; }
+
+    .pull-quote { margin:40px 0; padding:28px 32px; border-left:3px solid var(--accent); background:var(--bg-tint); border-radius:0 var(--radius) var(--radius) 0; }
+    .pull-quote p { font-family:'DM Serif Display',Georgia,serif; font-style:italic; font-size:1.15rem; color:var(--text); line-height:1.6; margin-bottom:8px; }
+    .pull-quote cite { font-size:0.75rem; font-weight:400; letter-spacing:0.06em; color:var(--text-3); font-style:normal; }
+
+    .stack-row { display:flex; flex-wrap:wrap; gap:8px; margin-top:28px; }
+    .stack-pill { font-size:0.75rem; font-weight:400; color:var(--text-2); background:var(--bg-card); border:1px solid var(--border); padding:5px 14px; border-radius:100px; backdrop-filter:var(--blur); }
+
+    .reflect-card { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius); padding:26px 22px; backdrop-filter:var(--blur); -webkit-backdrop-filter:var(--blur); }
+    .reflect-icon { font-size:1.2rem; margin-bottom:12px; display:block; }
+    .reflect-title { font-family:'DM Serif Display',Georgia,serif; font-size:1rem; font-weight:500; color:var(--text); margin-bottom:8px; }
+    .reflect-body { font-size:0.84rem; color:var(--text-2); line-height:1.7; }
+
+    .next-project { padding:72px 40px; text-align:center; border-top:1px solid var(--border); }
+    .next-label { font-size:0.64rem; font-weight:500; letter-spacing:0.18em; text-transform:uppercase; color:var(--text-3); margin-bottom:12px; }
+    .next-title { font-family:'DM Serif Display',Georgia,serif; font-size:clamp(1.8rem,4vw,2.8rem); font-weight:500; color:var(--text); margin-bottom:24px; }
+    .next-link { display:inline-flex; align-items:center; gap:8px; font-size:0.82rem; font-weight:400; color:var(--text); text-decoration:none; transition:gap 0.25s; }
+    .next-link:hover { gap:14px; }
+    .next-link-arrow { width:30px; height:30px; border-radius:50%; background:var(--accent); display:flex; align-items:center; justify-content:center; transition:transform 0.25s; }
+    .next-link:hover .next-link-arrow { transform:scale(1.1); }
+
+    footer { border-top:1px solid var(--border); padding:48px 40px 36px; text-align:center; }
+    .foot-inner { max-width:1100px; margin:0 auto; }
+    .foot-name { font-family:'DM Serif Display',Georgia,serif; font-size:1.5rem; font-weight:500; color:var(--text); margin-bottom:4px; }
+    .foot-sub { font-family:'DM Serif Display',Georgia,serif; font-style:italic; font-weight:300; font-size:0.9rem; color:var(--text-3); margin-bottom:24px; }
+    .foot-links { display:flex; gap:28px; justify-content:center; list-style:none; flex-wrap:wrap; margin-bottom:20px; }
+    .foot-links a { font-size:0.78rem; font-weight:400; letter-spacing:0.04em; color:var(--text-2); text-decoration:none; transition:color 0.2s; }
+    .foot-links a:hover { color:var(--accent); }
+    .foot-copy { font-size:0.64rem; color:var(--text-3); letter-spacing:0.06em; }
+
+    .reveal { opacity:1; transform:none; }
+    .delay-1 { transition-delay:0.08s; }
+    .delay-2 { transition-delay:0.18s; }
+    .delay-3 { transition-delay:0.28s; }
+      /* cursor dot */
+    #cdot {
+      display: none;
+      position: fixed;
+      width: 9px; height: 9px;
+      border-radius: 50%;
+      background: var(--accent);
+      pointer-events: none;
+      z-index: 9999;
+      opacity: 0;
+      transform: translate(-50%, -50%);
+      transition: width 0.18s ease, height 0.18s ease, opacity 0.15s ease;
+      will-change: left, top;
+    }
+    @media (pointer: fine) {
+      #cdot { display: block; }
+    }
+    body.has-cursor { cursor: none; }
+    body.has-cursor a,
+    body.has-cursor button,
+    body.has-cursor .card,
+    body.has-cursor .pill { cursor: none; }
+    #cdot.expand { width: 26px; height: 26px; opacity: 0.15; }
+  </style>
+</head>
+<body>
+<div id="cdot"></div>
+<div class="page">
+
+  <nav>
+    <a href="index.html" class="nav-back">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+        <path d="M9 2L4 7l5 5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      Back
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html#about">About</a></li>
+      <li><a href="index.html#work">Work</a></li>
+      <li><a href="index.html#contact">Contact</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <header class="cs-hero">
+    <div class="cs-hero-inner">
+      <span class="cs-tag reveal">Full Stack Engineering</span>
+      <h1 class="cs-title reveal delay-1">Instagram Clone</h1>
+      <p class="cs-subtitle reveal delay-2">A full-stack social media web app built with Flask, SQLite, React, and a custom REST API. Features infinite scroll, optimistic UI updates, double-click to like, and live comment rendering, all without page reloads. Scaled to 3,000+ requests per hour across 50+ concurrent users.</p>
+      <div class="cs-meta reveal delay-3">
+        <div class="cs-meta-item">
+          <span class="cs-meta-label">Role</span>
+          <span class="cs-meta-value">Team of 3 — Full Stack</span>
+        </div>
+        <div class="cs-meta-item">
+          <span class="cs-meta-label">Context</span>
+          <span class="cs-meta-value">University of Michigan, 2025</span>
+        </div>
+        <div class="cs-meta-item">
+          <span class="cs-meta-label">Timeline</span>
+          <span class="cs-meta-value">January – February 2025</span>
+        </div>
+        <div class="cs-meta-item">
+          <span class="cs-meta-label">Stack</span>
+          <span class="cs-meta-value">Python · Flask · React · SQLite · REST · AWS</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- 01 OVERVIEW -->
+  <section class="cs-section">
+    <div class="container-inner container">
+      <span class="section-label reveal"><span class="section-num">01</span>Overview</span>
+      <h2 class="section-heading reveal delay-1">Built three times, <em>each time deeper.</em></h2>
+      <p class="body-text reveal delay-2">This was not one project — it was three, each building on the last. The first version was a static site generator written in Python that took JSON data and Jinja2 templates as input and rendered a non-interactive Instagram clone as static HTML files. The second version made it dynamic: Flask served pages from a SQLite database, handling full CRUD for users, posts, likes, comments, and follows, with session-based auth and SHA-512 password hashing.</p>
+      <p class="body-text reveal delay-3">The third version, the final one, kept the server-side back end and layered client-side rendering on top. React took over the main feed, fetching data from a new REST API and updating the DOM in the browser without any page reloads. The same app, rebuilt at a higher level of complexity each time.</p>
+
+      <div class="stat-strip">
+        <div class="stat-card reveal delay-1">
+          <span class="stat-val">3</span>
+          <span class="stat-desc">versions: static site generator, server-side dynamic pages, client-side React app</span>
+        </div>
+        <div class="stat-card reveal delay-2">
+          <span class="stat-val">3K+</span>
+          <span class="stat-desc">requests per hour handled across 50+ concurrent users on AWS EC2</span>
+        </div>
+        <div class="stat-card reveal delay-3">
+          <span class="stat-val">10</span>
+          <span class="stat-desc">REST API endpoints covering posts, likes, and comments with full auth</span>
+        </div>
+        <div class="stat-card reveal delay-3">
+          <span class="stat-val">5</span>
+          <span class="stat-desc">database tables with cascading deletes and SHA-512 hashed passwords</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 02 THE THREE VERSIONS -->
+  <section class="cs-section">
+    <div class="container-inner container">
+      <span class="section-label reveal"><span class="section-num">02</span>The Three Versions</span>
+      <h2 class="section-heading reveal delay-1">Static, server-side, <em>then client-side.</em></h2>
+      <p class="body-text reveal delay-2">Each version was a complete, working application. The progression was not about adding features onto an existing codebase — it was about learning a new rendering model and rebuilding the same app with it.</p>
+
+      <div class="cards-3col">
+        <div class="insight-card reveal delay-1">
+          <div class="insight-card-icon">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <rect x="3" y="2" width="10" height="12" rx="1.5" stroke="var(--accent)" stroke-width="1.2"/>
+              <path d="M5 5h6M5 8h4M5 11h3" stroke="var(--accent)" stroke-width="1.1" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <h3 class="insight-card-title">Version 1: Static site generator</h3>
+          <p class="insight-card-body">Built <code>insta485generator</code>, a Python command-line tool that reads JSON data and Jinja2 HTML templates and writes a complete static website to disk. Hand-coded two pages first, then templated all six pages including user profiles, post detail, followers, following, and explore. The output was a fully linked, non-interactive Instagram clone served from flat files.</p>
+        </div>
+        <div class="insight-card reveal delay-2">
+          <div class="insight-card-icon">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <rect x="2" y="3" width="12" height="10" rx="1.5" stroke="var(--accent)" stroke-width="1.2"/>
+              <path d="M2 6h12" stroke="var(--accent)" stroke-width="1.2"/>
+              <circle cx="5" cy="9.5" r="1" fill="var(--accent)" opacity="0.6"/>
+              <path d="M8 9.5h4" stroke="var(--accent)" stroke-width="1.1" stroke-linecap="round" opacity="0.6"/>
+            </svg>
+          </div>
+          <h3 class="insight-card-title">Version 2: Server-side dynamic pages</h3>
+          <p class="insight-card-body">Converted the static site into a fully interactive Flask app backed by SQLite. Designed a five-table schema with foreign keys and cascading deletes, implemented full CRUD for posts, comments, likes, follows, and user accounts, and added session-based login with SHA-512 password hashing. Every page was rendered server-side on each request and deployed to AWS EC2.</p>
+        </div>
+        <div class="insight-card reveal delay-3">
+          <div class="insight-card-icon">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <circle cx="8" cy="8" r="5.5" stroke="var(--accent)" stroke-width="1.2"/>
+              <path d="M6 8.5c.4.8 1.1 1.3 2 1.3s1.6-.5 2-1.3" stroke="var(--accent)" stroke-width="1.1" stroke-linecap="round"/>
+              <circle cx="6" cy="6.5" r=".7" fill="var(--accent)"/>
+              <circle cx="10" cy="6.5" r=".7" fill="var(--accent)"/>
+            </svg>
+          </div>
+          <h3 class="insight-card-title">Version 3: Client-side React app</h3>
+          <p class="insight-card-body">Kept all the server-side routes from Version 2 and added a REST API layer. The main feed was rewritten in React with JSX, replacing server-rendered HTML with JavaScript that fetches from the API and builds the DOM in the browser. This enabled infinite scroll, optimistic likes, live comment updates, and double-click to like, all without any page reloads.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+    <!-- 02 ARCHITECTURE -->
+  <section class="cs-section">
+    <div class="container-inner container">
+      <span class="section-label reveal"><span class="section-num">03</span>Architecture</span>
+      <h2 class="section-heading reveal delay-1">Flask on the back, <em>React on the front.</em></h2>
+      <p class="body-text reveal delay-2">The app is split into two layers that communicate through a REST API. The Flask back end handles authentication, database access via SQLite, file uploads, and all API responses. The React front end runs in the browser, fetches data from the API using the Fetch API, and updates the DOM without any page reloads.</p>
+      <p class="body-text reveal delay-3">Most routes outside the feed are still server-side rendered from Project 2: user profiles, the explore page, account settings. Only the main feed is handled by React. This hybrid architecture let the team focus the client-side work where it mattered most.</p>
+
+      <div class="cards-2col">
+        <div class="insight-card reveal delay-1">
+          <div class="insight-card-icon">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <rect x="2" y="3" width="12" height="10" rx="1.5" stroke="var(--accent)" stroke-width="1.2"/>
+              <path d="M2 6h12" stroke="var(--accent)" stroke-width="1.2"/>
+            </svg>
+          </div>
+          <h3 class="insight-card-title">Flask REST API</h3>
+          <p class="insight-card-body">The back end exposes 10 endpoints covering posts, likes, and comments. Every route except <code>/api/v1/</code> requires authentication, which can come from a session cookie or an HTTP Basic Auth header. Responses follow a consistent JSON schema with appropriate status codes.</p>
+        </div>
+        <div class="insight-card reveal delay-2">
+          <div class="insight-card-icon">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <circle cx="8" cy="8" r="5.5" stroke="var(--accent)" stroke-width="1.2"/>
+              <path d="M5.5 8.5c.5 1 1.5 1.5 2.5 1.5s2-.5 2.5-1.5" stroke="var(--accent)" stroke-width="1.2" stroke-linecap="round"/>
+              <circle cx="6" cy="6.5" r=".75" fill="var(--accent)"/>
+              <circle cx="10" cy="6.5" r=".75" fill="var(--accent)"/>
+            </svg>
+          </div>
+          <h3 class="insight-card-title">React feed</h3>
+          <p class="insight-card-body">The main page loads a small HTML shell that mounts a React app. React fetches the first 10 posts from the API, renders them, and listens for scroll events. Each Post component manages its own likes and comments state, with updates reflected immediately without any server round-trip.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 04 BACK END -->
+  <section class="cs-section">
+    <div class="container-inner container">
+      <span class="section-label reveal"><span class="section-num">04</span>Back End</span>
+      <h2 class="section-heading reveal delay-1">Database, auth, <em>and account management.</em></h2>
+      <p class="body-text reveal delay-2">The server-side layer handles everything that should never run in the browser: database access, password verification, file storage, and access control. It was built in Version 2 and carried forward into Version 3 as the foundation the REST API sits on top of.</p>
+
+      <div class="cards-2col">
+        <div class="insight-card reveal delay-1">
+          <div class="insight-card-icon">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <ellipse cx="8" cy="5" rx="5" ry="2" stroke="var(--accent)" stroke-width="1.2"/>
+              <path d="M3 5v6c0 1.1 2.24 2 5 2s5-.9 5-2V5" stroke="var(--accent)" stroke-width="1.2"/>
+              <path d="M3 8c0 1.1 2.24 2 5 2s5-.9 5-2" stroke="var(--accent)" stroke-width="1.2" opacity="0.5"/>
+            </svg>
+          </div>
+          <h3 class="insight-card-title">Five-table SQLite schema</h3>
+          <p class="insight-card-body">The database has tables for users, posts, following relationships, comments, and likes. Every table uses foreign keys with <code>ON DELETE CASCADE</code> so deleting a user automatically removes all their posts, comments, likes, and follow relationships. Post IDs auto-increment so ordering by ID gives a stable newest-first feed even when timestamps collide at database initialization.</p>
+        </div>
+        <div class="insight-card reveal delay-2">
+          <div class="insight-card-icon">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <rect x="4" y="7" width="8" height="7" rx="1.5" stroke="var(--accent)" stroke-width="1.2"/>
+              <path d="M6 7V5a2 2 0 014 0v2" stroke="var(--accent)" stroke-width="1.2" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <h3 class="insight-card-title">SHA-512 password hashing</h3>
+          <p class="insight-card-body">Passwords are never stored in plaintext. Each password is salted with a random UUID and hashed using SHA-512. The stored value is a <code>$</code>-separated string of algorithm, salt, and hash. On login, Flask reconstructs the hash from the submitted password and compares it against the stored value.</p>
+        </div>
+        <div class="insight-card reveal delay-1">
+          <div class="insight-card-icon">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M8 2a3 3 0 100 6 3 3 0 000-6zM3 13c0-2.76 2.24-5 5-5s5 2.24 5 5" stroke="var(--accent)" stroke-width="1.2" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <h3 class="insight-card-title">Full account lifecycle</h3>
+          <p class="insight-card-body">Users can create accounts, log in, edit their profile photo, name and email, change their password, and delete their account entirely. Deletion cascades through all tables automatically. Photo uploads use UUID filenames to prevent collisions. Every protected route verifies the session cookie and returns 403 if the user is not authenticated.</p>
+        </div>
+        <div class="insight-card reveal delay-2">
+          <div class="insight-card-icon">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M3 8l3 3 7-7" stroke="var(--accent)" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <h3 class="insight-card-title">Access control on every mutation</h3>
+          <p class="insight-card-body">Ownership is checked on every POST and DELETE request. A user cannot delete another user's post or comment even if they bypass the UI and craft the request manually with curl. The server returns 403 on any ownership violation, and 409 Conflict if a user tries to like something already liked or follow someone already followed.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 05 REST API -->
+  <section class="cs-section">
+    <div class="container-inner container">
+      <span class="section-label reveal"><span class="section-num">05</span>REST API</span>
+      <h2 class="section-heading reveal delay-1">Clean endpoints, <em>consistent responses.</em></h2>
+      <p class="body-text reveal delay-2">The API follows REST conventions throughout. GET requests return data, POST requests create resources and return 201, DELETE requests remove them and return 204. Every error response has the same shape with a message and status code. Pagination uses cursor-based logic via <code>postid_lte</code>, <code>size</code>, and <code>page</code> parameters so the feed stays consistent even when new posts are added mid-scroll.</p>
+
+      <div class="code-block reveal delay-2">
+        <span class="cm"># Paginated post feed: returns 10 posts, newest first</span><br>
+        GET &nbsp;/api/v1/posts/?size=10&amp;page=0&amp;postid_lte=42<br><br>
+        <span class="cm"># Like a post, unlike by deleting the like resource</span><br>
+        POST &nbsp;&nbsp; /api/v1/likes/?postid=3 &nbsp;&nbsp;<span class="cm"># returns 201 or 200 if already liked</span><br>
+        DELETE /api/v1/likes/6/ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cm"># returns 204</span><br><br>
+        <span class="cm"># Add a comment, delete by comment ID</span><br>
+        POST &nbsp;&nbsp; /api/v1/comments/?postid=3<br>
+        DELETE /api/v1/comments/8/
+      </div>
+
+      <div class="cards-2col">
+        <div class="insight-card reveal delay-1">
+          <div class="insight-card-icon">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M8 2v4l3 2" stroke="var(--accent)" stroke-width="1.3" stroke-linecap="round"/>
+              <circle cx="8" cy="8" r="5.5" stroke="var(--accent)" stroke-width="1.2"/>
+            </svg>
+          </div>
+          <h3 class="insight-card-title">Cursor-based pagination</h3>
+          <p class="insight-card-body">Rather than using offset-based pagination, the API anchors results to a specific post ID via <code>postid_lte</code>. This means a new post appearing at the top of the feed while someone is scrolling down will not shift the results and cause the same post to appear twice or be skipped.</p>
+        </div>
+        <div class="insight-card reveal delay-2">
+          <div class="insight-card-icon">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <rect x="3" y="3" width="10" height="10" rx="1.5" stroke="var(--accent)" stroke-width="1.2"/>
+              <path d="M6 8l2 2 3-3" stroke="var(--accent)" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <h3 class="insight-card-title">Dual authentication</h3>
+          <p class="insight-card-body">Every protected route accepts both session cookies and HTTP Basic Auth headers. Session cookies serve the browser client. Basic Auth serves the test suite and any programmatic API consumers. Flask checks both on each request and returns 403 if neither is valid.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 04 CLIENT SIDE FEATURES -->
+  <section class="cs-section">
+    <div class="container-inner container">
+      <span class="section-label reveal"><span class="section-num">06</span>Client-side Features</span>
+      <h2 class="section-heading reveal delay-1">Four features that <em>required client-side rendering.</em></h2>
+      <p class="body-text reveal delay-2">These are the interactions that were impossible in the server-side version. Each one required careful state management in React to keep the UI in sync with the server without full page reloads.</p>
+
+      <div class="cards-2col">
+        <div class="insight-card reveal delay-1">
+          <div class="insight-card-icon">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M8 13.5S2.5 10 2.5 6.5a3.5 3.5 0 017 0 3.5 3.5 0 017 0C16.5 10 8 13.5 8 13.5z" stroke="var(--accent)" stroke-width="1.2"/>
+            </svg>
+          </div>
+          <h3 class="insight-card-title">Optimistic like and unlike</h3>
+          <p class="insight-card-body">Clicking the like button immediately updates the UI before the API call completes. The like count and button text change at the moment of click. The state is lifted to the parent Post component so it stays consistent across child components. Double-clicking an image also triggers a like if the post is not already liked, with no effect if it already is.</p>
+        </div>
+        <div class="insight-card reveal delay-2">
+          <div class="insight-card-icon">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M3 4h10M3 7h7M3 10h5" stroke="var(--accent)" stroke-width="1.3" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <h3 class="insight-card-title">Live comment rendering</h3>
+          <p class="insight-card-body">Comments submitted via the Enter key appear in the feed immediately. Only comments owned by the logged-in user show a delete button, which removes the comment from the DOM instantly on click. No form submission, no redirect, no reload. The comment input clears itself after submission.</p>
+        </div>
+        <div class="insight-card reveal delay-1">
+          <div class="insight-card-icon">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M8 3v10M4 9l4 4 4-4" stroke="var(--accent)" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <h3 class="insight-card-title">Infinite scroll</h3>
+          <p class="insight-card-body">Reaching the bottom of the page triggers a fetch for the next 10 posts, using the <code>next</code> URL returned by the previous API response. The React Infinite Scroll component handles the scroll detection. Posts accumulate in state and the feed grows downward without any visible loading boundary.</p>
+        </div>
+        <div class="insight-card reveal delay-2">
+          <div class="insight-card-icon">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <circle cx="8" cy="8" r="5.5" stroke="var(--accent)" stroke-width="1.2"/>
+              <path d="M5 8l2 2 4-4" stroke="var(--accent)" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <h3 class="insight-card-title">Human-readable timestamps</h3>
+          <p class="insight-card-body">The API returns timestamps in raw UTC format. The front end uses the <code>dayjs</code> library with the <code>relativeTime</code> and <code>utc</code> plugins to convert them to phrases like "a few seconds ago" or "3 hours ago" in the user's local time zone, matching what users expect from social media apps.</p>
+        </div>
+      </div>
+
+      <div class="pull-quote reveal delay-2">
+        <p>"The page should load without errors even when the REST API takes a long time to respond. React renders components before any data arrives."</p>
+        <cite>— Project spec, EECS 485</cite>
+      </div>
+    </div>
+  </section>
+
+  <!-- 05 STATE MANAGEMENT -->
+  <section class="cs-section">
+    <div class="container-inner container">
+      <span class="section-label reveal"><span class="section-num">07</span>State Management</span>
+      <h2 class="section-heading reveal delay-1">Keeping the UI and <em>server in sync.</em></h2>
+      <p class="body-text reveal delay-2">The trickiest part of this project was managing state correctly across components. Likes and comments needed to update instantly in the UI while the corresponding API call happened in the background. React's lifting state up pattern kept the Post component as the single source of truth for each post's data, passing down values and setter functions to child components.</p>
+
+      <div class="code-block reveal delay-2">
+        <span class="cm">// Spread syntax to append new posts without mutating state</span><br>
+        setPosts([...posts, ...data.results]);<br><br>
+        <span class="cm">// Optimistic update: change UI immediately, then call API</span><br>
+        <span class="kw">setLiked</span>(!liked);<br>
+        <span class="kw">setNumLikes</span>(liked ? numLikes - 1 : numLikes + 1);<br>
+        fetch(<span class="kw">liked ? </span>'/api/v1/likes/DELETE' : '/api/v1/likes/POST');
+      </div>
+
+      <div class="cards-2col">
+        <div class="insight-card reveal delay-1">
+          <div class="insight-card-icon">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M4 2h8a1 1 0 011 1v10a1 1 0 01-1 1H4a1 1 0 01-1-1V3a1 1 0 011-1z" stroke="var(--accent)" stroke-width="1.2"/>
+              <path d="M6 6h4M6 9h2" stroke="var(--accent)" stroke-width="1.2" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <h3 class="insight-card-title">Avoiding prop-to-state copies</h3>
+          <p class="insight-card-body">A common React anti-pattern is copying props into state inside a child component. It creates subtle bugs because later prop updates do not automatically update the copied state. All like and comment state lived in the Post component and flowed down as props, with only callbacks passed to children for triggering updates.</p>
+        </div>
+        <div class="insight-card reveal delay-2">
+          <div class="insight-card-icon">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M3 8h10M8 3v10" stroke="var(--accent)" stroke-width="1.3" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <h3 class="insight-card-title">Rendering before data arrives</h3>
+          <p class="insight-card-body">Components render before any AJAX data arrives. Each Post component shows a loading state on first render and only displays interactive content once data has been fetched. This prevented errors from accessing properties of undefined on the initial render, which is a common source of React bugs.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 06 STACK -->
+  <section class="cs-section">
+    <div class="container-inner container">
+      <span class="section-label reveal"><span class="section-num">08</span>Stack</span>
+      <h2 class="section-heading reveal delay-1">What it's <em>built with.</em></h2>
+      <p class="body-text reveal delay-2">The project spans two languages and two rendering models. The Python back end handles data and auth. The JavaScript front end handles rendering and interaction. Both had to follow strict linting rules throughout: pycodestyle, pydocstyle, and pylint on the Python side, ESLint and Prettier on the JavaScript side.</p>
+      <div class="stack-row reveal delay-2">
+        <span class="stack-pill">Python</span>
+        <span class="stack-pill">Flask</span>
+        <span class="stack-pill">SQLite</span>
+        <span class="stack-pill">React</span>
+        <span class="stack-pill">JavaScript (JSX)</span>
+        <span class="stack-pill">REST API</span>
+        <span class="stack-pill">Webpack</span>
+        <span class="stack-pill">AWS EC2</span>
+        <span class="stack-pill">Cypress</span>
+        <span class="stack-pill">HTML/CSS</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 07 REFLECTION -->
+  <section class="cs-section">
+    <div class="container-inner container">
+      <span class="section-label reveal"><span class="section-num">09</span>Reflection</span>
+      <h2 class="section-heading reveal delay-1">What we <em>took away.</em></h2>
+
+      <div class="cards-3col">
+        <div class="reflect-card reveal delay-1">
+          <span class="reflect-icon">🔄</span>
+          <h4 class="reflect-title">The front end and back end have to agree on a contract</h4>
+          <p class="reflect-body">Building the REST API and the React client simultaneously made it clear how much both sides depend on a shared contract. When the API response shape changed, the front end broke silently. Agreeing on the JSON schema up front and sticking to it saved a lot of debugging time.</p>
+        </div>
+        <div class="reflect-card reveal delay-2">
+          <span class="reflect-icon">⚡</span>
+          <h4 class="reflect-title">Optimistic UI makes apps feel fast, but adds complexity</h4>
+          <p class="reflect-body">Updating the UI before the API call completes makes interactions feel instant. But it means the UI can briefly show a state that does not match the server, especially if the request fails. Deciding which interactions needed optimistic updates versus waiting for confirmation was a recurring design decision throughout the project.</p>
+        </div>
+        <div class="reflect-card reveal delay-3">
+          <span class="reflect-icon">📦</span>
+          <h4 class="reflect-title">State management gets complicated fast</h4>
+          <p class="reflect-body">Managing likes, comments, and paginated post lists across components taught a lot about when to lift state up versus when to keep it local. The more interactive the UI, the more carefully you have to think about where state lives and who is responsible for updating it.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- NEXT PROJECT -->
+  <div class="next-project">
+    <p class="next-label reveal">Next project</p>
+    <h2 class="next-title reveal delay-1">Search Engine</h2>
+    <a href="search-engine.html" class="next-link reveal delay-2">
+      View case study
+      <span class="next-link-arrow">
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+          <path d="M2 6h8M6 2l4 4-4 4" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </span>
+    </a>
+  </div>
+
+  <footer>
+    <div class="foot-inner">
+      <p class="foot-name">Mahima Shah</p>
+      <p class="foot-sub">always learning</p>
+      <ul class="foot-links">
+        <li><a href="/cdn-cgi/l/email-protection#4a272b2223272b39222b223233300a2d272b232664292527">Email</a></li>
+        <li><a href="https://www.linkedin.com/in/shahmahima/" target="_blank" rel="noopener">LinkedIn</a></li>
+        <li><a href="https://github.com/mahima-shah" target="_blank" rel="noopener">GitHub</a></li>
+        <li><a href="https://www.youtube.com/@mahimashah" target="_blank" rel="noopener">YouTube</a></li>
+      </ul>
+      <p class="foot-copy">2025 Mahima Shah &nbsp;&middot;&nbsp; Designed with intention</p>
+    </div>
+  </footer>
+
+</div>
+
+<script>
+    }, { threshold: 0.08 });
+    revEls.forEach(function(el) { io.observe(el); });
+  });
+
+  // Scroll reveal
+  (function() {
+    var els = document.querySelectorAll('.reveal');
+    if (!els.length) return;
+    els.forEach(function(el) {
+      el.style.opacity = '0';
+      el.style.transform = 'translateY(20px)';
+    });
+    requestAnimationFrame(function() {
+      requestAnimationFrame(function() {
+        els.forEach(function(el) {
+          el.style.transition = 'opacity 0.7s cubic-bezier(0.16,1,0.3,1), transform 0.7s cubic-bezier(0.16,1,0.3,1)';
+        });
+        if (!('IntersectionObserver' in window)) {
+          els.forEach(function(el) { el.style.opacity='1'; el.style.transform='none'; });
+          return;
+        }
+        var io = new IntersectionObserver(function(entries) {
+          entries.forEach(function(e) {
+            if (e.isIntersecting) {
+              e.target.style.opacity = '1';
+              e.target.style.transform = 'none';
+              io.unobserve(e.target);
+            }
+          });
+        }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+        els.forEach(function(el) { io.observe(el); });
+      });
+    });
+  })();
+  // Cursor dot
+  (function() {
+    var dot = document.getElementById('cdot');
+    if (!dot || !window.matchMedia('(pointer: fine)').matches) return;
+    var active = false;
+    document.addEventListener('mousemove', function(e) {
+      dot.style.left = e.clientX + 'px';
+      dot.style.top  = e.clientY + 'px';
+      if (!active) {
+        active = true;
+        dot.style.opacity = '1';
+        document.body.classList.add('has-cursor');
+      }
+    }, { passive: true });
+    document.querySelectorAll('a, button, .card, .pill').forEach(function(el) {
+      el.addEventListener('mouseenter', function() { dot.classList.add('expand'); });
+      el.addEventListener('mouseleave', function() { dot.classList.remove('expand'); });
+    });
+  })();
+</script>
+</body>
+</html>

@@ -67,26 +67,11 @@
       -webkit-font-smoothing: antialiased;
     }
 
-    /* ── CURSOR DOT ── */
-    #cdot {
-      display: none;
-      position: fixed;
-      width: 9px; height: 9px;
-      border-radius: 50%;
-      background: var(--accent);
-      pointer-events: none;
-      z-index: 9999;
-      transform: translate(-50%, -50%);
-      transition: width 0.2s ease, height 0.2s ease;
-      will-change: left, top;
-      left: -100px; top: -100px;
-    }
+    
     @media (pointer: fine) {
-      #cdot { display: block; }
       body { cursor: none; }
       a, button, .card, .pill { cursor: none; }
     }
-    #cdot.expand { width: 28px; height: 28px; opacity: 0.18; }
 
     /* ── NAV ── */
     nav {
@@ -224,11 +209,7 @@
     */
     /* Reveal: visible by default so nothing ever disappears if JS fails */
     .reveal { opacity: 1; transform: none; }
-    /* JS will add .will-animate before observer fires, then .visible to trigger transition */
-    .reveal.will-animate { opacity: 0; transform: translateY(24px); transition: opacity 0.8s cubic-bezier(0.16,1,0.3,1), transform 0.8s cubic-bezier(0.16,1,0.3,1); }
-    .reveal.will-animate.reveal-left { transform: translateX(-24px); }
-    .reveal.will-animate.reveal-right { transform: translateX(24px); }
-    .reveal.will-animate.visible { opacity: 1; transform: none; }
+    .reveal { opacity: 1; transform: none; }
     .delay-1 { transition-delay: 0.08s; }
     .delay-2 { transition-delay: 0.18s; }
     .delay-3 { transition-delay: 0.28s; }
@@ -242,8 +223,8 @@
       margin-bottom: 48px;
     }
     .about-body-row {
-      display: grid; grid-template-columns: 1fr 340px;
-      gap: 64px; align-items: start;
+      display: grid; grid-template-columns: 1fr 300px;
+      gap: 56px; align-items: center;
     }
     @media (max-width: 860px) { .about-body-row { grid-template-columns: 1fr; gap: 40px; } }
 
@@ -259,18 +240,36 @@
 
     .photo-col { display: flex; align-items: flex-start; justify-content: center; }
     .photo-frame {
-      width: 100%; max-width: 340px;
-      border-radius: 18px; overflow: hidden;
-      box-shadow: var(--shadow-lg); border: 1px solid var(--border);
+      width: 300px; height: 300px;
+      border-radius: 50%;
+      overflow: hidden;
+      box-shadow: var(--shadow-lg);
+      border: 1px solid var(--border);
+      flex-shrink: 0;
       transition: transform 0.5s cubic-bezier(0.16,1,0.3,1), box-shadow 0.5s;
     }
-    .photo-frame:hover { transform: scale(1.02); box-shadow: 0 32px 96px rgba(0,0,0,0.15); }
-    .photo-frame img { width: 100%; height: 100%; object-fit: cover; display: block; max-height: 420px; }
+    .photo-frame:hover { transform: scale(1.03); box-shadow: 0 32px 96px rgba(0,0,0,0.15); }
+    .photo-frame img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
     /* ── WORK ── */
     #work { border-top: 1px solid var(--border); }
     .work-top { margin-bottom: 60px; }
     .cards { display: flex; flex-direction: column; gap: 20px; }
+    .cards-group { margin-bottom: 64px; }
+    .cards-group:last-child { margin-bottom: 0; }
+    .group-label {
+      display: flex; align-items: center; gap: 16px;
+      margin-bottom: 28px;
+    }
+    .group-label-text {
+      font-family: 'DM Serif Display', Georgia, serif;
+      font-size: 1.5rem; font-weight: 500;
+      color: var(--text); white-space: nowrap;
+    }
+    .group-label-text em { font-style: italic; color: var(--accent); }
+    .group-label-line {
+      flex: 1; height: 1px; background: var(--border);
+    }
 
     .card {
       display: grid; grid-template-columns: 1fr 1fr; min-height: 400px;
@@ -346,6 +345,30 @@
     .foot-copy { font-size:0.64rem;color:var(--text-3);letter-spacing:0.06em; }
 
     @keyframes fadein { from{opacity:0} to{opacity:1} }
+    @keyframes pulse { 0%,100%{transform:scale(1);opacity:0.9} 50%{transform:scale(1.3);opacity:0.4} }
+      /* cursor dot */
+    #cdot {
+      display: none;
+      position: fixed;
+      width: 9px; height: 9px;
+      border-radius: 50%;
+      background: var(--accent);
+      pointer-events: none;
+      z-index: 9999;
+      opacity: 0;
+      transform: translate(-50%, -50%);
+      transition: width 0.18s ease, height 0.18s ease, opacity 0.15s ease;
+      will-change: left, top;
+    }
+    @media (pointer: fine) {
+      #cdot { display: block; }
+    }
+    body.has-cursor { cursor: none; }
+    body.has-cursor a,
+    body.has-cursor button,
+    body.has-cursor .card,
+    body.has-cursor .pill { cursor: none; }
+    #cdot.expand { width: 26px; height: 26px; opacity: 0.15; }
   </style>
 </head>
 <body>
@@ -424,7 +447,14 @@
       <p class="chip reveal reveal-up">Selected work</p>
       <h2 class="sec-title reveal reveal-up delay-1">Projects</h2>
     </div>
-    <div class="cards">
+
+    <!-- I design -->
+    <div class="cards-group">
+      <div class="group-label reveal reveal-up">
+        <span class="group-label-text">I <em>design</em></span>
+        <span class="group-label-line"></span>
+      </div>
+      <div class="cards">
 
       <!-- A2Ventures -->
       <a class="card reveal reveal-up delay-2" href="a2ventures.html" aria-label="A2Ventures project">
@@ -519,7 +549,110 @@
         </div>
       </a>
 
-    </div>
+      </div><!-- end .cards (design) -->
+    </div><!-- end .cards-group (design) -->
+
+    <!-- I build -->
+    <div class="cards-group">
+      <div class="group-label reveal reveal-up">
+        <span class="group-label-text">I <em>build</em></span>
+        <span class="group-label-line"></span>
+      </div>
+      <div class="cards">
+
+      <!-- Search Engine -->
+      <a class="card reveal reveal-up delay-2" href="search-engine.html" aria-label="Search Engine project">
+        <div class="card-info">
+          <p class="card-num">03 &nbsp;/&nbsp; Systems Engineering</p>
+          <h3 class="card-title">Search Engine</h3>
+          <p class="card-desc">A scalable search engine built from scratch — MapReduce pipeline over 28K Wikipedia documents, tf-idf + PageRank scoring, three parallel index servers, and a Flask search UI returning results in under 200ms.</p>
+          <div class="card-tags">
+            <span class="tag">Python</span>
+            <span class="tag">MapReduce</span>
+            <span class="tag">Flask</span>
+            <span class="tag">REST API</span>
+          </div>
+          <span class="card-cta">
+            Read about it
+            <span class="cta-dot">
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                <path d="M2 6h8M6 2l4 4-4 4" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </span>
+          </span>
+        </div>
+        <div class="card-vis">
+          <div class="cv" style="background:linear-gradient(135deg,#1a1a1a 0%,#2a2a2a 100%);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;">
+            <!-- animated terminal aesthetic -->
+            <div style="position:absolute;inset:0;opacity:0.06;">
+              <div style="font-family:monospace;font-size:0.55rem;color:#fff;padding:20px;line-height:1.8;">
+                program 0.2818 00111573 3 325.75<br>
+                michigan 0.4163 47914064 515 437.9<br>
+                wolverine 1.7958 47914064 5 437.9<br>
+                search 0.3241 00266386 12 182.4<br>
+                index 0.5512 00350748 8 291.6<br>
+                flask 0.8834 00121099 3 79.53<br>
+              </div>
+            </div>
+            <div style="position:relative;z-index:2;text-align:center;">
+              <div style="font-family:'DM Serif Display',Georgia,serif;font-size:2.8rem;color:var(--accent);line-height:1;margin-bottom:8px;">485</div>
+              <div style="font-size:0.62rem;font-weight:500;letter-spacing:0.18em;text-transform:uppercase;color:rgba(255,255,255,0.4);">Search Engine</div>
+              <div style="margin-top:16px;display:flex;gap:6px;justify-content:center;">
+                <div style="width:8px;height:8px;border-radius:50%;background:var(--accent);opacity:0.9;animation:pulse 1.8s ease-in-out infinite;"></div>
+                <div style="width:8px;height:8px;border-radius:50%;background:var(--accent);opacity:0.6;animation:pulse 1.8s ease-in-out infinite 0.3s;"></div>
+                <div style="width:8px;height:8px;border-radius:50%;background:var(--accent);opacity:0.3;animation:pulse 1.8s ease-in-out infinite 0.6s;"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </a>
+
+      <!-- Instagram Clone -->
+      <a class="card flip reveal reveal-up delay-3" href="instagram-clone.html" aria-label="Instagram Clone project">
+        <div class="card-info">
+          <p class="card-num">04 &nbsp;/&nbsp; Full Stack Engineering</p>
+          <h3 class="card-title">Instagram Clone</h3>
+          <p class="card-desc">A full-stack social media app with a Flask REST API, React front end, infinite scroll, optimistic likes and comments, and double-click to like. Deployed to AWS EC2 and scaled to 3,000+ requests per hour.</p>
+          <div class="card-tags">
+            <span class="tag">React</span>
+            <span class="tag">Flask</span>
+            <span class="tag">REST API</span>
+            <span class="tag">AWS</span>
+          </div>
+          <span class="card-cta">
+            Read about it
+            <span class="cta-dot">
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                <path d="M2 6h8M6 2l4 4-4 4" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </span>
+          </span>
+        </div>
+        <div class="card-vis">
+          <div class="cv" style="background:linear-gradient(135deg,#0f0f0f 0%,#1c1c1e 100%);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;">
+            <div style="position:absolute;inset:0;display:flex;flex-direction:column;gap:12px;padding:24px;justify-content:center;opacity:0.08;">
+              <div style="height:8px;background:#fff;border-radius:4px;width:70%;"></div>
+              <div style="height:8px;background:#fff;border-radius:4px;width:45%;"></div>
+              <div style="height:8px;background:#fff;border-radius:4px;width:60%;"></div>
+              <div style="height:8px;background:#fff;border-radius:4px;width:35%;"></div>
+            </div>
+            <div style="position:relative;z-index:2;text-align:center;">
+              <div style="width:56px;height:56px;border-radius:16px;background:linear-gradient(135deg,var(--accent),rgba(120,50,150,0.9));margin:0 auto 12px;display:flex;align-items:center;justify-content:center;">
+                <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+                  <rect x="5" y="5" width="18" height="18" rx="5" stroke="white" stroke-width="1.5"/>
+                  <circle cx="14" cy="14" r="4.5" stroke="white" stroke-width="1.5"/>
+                  <circle cx="19.5" cy="8.5" r="1.5" fill="white"/>
+                </svg>
+              </div>
+              <div style="font-size:0.62rem;font-weight:500;letter-spacing:0.18em;text-transform:uppercase;color:rgba(255,255,255,0.4);">Insta485</div>
+            </div>
+          </div>
+        </div>
+      </a>
+
+      </div><!-- end .cards (build) -->
+    </div><!-- end .cards-group (build) -->
+
   </div>
 </section>
 
@@ -529,7 +662,7 @@
     <p class="foot-name reveal reveal-up">Mahima Shah</p>
     <p class="foot-sub reveal reveal-up delay-1">always learning</p>
     <ul class="foot-links reveal reveal-up delay-2">
-      <li><a href="/cdn-cgi/l/email-protection#93fef2fbfafef2e0fbf2fbebeae9d3f4fef2faffbdf0fcfe">Email</a></li>
+      <li><a href="/cdn-cgi/l/email-protection#d4b9b5bcbdb9b5a7bcb5bcacadae94b3b9b5bdb8fab7bbb9">Email</a></li>
       <li><a href="https://www.linkedin.com/in/shahmahima/" target="_blank" rel="noopener">LinkedIn</a></li>
       <li><a href="https://github.com/mahima-shah" target="_blank" rel="noopener">GitHub</a></li>
       <li><a href="https://www.youtube.com/@mahimashah" target="_blank" rel="noopener">YouTube</a></li>
@@ -538,26 +671,14 @@
   </div>
 </footer>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+<script>
   // ── Scroll reveal ──
   // Elements start visible (opacity:1). JS hides them, then reveals on scroll.
   // If observer never fires, everything stays visible.
-  var revEls = document.querySelectorAll('.reveal');
-  revEls.forEach(function(el) {
-    el.style.opacity = '0';
-    el.style.transform = 'translateY(22px)';
-    el.style.transition = 'opacity 0.75s cubic-bezier(0.16,1,0.3,1), transform 0.75s cubic-bezier(0.16,1,0.3,1)';
+  // Scroll reveal — hide first, then transition in on scroll
+    }, { threshold: 0.08 });
+    revEls.forEach(function(el) { io.observe(el); });
   });
-  var io = new IntersectionObserver(function(entries) {
-    entries.forEach(function(e) {
-      if (e.isIntersecting) {
-        e.target.style.opacity = '1';
-        e.target.style.transform = 'none';
-        io.unobserve(e.target);
-      }
-    });
-  }, { threshold: 0.05 });
-  revEls.forEach(function(el) { io.observe(el); });
 
   // ── Orb tracking ──
   var hero = document.getElementById('hero');
@@ -603,29 +724,64 @@
         scrollInd.style.pointerEvents = e.isIntersecting ? '' : 'none';
       });
     }, {threshold:0.7}).observe(hero);
-  }
-
-  // ── Cursor dot ──
-  var cdot = document.getElementById('cdot');
-  if (cdot) {
-    document.addEventListener('mousemove', function(e) {
-      cdot.style.left = e.clientX + 'px';
-      cdot.style.top  = e.clientY + 'px';
-    }, {passive:true});
-    document.querySelectorAll('a,.card,.pill').forEach(function(el) {
-      el.addEventListener('mouseenter', function() { cdot.classList.add('expand'); });
-      el.addEventListener('mouseleave', function() { cdot.classList.remove('expand'); });
-    });
-  }
-
-  // ── Nav highlight ──
+  }  // ── Nav highlight ──
   var secs = document.querySelectorAll('section[id],footer[id]');
   var navAs = document.querySelectorAll('.nav-links a');
   window.addEventListener('scroll', function() {
     var current = '';
-    secs.forEach(function(s) { if (window.scrollY >= s.offsetTop-80) current=s.id; });
-    navAs.forEach(function(a) { a.style.color = a.getAttribute('href')==='#'+current ? 'var(--text)' : ''; });
-  }, {passive:true});
+    secs.forEach(function(s) { if (window.scrollY >= s.offsetTop - 80) current = s.id; });
+    navAs.forEach(function(a) { a.style.color = a.getAttribute('href') === '#' + current ? 'var(--text)' : ''; });
+  }, { passive: true });
+
+  // Scroll reveal
+  (function() {
+    var els = document.querySelectorAll('.reveal');
+    if (!els.length) return;
+    els.forEach(function(el) {
+      el.style.opacity = '0';
+      el.style.transform = 'translateY(20px)';
+    });
+    requestAnimationFrame(function() {
+      requestAnimationFrame(function() {
+        els.forEach(function(el) {
+          el.style.transition = 'opacity 0.7s cubic-bezier(0.16,1,0.3,1), transform 0.7s cubic-bezier(0.16,1,0.3,1)';
+        });
+        if (!('IntersectionObserver' in window)) {
+          els.forEach(function(el) { el.style.opacity='1'; el.style.transform='none'; });
+          return;
+        }
+        var io = new IntersectionObserver(function(entries) {
+          entries.forEach(function(e) {
+            if (e.isIntersecting) {
+              e.target.style.opacity = '1';
+              e.target.style.transform = 'none';
+              io.unobserve(e.target);
+            }
+          });
+        }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+        els.forEach(function(el) { io.observe(el); });
+      });
+    });
+  })();
+  // Cursor dot
+  (function() {
+    var dot = document.getElementById('cdot');
+    if (!dot || !window.matchMedia('(pointer: fine)').matches) return;
+    var active = false;
+    document.addEventListener('mousemove', function(e) {
+      dot.style.left = e.clientX + 'px';
+      dot.style.top  = e.clientY + 'px';
+      if (!active) {
+        active = true;
+        dot.style.opacity = '1';
+        document.body.classList.add('has-cursor');
+      }
+    }, { passive: true });
+    document.querySelectorAll('a, button, .card, .pill').forEach(function(el) {
+      el.addEventListener('mouseenter', function() { dot.classList.add('expand'); });
+      el.addEventListener('mouseleave', function() { dot.classList.remove('expand'); });
+    });
+  })();
 </script>
 </body>
 </html>
