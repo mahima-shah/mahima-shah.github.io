@@ -670,31 +670,50 @@
     <p class="foot-copy reveal reveal-up delay-3">2025 Mahima Shah &nbsp;&middot;&nbsp; Designed with intention</p>
   </div>
 </footer>
-
 <script>
-  // ── Scroll reveal ──
-  // Elements start visible (opacity:1). JS hides them, then reveals on scroll.
-  // If observer never fires, everything stays visible.
-  // Scroll reveal — hide first, then transition in on scroll
-    }, { threshold: 0.08 });
-    revEls.forEach(function(el) { io.observe(el); });
+  // Scroll reveal
+  var revEls = document.querySelectorAll('.reveal');
+  revEls.forEach(function(el) {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(20px)';
+  });
+  requestAnimationFrame(function() {
+    requestAnimationFrame(function() {
+      revEls.forEach(function(el) {
+        el.style.transition = 'opacity 0.7s cubic-bezier(0.16,1,0.3,1), transform 0.7s cubic-bezier(0.16,1,0.3,1)';
+      });
+      if (!('IntersectionObserver' in window)) {
+        revEls.forEach(function(el) { el.style.opacity='1'; el.style.transform='none'; });
+        return;
+      }
+      var io = new IntersectionObserver(function(entries) {
+        entries.forEach(function(e) {
+          if (e.isIntersecting) {
+            e.target.style.opacity = '1';
+            e.target.style.transform = 'none';
+            io.unobserve(e.target);
+          }
+        });
+      }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+      revEls.forEach(function(el) { io.observe(el); });
+    });
   });
 
-  // ── Orb tracking ──
+  // Orb tracking
   var hero = document.getElementById('hero');
   var orb1 = document.querySelector('.orb-1');
   var orb2 = document.querySelector('.orb-2');
   var orb3 = document.querySelector('.orb-3');
   if (hero && orb1) {
-    var t1x=120,t1y=-80, t2x=-100,t2y=60, t3x=60,t3y=100;
-    var c1x=120,c1y=-80, c2x=-100,c2y=60, c3x=60,c3y=100;
+    var t1x=120,t1y=-80,t2x=-100,t2y=60,t3x=60,t3y=100;
+    var c1x=120,c1y=-80,c2x=-100,c2y=60,c3x=60,c3y=100;
     hero.addEventListener('mousemove', function(e) {
       var r = hero.getBoundingClientRect();
       var mx = e.clientX - r.left - r.width/2;
-      var my = e.clientY - r.top  - r.height/2;
-      t1x = mx*0.4;  t1y = my*0.4;
-      t2x = mx*-0.25; t2y = my*-0.25;
-      t3x = mx*0.6;  t3y = my*0.6;
+      var my = e.clientY - r.top - r.height/2;
+      t1x=mx*0.4; t1y=my*0.4;
+      t2x=mx*-0.25; t2y=my*-0.25;
+      t3x=mx*0.6; t3y=my*0.6;
     });
     function orbLoop() {
       c1x+=(t1x-c1x)*0.28; c1y+=(t1y-c1y)*0.28;
@@ -714,7 +733,7 @@
     }, {threshold:0.1}).observe(hero);
   }
 
-  // ── Scroll indicator ──
+  // Scroll indicator
   var scrollInd = document.getElementById('scrollInd');
   if (scrollInd && hero) {
     new IntersectionObserver(function(entries) {
@@ -724,49 +743,20 @@
         scrollInd.style.pointerEvents = e.isIntersecting ? '' : 'none';
       });
     }, {threshold:0.7}).observe(hero);
-  }  // ── Nav highlight ──
+  }
+
+  // Nav highlight
   var secs = document.querySelectorAll('section[id],footer[id]');
   var navAs = document.querySelectorAll('.nav-links a');
   window.addEventListener('scroll', function() {
     var current = '';
-    secs.forEach(function(s) { if (window.scrollY >= s.offsetTop - 80) current = s.id; });
-    navAs.forEach(function(a) { a.style.color = a.getAttribute('href') === '#' + current ? 'var(--text)' : ''; });
-  }, { passive: true });
+    secs.forEach(function(s) { if (window.scrollY >= s.offsetTop-80) current=s.id; });
+    navAs.forEach(function(a) { a.style.color = a.getAttribute('href')==='#'+current ? 'var(--text)' : ''; });
+  }, {passive:true});
 
-  // Scroll reveal
-  (function() {
-    var els = document.querySelectorAll('.reveal');
-    if (!els.length) return;
-    els.forEach(function(el) {
-      el.style.opacity = '0';
-      el.style.transform = 'translateY(20px)';
-    });
-    requestAnimationFrame(function() {
-      requestAnimationFrame(function() {
-        els.forEach(function(el) {
-          el.style.transition = 'opacity 0.7s cubic-bezier(0.16,1,0.3,1), transform 0.7s cubic-bezier(0.16,1,0.3,1)';
-        });
-        if (!('IntersectionObserver' in window)) {
-          els.forEach(function(el) { el.style.opacity='1'; el.style.transform='none'; });
-          return;
-        }
-        var io = new IntersectionObserver(function(entries) {
-          entries.forEach(function(e) {
-            if (e.isIntersecting) {
-              e.target.style.opacity = '1';
-              e.target.style.transform = 'none';
-              io.unobserve(e.target);
-            }
-          });
-        }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
-        els.forEach(function(el) { io.observe(el); });
-      });
-    });
-  })();
-  // Cursor dot
-  (function() {
-    var dot = document.getElementById('cdot');
-    if (!dot || !window.matchMedia('(pointer: fine)').matches) return;
+  // Orange dot cursor
+  var dot = document.getElementById('cdot');
+  if (dot && window.matchMedia('(pointer: fine)').matches) {
     var active = false;
     document.addEventListener('mousemove', function(e) {
       dot.style.left = e.clientX + 'px';
@@ -776,12 +766,12 @@
         dot.style.opacity = '1';
         document.body.classList.add('has-cursor');
       }
-    }, { passive: true });
+    }, {passive:true});
     document.querySelectorAll('a, button, .card, .pill').forEach(function(el) {
       el.addEventListener('mouseenter', function() { dot.classList.add('expand'); });
       el.addEventListener('mouseleave', function() { dot.classList.remove('expand'); });
     });
-  })();
+  }
 </script>
 </body>
 </html>

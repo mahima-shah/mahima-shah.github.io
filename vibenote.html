@@ -695,60 +695,38 @@
   </footer>
 
 </div>
-
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js">,{passive:true}); document.querySelectorAll("a").forEach(function(el){ el.addEventListener("mouseenter",function(){ cdot2.classList.add("expand"); }); el.addEventListener("mouseleave",function(){ cdot2.classList.remove("expand"); }); }); }
-</script><script>
-    }, { threshold: 0.08 });
-    revEls.forEach(function(el) { io.observe(el); });
-  });,{passive:true}); document.querySelectorAll("a").forEach(function(el){ el.addEventListener("mouseenter",function(){ cdot2.classList.add("expand"); }); el.addEventListener("mouseleave",function(){ cdot2.classList.remove("expand"); }); }); }, { passive: true });
-    document.querySelectorAll('a, .card, .pill, button').forEach(function(el) {
-      el.addEventListener('mouseenter', function() { cdot.classList.add('expand'); });
-      el.addEventListener('mouseleave', function() { cdot.classList.remove('expand'); });
-    });
-  }
-
-  // Scroll reveal animations
-  (function() {
-    var els = document.querySelectorAll('.reveal');
-    if (!els.length) return;
-    // Hide all reveal elements immediately (before next paint)
-    els.forEach(function(el) {
-      el.style.opacity = '0';
-      el.style.transform = 'translateY(20px)';
-    });
-    // On next frame, add transition and start observing
+<script>
+  // Scroll reveal
+  var revEls = document.querySelectorAll('.reveal');
+  revEls.forEach(function(el) {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(20px)';
+  });
+  requestAnimationFrame(function() {
     requestAnimationFrame(function() {
-      requestAnimationFrame(function() {
-        els.forEach(function(el) {
-          el.style.transition = 'opacity 0.7s cubic-bezier(0.16,1,0.3,1), transform 0.7s cubic-bezier(0.16,1,0.3,1)';
-        });
-        if (!('IntersectionObserver' in window)) {
-          // Fallback: show everything immediately
-          els.forEach(function(el) {
-            el.style.opacity = '1';
-            el.style.transform = 'none';
-          });
-          return;
-        }
-        var io = new IntersectionObserver(function(entries) {
-          entries.forEach(function(e) {
-            if (e.isIntersecting) {
-              e.target.style.opacity = '1';
-              e.target.style.transform = 'none';
-              io.unobserve(e.target);
-            }
-          });
-        }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
-        els.forEach(function(el) { io.observe(el); });
+      revEls.forEach(function(el) {
+        el.style.transition = 'opacity 0.7s cubic-bezier(0.16,1,0.3,1), transform 0.7s cubic-bezier(0.16,1,0.3,1)';
       });
+      if (!('IntersectionObserver' in window)) {
+        revEls.forEach(function(el) { el.style.opacity='1'; el.style.transform='none'; });
+        return;
+      }
+      var io = new IntersectionObserver(function(entries) {
+        entries.forEach(function(e) {
+          if (e.isIntersecting) {
+            e.target.style.opacity = '1';
+            e.target.style.transform = 'none';
+            io.unobserve(e.target);
+          }
+        });
+      }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+      revEls.forEach(function(el) { io.observe(el); });
     });
-  })();
+  });
 
-  // Cursor dot - orange dot follows mouse on fine pointer devices
-  (function() {
-    var dot = document.getElementById('cdot');
-    if (!dot) return;
-    if (!window.matchMedia('(pointer: fine)').matches) return;
+  // Orange dot cursor
+  var dot = document.getElementById('cdot');
+  if (dot && window.matchMedia('(pointer: fine)').matches) {
     var active = false;
     document.addEventListener('mousemove', function(e) {
       dot.style.left = e.clientX + 'px';
@@ -758,13 +736,12 @@
         dot.style.opacity = '1';
         document.body.classList.add('has-cursor');
       }
-    }, { passive: true });
+    }, {passive:true});
     document.querySelectorAll('a, button, .card, .pill').forEach(function(el) {
       el.addEventListener('mouseenter', function() { dot.classList.add('expand'); });
       el.addEventListener('mouseleave', function() { dot.classList.remove('expand'); });
     });
-  })();
-
+  }
 </script>
 </body>
 </html>
