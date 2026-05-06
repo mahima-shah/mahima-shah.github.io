@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Creative Work — Mahima Shah</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; font-size: 16px; }
+
+    :root {
+      --bg:          #f5f5f7;
+      --bg-card:     rgba(255,255,255,0.68);
+      --bg-nav:      rgba(245,245,247,0.75);
+      --bg-tint:     rgba(176,80,48,0.04);
+      --border:      rgba(0,0,0,0.08);
+      --text:        #1d1d1f;
+      --text-2:      #515154;
+      --text-3:      #86868b;
+      --accent:      #B05030;
+      --accent-hi:   #C86040;
+      --accent-dim:  rgba(176,80,48,0.09);
+      --accent-tag:  rgba(176,80,48,0.16);
+      --shadow-sm:   0 2px 16px rgba(0,0,0,0.06);
+      --shadow-md:   0 4px 32px rgba(0,0,0,0.09);
+      --shadow-lg:   0 20px 60px rgba(0,0,0,0.11);
+      --blur:        blur(24px);
+      --radius:      18px;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg:          #000000;
+        --bg-card:     rgba(28,28,30,0.82);
+        --bg-nav:      rgba(0,0,0,0.75);
+        --bg-tint:     rgba(212,114,78,0.07);
+        --border:      rgba(255,255,255,0.1);
+        --text:        #f5f5f7;
+        --text-2:      #a1a1a6;
+        --text-3:      #636366;
+        --accent:      #D4724E;
+        --accent-hi:   #E08060;
+        --accent-dim:  rgba(212,114,78,0.12);
+        --accent-tag:  rgba(212,114,78,0.2);
+        --shadow-sm:   0 2px 16px rgba(0,0,0,0.35);
+        --shadow-md:   0 4px 32px rgba(0,0,0,0.45);
+        --shadow-lg:   0 20px 60px rgba(0,0,0,0.65);
+      }
+    }
+
+    body { background:var(--bg); color:var(--text); font-family:'DM Sans',-apple-system,sans-serif; font-weight:300; line-height:1.6; overflow-x:hidden; -webkit-font-smoothing:antialiased; }
+
+    /* cursor dot */
+    #cdot { display:none; position:fixed; width:9px; height:9px; border-radius:50%; background:var(--accent); pointer-events:none; z-index:9999; opacity:0; transform:translate(-50%,-50%); transition:width .18s,height .18s,opacity .15s; left:-100px; top:-100px; }
+    @media (pointer:fine) { #cdot { display:block; } }
+    body.has-cursor { cursor:none; }
+    body.has-cursor a, body.has-cursor button { cursor:none; }
+    #cdot.expand { width:26px; height:26px; opacity:0.15; }
+
+    /* NAV */
+    nav { position:fixed; top:0; left:0; right:0; z-index:800; height:52px; display:flex; align-items:center; justify-content:space-between; padding:0 52px; background:var(--bg-nav); backdrop-filter:var(--blur); -webkit-backdrop-filter:var(--blur); border-bottom:1px solid var(--border); }
+    @media (max-width:600px) { nav { padding:0 22px; } }
+    .nav-links { display:flex; gap:36px; list-style:none; align-items:center; }
+    .nav-links a { font-size:0.78rem; font-weight:400; letter-spacing:0.04em; color:var(--text-3); text-decoration:none; position:relative; transition:color 0.2s; }
+    .nav-links a::after { content:''; position:absolute; bottom:-2px; left:0; width:0; height:1px; background:var(--accent); transition:width 0.25s cubic-bezier(0.16,1,0.3,1); }
+    .nav-links a:hover { color:var(--text); }
+    .nav-links a:hover::after { width:100%; }
+    .nav-back { display:inline-flex; align-items:center; gap:6px; font-size:0.78rem; font-weight:400; letter-spacing:0.04em; color:var(--text-3); text-decoration:none; transition:color 0.2s; }
+    .nav-back:hover { color:var(--accent); }
+    .nav-back svg { transition:transform 0.2s; }
+    .nav-back:hover svg { transform:translateX(-3px); }
+
+    /* LAYOUT */
+    .page { padding-top:52px; }
+    .container { max-width:1100px; margin:0 auto; padding:0 40px; }
+
+    /* HERO */
+    .cs-hero { padding:80px 40px 72px; border-bottom:1px solid var(--border); position:relative; overflow:hidden; }
+    .cs-hero::before { content:''; position:absolute; inset:0; background:radial-gradient(ellipse at 70% 50%, var(--accent-dim), transparent 65%); pointer-events:none; }
+    .cs-hero-inner { max-width:1100px; margin:0 auto; position:relative; z-index:1; }
+    .cs-tag { display:inline-block; font-size:0.64rem; font-weight:500; letter-spacing:0.16em; text-transform:uppercase; color:var(--accent); background:var(--accent-dim); border:1px solid var(--accent-tag); padding:4px 12px; border-radius:100px; margin-bottom:20px; }
+    .cs-title { font-family:'DM Serif Display',Georgia,serif; font-size:clamp(2.8rem,7vw,5.5rem); font-weight:600; line-height:1.0; letter-spacing:-0.02em; color:var(--text); margin-bottom:20px; }
+    .cs-subtitle { font-size:clamp(1rem,2vw,1.15rem); color:var(--text-2); line-height:1.7; max-width:600px; }
+    .cs-meta { display:flex; flex-wrap:wrap; gap:32px; padding-top:36px; border-top:1px solid var(--border); margin-top:36px; }
+    .cs-meta-item { display:flex; flex-direction:column; gap:4px; }
+    .cs-meta-label { font-size:0.62rem; font-weight:500; letter-spacing:0.16em; text-transform:uppercase; color:var(--text-3); }
+    .cs-meta-value { font-size:0.88rem; font-weight:400; color:var(--text); }
+
+    /* SECTIONS */
+    .cs-section { padding:80px 40px; border-bottom:1px solid var(--border); }
+    .cs-section:last-of-type { border-bottom:none; }
+    .container-inner { max-width:1100px; margin:0 auto; }
+    .section-label { display:inline-block; font-size:0.62rem; font-weight:500; letter-spacing:0.18em; text-transform:uppercase; color:var(--accent); margin-bottom:12px; }
+    .section-num { font-size:0.62rem; font-weight:400; letter-spacing:0.1em; color:var(--text-3); margin-right:10px; }
+    .section-heading { font-family:'DM Serif Display',Georgia,serif; font-size:clamp(1.8rem,4vw,2.8rem); font-weight:500; line-height:1.12; letter-spacing:-0.015em; color:var(--text); margin-bottom:24px; }
+    .section-heading em { font-style:italic; color:var(--accent); }
+    .body-text { font-size:1rem; color:var(--text-2); line-height:1.82; max-width:680px; }
+    .body-text + .body-text { margin-top:14px; }
+
+    /* IMAGE SHOWCASE */
+    .image-showcase { margin:40px 0; display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+    @media (max-width:640px) { .image-showcase { grid-template-columns:1fr; } }
+    .showcase-img {
+      border-radius:var(--radius); overflow:hidden;
+      border:1px solid var(--border);
+      box-shadow:var(--shadow-md);
+    }
+    .showcase-img img { width:100%; height:100%; object-fit:cover; display:block; }
+    .showcase-img.tall { grid-row:span 2; }
+    .showcase-label { font-size:0.72rem; font-weight:400; letter-spacing:0.06em; color:var(--text-3); margin-top:10px; text-align:center; }
+
+    /* FINAL PROJECT FEATURE */
+    .feature-card {
+      background:var(--bg-card); border:1px solid var(--border);
+      border-radius:var(--radius); overflow:hidden;
+      backdrop-filter:var(--blur); -webkit-backdrop-filter:var(--blur);
+      margin:40px 0;
+    }
+    .feature-card-body { padding:36px 40px; }
+    .feature-tag { display:inline-block; font-size:0.6rem; font-weight:500; letter-spacing:0.18em; text-transform:uppercase; color:var(--accent); background:var(--accent-dim); border:1px solid var(--accent-tag); padding:3px 10px; border-radius:100px; margin-bottom:14px; }
+    .feature-title { font-family:'DM Serif Display',Georgia,serif; font-size:1.8rem; font-weight:500; color:var(--text); margin-bottom:14px; line-height:1.15; }
+    .feature-body { font-size:0.92rem; color:var(--text-2); line-height:1.8; max-width:680px; }
+    .feature-body + .feature-body { margin-top:12px; }
+    .feature-link { display:inline-flex; align-items:center; gap:8px; margin-top:24px; font-size:0.8rem; font-weight:500; color:var(--accent); text-decoration:none; letter-spacing:0.04em; transition:gap 0.2s; }
+    .feature-link:hover { gap:12px; }
+    .feature-modes { display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; margin-top:28px; }
+    @media (max-width:640px) { .feature-modes { grid-template-columns:1fr; } }
+    .mode-card { background:var(--accent-dim); border:1px solid var(--accent-tag); border-radius:12px; padding:16px 18px; }
+    .mode-name { font-size:0.7rem; font-weight:500; letter-spacing:0.12em; text-transform:uppercase; color:var(--accent); margin-bottom:6px; }
+    .mode-desc { font-size:0.82rem; color:var(--text-2); line-height:1.6; }
+
+    /* PULL QUOTE */
+    .pull-quote { margin:40px 0; padding:28px 32px; border-left:3px solid var(--accent); background:var(--bg-tint); border-radius:0 var(--radius) var(--radius) 0; }
+    .pull-quote p { font-family:'DM Serif Display',Georgia,serif; font-style:italic; font-size:1.15rem; color:var(--text); line-height:1.6; margin-bottom:8px; }
+    .pull-quote cite { font-size:0.75rem; font-weight:400; letter-spacing:0.06em; color:var(--text-3); font-style:normal; }
+
+    /* PROJECT GRID */
+    .project-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:36px; }
+    @media (max-width:640px) { .project-grid { grid-template-columns:1fr; } }
+    .project-tile {
+      background:var(--bg-card); border:1px solid var(--border);
+      border-radius:var(--radius); padding:28px 26px;
+      backdrop-filter:var(--blur); -webkit-backdrop-filter:var(--blur);
+      text-decoration:none; display:flex; flex-direction:column; gap:10px;
+      transition:border-color 0.2s, transform 0.25s cubic-bezier(0.16,1,0.3,1), box-shadow 0.25s;
+    }
+    .project-tile:hover { border-color:var(--accent-tag); transform:translateY(-3px); box-shadow:var(--shadow-md); }
+    .project-tile-num { font-size:0.6rem; font-weight:500; letter-spacing:0.16em; text-transform:uppercase; color:var(--text-3); }
+    .project-tile-title { font-family:'DM Serif Display',Georgia,serif; font-size:1.1rem; font-weight:500; color:var(--text); line-height:1.2; }
+    .project-tile-desc { font-size:0.84rem; color:var(--text-2); line-height:1.68; flex:1; }
+    .project-tile-link { display:inline-flex; align-items:center; gap:6px; font-size:0.74rem; font-weight:500; color:var(--accent); letter-spacing:0.04em; margin-top:4px; transition:gap 0.2s; }
+    .project-tile:hover .project-tile-link { gap:10px; }
+    .project-tile-tags { display:flex; flex-wrap:wrap; gap:6px; }
+    .project-tile-tag { font-size:0.68rem; font-weight:400; color:var(--text-3); background:var(--accent-dim); border:1px solid var(--accent-tag); padding:3px 9px; border-radius:100px; }
+
+    /* STAT STRIP */
+    .stat-strip { display:flex; flex-wrap:wrap; gap:2px; margin:40px 0; }
+    .stat-card { flex:1; min-width:120px; background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius); padding:24px 22px; backdrop-filter:var(--blur); }
+    .stat-val { font-family:'DM Serif Display',Georgia,serif; font-size:2.2rem; font-weight:500; color:var(--accent); line-height:1; display:block; margin-bottom:6px; }
+    .stat-desc { font-size:0.8rem; font-weight:400; color:var(--text-3); line-height:1.4; }
+
+    /* NEXT PROJECT */
+    .next-project { padding:72px 40px; text-align:center; border-top:1px solid var(--border); }
+    .next-label { font-size:0.64rem; font-weight:500; letter-spacing:0.18em; text-transform:uppercase; color:var(--text-3); margin-bottom:12px; }
+    .next-title { font-family:'DM Serif Display',Georgia,serif; font-size:clamp(1.8rem,4vw,2.8rem); font-weight:500; color:var(--text); margin-bottom:24px; }
+    .next-link { display:inline-flex; align-items:center; gap:8px; font-size:0.82rem; font-weight:400; color:var(--text); text-decoration:none; transition:gap 0.25s; }
+    .next-link:hover { gap:14px; }
+    .next-link-arrow { width:30px; height:30px; border-radius:50%; background:var(--accent); display:flex; align-items:center; justify-content:center; transition:transform 0.25s; }
+    .next-link:hover .next-link-arrow { transform:scale(1.1); }
+
+    /* FOOTER */
+    footer { border-top:1px solid var(--border); padding:48px 40px 36px; text-align:center; }
+    .foot-inner { max-width:1100px; margin:0 auto; }
+    .foot-name { font-family:'DM Serif Display',Georgia,serif; font-size:1.5rem; font-weight:500; color:var(--text); margin-bottom:4px; }
+    .foot-sub { font-family:'DM Serif Display',Georgia,serif; font-style:italic; font-weight:300; font-size:0.9rem; color:var(--text-3); margin-bottom:24px; }
+    .foot-links { display:flex; gap:28px; justify-content:center; list-style:none; flex-wrap:wrap; margin-bottom:20px; }
+    .foot-links a { font-size:0.78rem; font-weight:400; letter-spacing:0.04em; color:var(--text-2); text-decoration:none; transition:color 0.2s; }
+    .foot-links a:hover { color:var(--accent); }
+    .foot-copy { font-size:0.64rem; color:var(--text-3); letter-spacing:0.06em; }
+
+    .reveal { opacity:1; transform:none; }
+    .delay-1 { transition-delay:0.08s; }
+    .delay-2 { transition-delay:0.18s; }
+    .delay-3 { transition-delay:0.28s; }
+  </style>
+</head>
+<body>
+<div id="cdot"></div>
+<div class="page">
+
+  <nav>
+    <a href="index.html" class="nav-back">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+        <path d="M9 2L4 7l5 5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      Back
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html#about">About</a></li>
+      <li><a href="index.html#work">Work</a></li>
+      <li><a href="index.html#contact">Contact</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <header class="cs-hero">
+    <div class="cs-hero-inner">
+      <span class="cs-tag reveal">Computing for the Arts</span>
+      <h1 class="cs-title reveal delay-1">Creative Work</h1>
+      <p class="cs-subtitle reveal delay-2">Eight projects built in Snap! at UC Berkeley, spanning generative geometry, pixel manipulation, sound design, interactive drawing, game development, data visualization, web building, and a final piece that treats code as an artistic medium in its own right.</p>
+      <div class="cs-meta reveal delay-3">
+        <div class="cs-meta-item">
+          <span class="cs-meta-label">Course</span>
+          <span class="cs-meta-value">COMPFOR 121 — Computing for the Arts</span>
+        </div>
+        <div class="cs-meta-item">
+          <span class="cs-meta-label">Context</span>
+          <span class="cs-meta-value">University of Michigan</span>
+        </div>
+        <div class="cs-meta-item">
+          <span class="cs-meta-label">Tool</span>
+          <span class="cs-meta-value">Snap! (UC Berkeley)</span>
+        </div>
+        <div class="cs-meta-item">
+          <span class="cs-meta-label">Projects</span>
+          <span class="cs-meta-value">8 across one semester</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- 01 OVERVIEW -->
+  <section class="cs-section">
+    <div class="container-inner container">
+      <span class="section-label reveal"><span class="section-num">01</span>Overview</span>
+      <h2 class="section-heading reveal delay-1">Code as a <em>creative medium.</em></h2>
+      <p class="body-text reveal delay-2">COMPFOR 121 used Snap!, a visual block-based programming language developed at UC Berkeley, to explore computing not as a tool for solving problems but as a medium for making things. Each assignment introduced a different creative domain — image, sound, interaction, data, the web — and asked for something original within it.</p>
+      <p class="body-text reveal delay-3">The projects below span the full arc of the course, from early geometry experiments to a final piece that engaged directly with artworks from the University of Michigan Museum of Art. What stayed consistent across all of them was the question: what can code do that other media cannot?</p>
+
+      <div class="stat-strip">
+        <div class="stat-card reveal delay-1">
+          <span class="stat-val">8</span>
+          <span class="stat-desc">projects across image, sound, interaction, data, and web</span>
+        </div>
+        <div class="stat-card reveal delay-2">
+          <span class="stat-val">2</span>
+          <span class="stat-desc">UMMA artworks engaged with in the final project</span>
+        </div>
+        <div class="stat-card reveal delay-3">
+          <span class="stat-val">3</span>
+          <span class="stat-desc">interactive modes in the final collage, each with a distinct palette and feel</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 02 FINAL PROJECT -->
+  <section class="cs-section">
+    <div class="container-inner container">
+      <span class="section-label reveal"><span class="section-num">02</span>Final Project</span>
+      <h2 class="section-heading reveal delay-1">A collage that <em>only exists through interaction.</em></h2>
+      <p class="body-text reveal delay-2">The final project was an interactive digital collage inspired by two works from the UMMA: Flirt (1979) by Robert Rauschenberg and What We All Lack (1962) by Man Ray. Both pieces treat images as flexible rather than fixed — Rauschenberg layers images so meaning comes from how they interact, while Man Ray's work feels open-ended and deliberately incomplete.</p>
+
+      <div class="feature-card reveal delay-2">
+        <div class="feature-card-body">
+          <span class="feature-tag">Featured Work</span>
+          <h3 class="feature-title">Fragmented Self</h3>
+          <p class="feature-body">Image fragments appear when the user makes sound into the microphone, and slowly fade away when the interaction stops. This creates a continuous cycle where the collage is always building and dissolving at the same time — reflecting the temporary and unstable nature of meaning in the original works.</p>
+          <p class="feature-body">The fragments used are photographs of the artist herself. Since the collage is constantly forming and dissolving, using personal images adds another layer of meaning: different versions of the same person appear, overlap, and disappear. Identity, like the collage, is not fixed but made up of fragments that shift depending on context and interaction.</p>
+          <p class="feature-body">Three keyboard modes let the viewer shift between different visual and emotional interpretations of the same system.</p>
+
+          <div class="feature-modes">
+            <div class="mode-card">
+              <p class="mode-name">Mode 1 — Warm</p>
+              <p class="mode-desc">Saturated reds and pinks inspired by Flirt. Fragments feel dense and close, creating intensity through overlap and layering.</p>
+            </div>
+            <div class="mode-card">
+              <p class="mode-name">Mode 2 — Subdued</p>
+              <p class="mode-desc">A softer, more muted palette. Tones are cohesive rather than contrasting, making the collage feel dream-like and unified.</p>
+            </div>
+            <div class="mode-card">
+              <p class="mode-name">Mode 3 — Natural</p>
+              <p class="mode-desc">More varied and dynamic. Reflects how images online are constantly remixed, layered, and reinterpreted without a fixed meaning.</p>
+            </div>
+          </div>
+
+          <div style="display:flex;gap:20px;flex-wrap:wrap;align-items:center;">
+            <a href="https://snap.berkeley.edu/project?username=mahimash%2dum&projectname=COMPFOR%20121%20Final%20Project" target="_blank" rel="noopener" class="feature-link">
+              View project in Snap!
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                <path d="M2 6h8M6 2l4 4-4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </a>
+            <a href="https://youtu.be/zMCH9NiZszE" target="_blank" rel="noopener" class="feature-link" style="color:var(--text-3);">
+              Watch demo video
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                <path d="M2 6h8M6 2l4 4-4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="pull-quote reveal delay-2">
+        <p>"In my project, there is no single final version of the collage. Each interaction produces a different result, and the image only exists for a short period of time before fading away."</p>
+        <cite>— Final project write-up</cite>
+      </div>
+
+      <p class="body-text reveal delay-2">Working with code as a medium changed how the idea of collage could be expressed. In a physical collage, once assembled, the piece becomes fixed. Code allows the artwork to exist as a system that is constantly running and changing — unpredictability comes not from physical materials but from user input and controlled randomness within the system. The viewer is not just observing something complete. They are necessary for the work to exist at all.</p>
+    </div>
+  </section>
+
+  <!-- 03 ASSIGNMENT 1 AND 2 -->
+  <section class="cs-section">
+    <div class="container-inner container">
+      <span class="section-label reveal"><span class="section-num">03</span>Selected Work</span>
+      <h2 class="section-heading reveal delay-1">Geometry, pixels, <em>and pattern.</em></h2>
+      <p class="body-text reveal delay-2">Two of the earliest assignments produced the most visually striking outputs. The first used recursive loops and color cycling to tile a canvas with geometric patterns. The second applied custom pixel-level image filters to personal photographs and assembled them into a designed collage.</p>
+
+      <div class="image-showcase reveal delay-2">
+        <div>
+          <div class="showcase-img" style="aspect-ratio:4/3;">
+            <img src="creative-hw1.png" alt="Assignment 1: geometric tiling in Snap! — overlapping squares, circles, and diamonds tiled across a canvas in six colors" />
+          </div>
+          <p class="showcase-label">Assignment 01 — Geometric tiling with recursive loops and color cycling</p>
+        </div>
+        <div>
+          <div class="showcase-img" style="aspect-ratio:4/3;">
+            <img src="creative-hw2.png" alt="Assignment 2: image collage with custom pixel filters — photographs processed through red/blue channel manipulation arranged as playing cards" />
+          </div>
+          <p class="showcase-label">Assignment 02 — Image collage with custom pixel-level filters</p>
+        </div>
+      </div>
+
+      <p class="body-text reveal delay-2" style="margin-top:32px;">The geometric tiling used variables for center position, tile size, row, and column to place each unit precisely, then looped through a color sequence to distinguish the six tiles. The image collage used custom filter blocks that manipulated individual red, green, and blue channel values to transform the same photographs into visually distinct versions of themselves.</p>
+    </div>
+  </section>
+
+  <!-- 04 ALL PROJECTS -->
+  <section class="cs-section">
+    <div class="container-inner container">
+      <span class="section-label reveal"><span class="section-num">04</span>All Projects</span>
+      <h2 class="section-heading reveal delay-1">Eight assignments, <em>eight mediums.</em></h2>
+      <p class="body-text reveal delay-2">Each project introduced a different domain and a different set of creative constraints. Click any card to open the live project in Snap!</p>
+
+      <div class="project-grid">
+        <a href="https://snap.berkeley.edu/project?username=mahimash%2dum&projectname=COMPFOR%20121%20Make%20a%20Shape%20Drawing" target="_blank" rel="noopener" class="project-tile reveal delay-1">
+          <span class="project-tile-num">Assignment 01</span>
+          <h3 class="project-tile-title">Geometric Tiling</h3>
+          <p class="project-tile-desc">Recursive loops draw overlapping squares, circles, and rotating diamonds across a tiled canvas, cycling through six colors with each unit precisely placed using centerX, centerY, and size variables.</p>
+          <div class="project-tile-tags">
+            <span class="project-tile-tag">Generative geometry</span>
+            <span class="project-tile-tag">Loops</span>
+            <span class="project-tile-tag">Color</span>
+          </div>
+          <span class="project-tile-link">Open in Snap! <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M1.5 5h7M5 1.5l3.5 3.5L5 8.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        </a>
+
+        <a href="https://snap.berkeley.edu/project?username=mahimash%2dum&projectname=COMPFOR%20121%20Make%20a%20Image%20Collage" target="_blank" rel="noopener" class="project-tile reveal delay-2">
+          <span class="project-tile-num">Assignment 02</span>
+          <h3 class="project-tile-title">Image Collage</h3>
+          <p class="project-tile-desc">Custom pixel-level image filters manipulate individual RGB channel values to transform personal photographs. Two original images each appear three times — once original and twice filtered — arranged into a designed collage.</p>
+          <div class="project-tile-tags">
+            <span class="project-tile-tag">Pixel filters</span>
+            <span class="project-tile-tag">RGB manipulation</span>
+            <span class="project-tile-tag">Collage</span>
+          </div>
+          <span class="project-tile-link">Open in Snap! <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M1.5 5h7M5 1.5l3.5 3.5L5 8.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        </a>
+
+        <a href="https://snap.berkeley.edu/project?username=mahimash%2dum&projectname=COMPFOR%20121%20Make%20a%20Soundscape" target="_blank" rel="noopener" class="project-tile reveal delay-1">
+          <span class="project-tile-num">Assignment 03</span>
+          <h3 class="project-tile-title">Before a Night Out</h3>
+          <p class="project-tile-desc">A soundscape capturing the chaos of getting ready with roommates before going out — makeup compacts, heels on the floor, phone notifications, lip gloss, perfume sprays, background music, and camera clicks. Sounds are clipped, spliced, resampled, and layered in parallel to recreate the overlapping energy of the moment.</p>
+          <div class="project-tile-tags">
+            <span class="project-tile-tag">Sound design</span>
+            <span class="project-tile-tag">Sampling</span>
+            <span class="project-tile-tag">Splicing</span>
+          </div>
+          <span class="project-tile-link">Open in Snap! <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M1.5 5h7M5 1.5l3.5 3.5L5 8.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        </a>
+
+        <a href="https://snap.berkeley.edu/project?username=mahimash%2dum&projectname=COMPFOR%20121%20Make%20a%20Novel%20Drawing%20Program" target="_blank" rel="noopener" class="project-tile reveal delay-2">
+          <span class="project-tile-num">Assignment 04</span>
+          <h3 class="project-tile-title">Fireworks Festival</h3>
+          <p class="project-tile-desc">A fireworks show driven by your microphone — put on your favourite song and watch. Lower frequencies launch fireworks near the ground, higher frequencies send them skyward, and louder sounds create bigger explosions with more particles. Keyboard controls switch between colorful, Michigan-themed (blue and gold), and rainbow modes.</p>
+          <div class="project-tile-tags">
+            <span class="project-tile-tag">Microphone input</span>
+            <span class="project-tile-tag">Frequency detection</span>
+            <span class="project-tile-tag">Generative</span>
+          </div>
+          <span class="project-tile-link">Open in Snap! <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M1.5 5h7M5 1.5l3.5 3.5L5 8.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        </a>
+
+        <div class="project-tile reveal delay-1" style="cursor:default;">
+          <span class="project-tile-num">Assignment 05</span>
+          <h3 class="project-tile-title">Side-Scroller Game</h3>
+          <p class="project-tile-desc">A designed side-scrolling video game with a keyboard-controlled player character that changes costume while moving, at least two other moving characters to interact with, a designed background with animated elements, a visible score, and a victory animation when the goal is reached.</p>
+          <div class="project-tile-tags">
+            <span class="project-tile-tag">Game design</span>
+            <span class="project-tile-tag">Animation</span>
+            <span class="project-tile-tag">Sprites</span>
+          </div>
+          <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:4px;">
+            <a href="https://snap.berkeley.edu/project?username=mahimash%2dum&projectname=COMPFOR%20121%20Make%20a%20Side%20Scroller%20Video%20Game" target="_blank" rel="noopener" class="project-tile-link" onclick="event.stopPropagation()">Open in Snap! <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M1.5 5h7M5 1.5l3.5 3.5L5 8.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+            <a href="https://youtu.be/iH3yURaWsuY" target="_blank" rel="noopener" class="project-tile-link" onclick="event.stopPropagation()" style="color:var(--text-3);">Watch gameplay <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M1.5 5h7M5 1.5l3.5 3.5L5 8.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+          </div>
+        </div>
+
+        <a href="https://snap.berkeley.edu/project?username=mahimash%2dum&projectname=COMPFOR%20121%20Make%20a%20Data%20Art" target="_blank" rel="noopener" class="project-tile reveal delay-2">
+          <span class="project-tile-num">Assignment 06</span>
+          <h3 class="project-tile-title">Data Art</h3>
+          <p class="project-tile-desc">A work of visual data art generated from a CSV dataset with at least 40 entries. Two columns per row drive the visual output — one controls form, one controls color or size — producing a piece that is both data-driven and intentionally designed.</p>
+          <div class="project-tile-tags">
+            <span class="project-tile-tag">Data visualization</span>
+            <span class="project-tile-tag">Generative art</span>
+            <span class="project-tile-tag">CSV</span>
+          </div>
+          <span class="project-tile-link">Open in Snap! <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M1.5 5h7M5 1.5l3.5 3.5L5 8.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        </a>
+
+        <a href="https://snap.berkeley.edu/project?username=mahimash%2dum&projectname=COMPFOR%20121%20Make%20a%20Website" target="_blank" rel="noopener" class="project-tile reveal delay-1">
+          <span class="project-tile-num">Assignment 07</span>
+          <h3 class="project-tile-title">Web Page in Snap!</h3>
+          <p class="project-tile-desc">A fully designed web page built entirely through Snap! blocks — no hand-written HTML. Custom blocks generate valid HTML elements with inputs, apply a CSS style scheme, and embed another Snap project. The page has at least three headings, one image, three external links, and five CSS rules.</p>
+          <div class="project-tile-tags">
+            <span class="project-tile-tag">HTML generation</span>
+            <span class="project-tile-tag">CSS</span>
+            <span class="project-tile-tag">Custom blocks</span>
+          </div>
+          <span class="project-tile-link">Open in Snap! <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M1.5 5h7M5 1.5l3.5 3.5L5 8.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        </a>
+
+        <div class="project-tile reveal delay-2" style="cursor:default;">
+          <span class="project-tile-num">Assignment 08 — Final</span>
+          <h3 class="project-tile-title">Fragmented Self</h3>
+          <p class="project-tile-desc">An interactive digital collage that forms and dissolves through microphone input. Image fragments of the artist appear when sound is detected and fade when it stops. Three keyboard modes shift the palette and emotional register of the piece, inspired by Rauschenberg and Man Ray.</p>
+          <div class="project-tile-tags">
+            <span class="project-tile-tag">Interactive art</span>
+            <span class="project-tile-tag">Microphone input</span>
+            <span class="project-tile-tag">Collage</span>
+          </div>
+          <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:4px;">
+            <a href="https://snap.berkeley.edu/project?username=mahimash%2dum&projectname=COMPFOR%20121%20Final%20Project" target="_blank" rel="noopener" class="project-tile-link" onclick="event.stopPropagation()">Open in Snap! <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M1.5 5h7M5 1.5l3.5 3.5L5 8.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+            <a href="https://youtu.be/zMCH9NiZszE" target="_blank" rel="noopener" class="project-tile-link" onclick="event.stopPropagation()" style="color:var(--text-3);">Watch demo <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M1.5 5h7M5 1.5l3.5 3.5L5 8.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- NEXT -->
+  <div class="next-project">
+    <p class="next-label reveal">Back to work</p>
+    <h2 class="next-title reveal delay-1">See all projects</h2>
+    <a href="index.html#work" class="next-link reveal delay-2">
+      Home
+      <span class="next-link-arrow">
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+          <path d="M2 6h8M6 2l4 4-4 4" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </span>
+    </a>
+  </div>
+
+  <footer>
+    <div class="foot-inner">
+      <p class="foot-name">Mahima Shah</p>
+      <p class="foot-sub">always learning</p>
+      <ul class="foot-links">
+        <li><a href="mailto:mahimashahxyz@gmail.com">Email</a></li>
+        <li><a href="https://www.linkedin.com/in/shahmahima/" target="_blank" rel="noopener">LinkedIn</a></li>
+        <li><a href="https://github.com/mahima-shah" target="_blank" rel="noopener">GitHub</a></li>
+        <li><a href="https://www.youtube.com/@mahimashah" target="_blank" rel="noopener">YouTube</a></li>
+      </ul>
+      <p class="foot-copy">2025 Mahima Shah &nbsp;&middot;&nbsp; Designed with intention</p>
+    </div>
+  </footer>
+
+</div>
+
+<script>
+  // Scroll reveal
+  var revEls = document.querySelectorAll('.reveal');
+  revEls.forEach(function(el) {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(20px)';
+  });
+  requestAnimationFrame(function() {
+    requestAnimationFrame(function() {
+      revEls.forEach(function(el) {
+        el.style.transition = 'opacity 0.7s cubic-bezier(0.16,1,0.3,1), transform 0.7s cubic-bezier(0.16,1,0.3,1)';
+      });
+      if (!('IntersectionObserver' in window)) {
+        revEls.forEach(function(el) { el.style.opacity='1'; el.style.transform='none'; });
+        return;
+      }
+      var io = new IntersectionObserver(function(entries) {
+        entries.forEach(function(e) {
+          if (e.isIntersecting) {
+            e.target.style.opacity = '1';
+            e.target.style.transform = 'none';
+            io.unobserve(e.target);
+          }
+        });
+      }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+      revEls.forEach(function(el) { io.observe(el); });
+    });
+  });
+
+  // Orange dot cursor
+  var dot = document.getElementById('cdot');
+  if (dot && window.matchMedia('(pointer: fine)').matches) {
+    var active = false;
+    document.addEventListener('mousemove', function(e) {
+      dot.style.left = e.clientX + 'px';
+      dot.style.top  = e.clientY + 'px';
+      if (!active) {
+        active = true;
+        dot.style.opacity = '1';
+        document.body.classList.add('has-cursor');
+      }
+    }, {passive:true});
+    document.querySelectorAll('a, button, .project-tile').forEach(function(el) {
+      el.addEventListener('mouseenter', function() { dot.classList.add('expand'); });
+      el.addEventListener('mouseleave', function() { dot.classList.remove('expand'); });
+    });
+  }
+</script>
+</body>
+</html>
