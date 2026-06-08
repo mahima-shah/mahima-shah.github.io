@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Zines, Mahima Shah</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; font-size: 16px; }
+
+    :root {
+      --bg:          #f5f5f7;
+      --bg-card:     rgba(255,255,255,0.68);
+      --bg-nav:      rgba(245,245,247,0.75);
+      --bg-tint:     rgba(176,80,48,0.04);
+      --border:      rgba(0,0,0,0.08);
+      --text:        #1d1d1f;
+      --text-2:      #515154;
+      --text-3:      #86868b;
+      --accent:      #B05030;
+      --accent-hi:   #C86040;
+      --accent-dim:  rgba(176,80,48,0.09);
+      --accent-tag:  rgba(176,80,48,0.16);
+      --shadow-sm:   0 2px 16px rgba(0,0,0,0.06);
+      --shadow-md:   0 4px 32px rgba(0,0,0,0.09);
+      --shadow-lg:   0 20px 60px rgba(0,0,0,0.11);
+      --blur:        blur(24px);
+      --radius:      18px;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg:          #000000;
+        --bg-card:     rgba(28,28,30,0.82);
+        --bg-nav:      rgba(0,0,0,0.75);
+        --bg-tint:     rgba(212,114,78,0.07);
+        --border:      rgba(255,255,255,0.1);
+        --text:        #f5f5f7;
+        --text-2:      #a1a1a6;
+        --text-3:      #636366;
+        --accent:      #D4724E;
+        --accent-hi:   #E08060;
+        --accent-dim:  rgba(212,114,78,0.12);
+        --accent-tag:  rgba(212,114,78,0.2);
+        --shadow-sm:   0 2px 16px rgba(0,0,0,0.35);
+        --shadow-md:   0 4px 32px rgba(0,0,0,0.45);
+        --shadow-lg:   0 20px 60px rgba(0,0,0,0.65);
+      }
+    }
+
+    body { background:var(--bg); color:var(--text); font-family:'DM Sans',-apple-system,sans-serif; font-weight:300; line-height:1.6; overflow-x:hidden; -webkit-font-smoothing:antialiased; }
+
+    #cdot { display:none; position:fixed; width:9px; height:9px; border-radius:50%; background:var(--accent); pointer-events:none; z-index:9999; opacity:0; transform:translate(-50%,-50%); transition:width .18s,height .18s,opacity .15s; left:-100px; top:-100px; }
+    @media (pointer:fine) { #cdot { display:block; } }
+    body.has-cursor { cursor:none; }
+    body.has-cursor a, body.has-cursor button { cursor:none; }
+    #cdot.expand { width:26px; height:26px; opacity:0.15; }
+
+    nav { position:fixed; top:0; left:0; right:0; z-index:800; height:52px; display:flex; align-items:center; justify-content:space-between; padding:0 52px; background:var(--bg-nav); backdrop-filter:var(--blur); -webkit-backdrop-filter:var(--blur); border-bottom:1px solid var(--border); }
+    @media (max-width:600px) { nav { padding:0 22px; } }
+    .nav-links { display:flex; gap:36px; list-style:none; align-items:center; }
+    .nav-links a { font-size:0.78rem; font-weight:400; letter-spacing:0.04em; color:var(--text-3); text-decoration:none; position:relative; transition:color 0.2s; }
+    .nav-links a::after { content:''; position:absolute; bottom:-2px; left:0; width:0; height:1px; background:var(--accent); transition:width 0.25s cubic-bezier(0.16,1,0.3,1); }
+    .nav-links a:hover { color:var(--text); }
+    .nav-links a:hover::after { width:100%; }
+    .nav-back { display:inline-flex; align-items:center; gap:6px; font-size:0.78rem; font-weight:400; letter-spacing:0.04em; color:var(--text-3); text-decoration:none; transition:color 0.2s; }
+    .nav-back:hover { color:var(--accent); }
+    .nav-back svg { transition:transform 0.2s; }
+    .nav-back:hover svg { transform:translateX(-3px); }
+
+    .page { padding-top:52px; }
+    .container { max-width:1100px; margin:0 auto; padding:0 40px; }
+    @media (max-width:600px) { .container { padding:0 22px; } }
+
+    /* HERO */
+    .cs-hero { padding:80px 40px 72px; border-bottom:1px solid var(--border); position:relative; overflow:hidden; }
+    .cs-hero::before { content:''; position:absolute; inset:0; background:radial-gradient(ellipse at 70% 50%, var(--accent-dim), transparent 65%); pointer-events:none; }
+    .cs-hero-inner { max-width:1100px; margin:0 auto; position:relative; z-index:1; }
+    @media (max-width:600px) { .cs-hero { padding:60px 22px 52px; } }
+    .cs-tag { display:inline-block; font-size:0.64rem; font-weight:500; letter-spacing:0.16em; text-transform:uppercase; color:var(--accent); background:var(--accent-dim); border:1px solid var(--accent-tag); padding:4px 12px; border-radius:100px; margin-bottom:20px; }
+    .cs-title { font-family:'DM Serif Display',Georgia,serif; font-size:clamp(2.8rem,7vw,5.5rem); font-weight:600; line-height:1.0; letter-spacing:-0.02em; color:var(--text); margin-bottom:20px; }
+    .cs-subtitle { font-size:clamp(1rem,2vw,1.15rem); color:var(--text-2); line-height:1.7; max-width:600px; }
+    .cs-meta { display:flex; flex-wrap:wrap; gap:32px; padding-top:36px; border-top:1px solid var(--border); margin-top:36px; }
+    .cs-meta-item { display:flex; flex-direction:column; gap:4px; }
+    .cs-meta-label { font-size:0.62rem; font-weight:500; letter-spacing:0.16em; text-transform:uppercase; color:var(--text-3); }
+    .cs-meta-value { font-size:0.88rem; font-weight:400; color:var(--text); }
+
+    /* SECTIONS */
+    .cs-section { padding:80px 40px; border-bottom:1px solid var(--border); }
+    .cs-section:last-of-type { border-bottom:none; }
+    .container-inner { max-width:1100px; margin:0 auto; }
+    @media (max-width:600px) { .cs-section { padding:60px 22px; } }
+    .section-label { display:inline-block; font-size:0.62rem; font-weight:500; letter-spacing:0.18em; text-transform:uppercase; color:var(--accent); margin-bottom:12px; }
+    .section-num { font-size:0.62rem; font-weight:400; letter-spacing:0.1em; color:var(--text-3); margin-right:10px; }
+    .section-heading { font-family:'DM Serif Display',Georgia,serif; font-size:clamp(1.8rem,4vw,2.8rem); font-weight:500; line-height:1.12; letter-spacing:-0.015em; color:var(--text); margin-bottom:24px; }
+    .section-heading em { font-style:italic; color:var(--accent); }
+    .body-text { font-size:1rem; color:var(--text-2); line-height:1.82; max-width:680px; }
+    .body-text + .body-text { margin-top:14px; }
+
+    /* TRIO INTRO CARDS */
+    .zine-trio { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-top:40px; }
+    @media (max-width:700px) { .zine-trio { grid-template-columns:1fr; } }
+    .trio-card { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius); padding:24px 22px; backdrop-filter:var(--blur); display:flex; flex-direction:column; gap:8px; }
+    .trio-num { font-size:0.6rem; font-weight:500; letter-spacing:0.16em; text-transform:uppercase; color:var(--text-3); }
+    .trio-name { font-family:'DM Serif Display',Georgia,serif; font-size:1.05rem; font-weight:500; color:var(--text); }
+    .trio-desc { font-size:0.82rem; color:var(--text-2); line-height:1.65; }
+
+    /* FLIPBOOK */
+    .flipbook-wrap { margin-top:40px; }
+    .flipbook { position:relative; max-width:480px; }
+
+    .book-stage {
+      position:relative;
+      width:100%;
+      aspect-ratio:3/4;
+      perspective:1400px;
+      margin:0 auto 0;
+      border-radius:12px;
+      overflow:hidden;
+      box-shadow: 6px 8px 40px rgba(0,0,0,0.18), 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .book-page {
+      position:absolute;
+      inset:0;
+      background:var(--bg-card);
+      backface-visibility:hidden;
+      display:flex; align-items:center; justify-content:center;
+    }
+    .book-page img {
+      width:100%; height:100%;
+      object-fit:cover;
+      display:block;
+    }
+    .page-placeholder {
+      width:100%; height:100%;
+      display:flex; flex-direction:column; align-items:center; justify-content:center;
+      gap:12px;
+      background: linear-gradient(145deg, var(--bg-card), var(--accent-dim));
+    }
+    .page-placeholder-num {
+      font-family:'DM Serif Display',Georgia,serif;
+      font-size:3.5rem; font-weight:500;
+      color:var(--accent); opacity:0.3; line-height:1;
+    }
+    .page-placeholder-label {
+      font-size:0.68rem; font-weight:500; letter-spacing:0.14em; text-transform:uppercase;
+      color:var(--text-3);
+    }
+
+    .book-shadow {
+      width:80%; height:14px;
+      background:radial-gradient(ellipse,rgba(0,0,0,0.14) 0%,transparent 70%);
+      margin:0 auto 4px;
+      border-radius:50%;
+    }
+
+    .flipbook-controls {
+      display:flex; align-items:center; justify-content:center; gap:16px;
+      margin-top:18px;
+    }
+    .flip-btn {
+      width:40px; height:40px; border-radius:50%;
+      background:var(--bg-card); border:1px solid var(--border);
+      display:flex; align-items:center; justify-content:center;
+      color:var(--text-2);
+      transition:background 0.2s, border-color 0.2s, color 0.2s, transform 0.2s;
+      flex-shrink:0; cursor:pointer;
+    }
+    .flip-btn:hover:not(:disabled) { background:var(--accent-dim); border-color:var(--accent-tag); color:var(--accent); transform:scale(1.08); }
+    .flip-btn:disabled { opacity:0.3; pointer-events:none; }
+    .flip-counter {
+      font-family:'DM Serif Display',Georgia,serif;
+      font-size:0.95rem; color:var(--text-3);
+      min-width:72px; text-align:center; user-select:none;
+    }
+    .flip-counter span { color:var(--text); font-weight:500; }
+    .page-label-strip {
+      text-align:center; margin-top:10px;
+      font-size:0.7rem; font-weight:400; letter-spacing:0.08em;
+      color:var(--text-3); min-height:1.2em;
+    }
+    .flipbook-dots {
+      display:flex; gap:6px; justify-content:center; margin-top:12px; flex-wrap:wrap;
+    }
+    .flip-dot {
+      width:6px; height:6px; border-radius:50%;
+      background:var(--border);
+      transition:background 0.2s, transform 0.2s; cursor:pointer;
+    }
+    .flip-dot.active { background:var(--accent); transform:scale(1.35); }
+
+    /* PULL QUOTE */
+    .pull-quote { margin:40px 0; padding:28px 32px; border-left:3px solid var(--accent); background:var(--bg-tint); border-radius:0 var(--radius) var(--radius) 0; }
+    .pull-quote p { font-family:'DM Serif Display',Georgia,serif; font-style:italic; font-size:1.15rem; color:var(--text); line-height:1.6; margin-bottom:8px; }
+    .pull-quote cite { font-size:0.75rem; font-weight:400; letter-spacing:0.06em; color:var(--text-3); font-style:normal; }
+
+    /* NEXT */
+    .next-project { padding:72px 40px; text-align:center; border-top:1px solid var(--border); }
+    .next-label { font-size:0.64rem; font-weight:500; letter-spacing:0.18em; text-transform:uppercase; color:var(--text-3); margin-bottom:12px; }
+    .next-title { font-family:'DM Serif Display',Georgia,serif; font-size:clamp(1.8rem,4vw,2.8rem); font-weight:500; color:var(--text); margin-bottom:24px; }
+    .next-link { display:inline-flex; align-items:center; gap:8px; font-size:0.82rem; font-weight:400; color:var(--text); text-decoration:none; transition:gap 0.25s; }
+    .next-link:hover { gap:14px; }
+    .next-link-arrow { width:30px; height:30px; border-radius:50%; background:var(--accent); display:flex; align-items:center; justify-content:center; transition:transform 0.25s; }
+    .next-link:hover .next-link-arrow { transform:scale(1.1); }
+
+    footer { border-top:1px solid var(--border); padding:48px 40px 36px; text-align:center; }
+    .foot-inner { max-width:1100px; margin:0 auto; }
+    .foot-name { font-family:'DM Serif Display',Georgia,serif; font-size:1.5rem; font-weight:500; color:var(--text); margin-bottom:4px; }
+    .foot-sub { font-family:'DM Serif Display',Georgia,serif; font-style:italic; font-weight:300; font-size:0.9rem; color:var(--text-3); margin-bottom:24px; }
+    .foot-links { display:flex; gap:28px; justify-content:center; list-style:none; flex-wrap:wrap; margin-bottom:20px; }
+    .foot-links a { font-size:0.78rem; font-weight:400; letter-spacing:0.04em; color:var(--text-2); text-decoration:none; transition:color 0.2s; }
+    .foot-links a:hover { color:var(--accent); }
+    .foot-copy { font-size:0.64rem; color:var(--text-3); letter-spacing:0.06em; }
+
+    .reveal { opacity:1; transform:none; }
+    .delay-1 { transition-delay:0.08s; }
+    .delay-2 { transition-delay:0.18s; }
+    .delay-3 { transition-delay:0.28s; }
+  </style>
+</head>
+<body>
+<div id="cdot"></div>
+<div class="page">
+
+  <nav>
+    <a href="index.html" class="nav-back">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+        <path d="M9 2L4 7l5 5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      Back
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html#about">About</a></li>
+      <li><a href="index.html#work">Work</a></li>
+      <li><a href="index.html#contact">Contact</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <header class="cs-hero">
+    <div class="cs-hero-inner">
+      <span class="cs-tag reveal">Zine Making</span>
+      <h1 class="cs-title reveal delay-1">Zines</h1>
+      <p class="cs-subtitle reveal delay-2">Three zines, three forms. A personal one, a fan one, and a story one. Each uses the format differently but they all share the same logic: make something small that says something real.</p>
+      <div class="cs-meta reveal delay-3">
+        <div class="cs-meta-item">
+          <span class="cs-meta-label">Zines</span>
+          <span class="cs-meta-value">3</span>
+        </div>
+        <div class="cs-meta-item">
+          <span class="cs-meta-label">Forms</span>
+          <span class="cs-meta-value">Perzine, Fanzine, Story Zine</span>
+        </div>
+        <div class="cs-meta-item">
+          <span class="cs-meta-label">Role</span>
+          <span class="cs-meta-value">Writer, Designer, Maker</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- 01 OVERVIEW -->
+  <section class="cs-section">
+    <div class="container-inner container">
+      <span class="section-label reveal"><span class="section-num">01</span>Overview</span>
+      <h2 class="section-heading reveal delay-1">Three zines, three voices.</h2>
+      <p class="body-text reveal delay-2">Zines are a form built on directness. No editor, no pitch, no minimum word count. You make it, you fold it, you put it out. The constraint is the medium: a small format that has to say something worth keeping.</p>
+      <p class="body-text reveal delay-2">Each of the three approaches that freedom differently. The perzine is the most personal, it exists to say something true about living between two places. The fanzine is pure enthusiasm compressed into pages about a hobby I genuinely love. The story zine is the most crafted, using the format as a scrapbook for a moment I never witnessed but feel like I know.</p>
+
+      <div class="zine-trio reveal delay-2">
+        <div class="trio-card">
+          <span class="trio-num">01 &nbsp;/ Perzine</span>
+          <span class="trio-name">Untitled</span>
+          <p class="trio-desc">8 pages on identity, belonging, and the specific texture of living between India and the US.</p>
+        </div>
+        <div class="trio-card">
+          <span class="trio-num">02 &nbsp;/ Fanzine</span>
+          <span class="trio-name">Locked</span>
+          <p class="trio-desc">12 pages on escape rooms: the design, the logic, the feeling of getting out with a minute to spare.</p>
+        </div>
+        <div class="trio-card">
+          <span class="trio-num">03 &nbsp;/ Story Zine</span>
+          <span class="trio-name">A Monsoon Wedding</span>
+          <p class="trio-desc">12 pages reconstructing my parents' wedding from photographs, memory, and the details you only get from asking.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 02 PERZINE -->
+  <section class="cs-section">
+    <div class="container-inner container">
+      <span class="section-label reveal"><span class="section-num">02</span>Perzine</span>
+      <h2 class="section-heading reveal delay-1">Untitled.</h2>
+      <p class="body-text reveal delay-2">The perzine moves through a single day split between two worlds. India wakes up to a 6 AM alarm and the rhythm of the house as white noise. The US wakes up to an 8:30 AM buzz and the particular silence of keeping headphones in. One morning starts with a silent buzz, the other begins with a scream of steam. Mumma's chai and snacks made with love on one side, coffee-to-go on the other.</p>
+      <p class="body-text reveal delay-2">By night, the streets in India are only just waking up. In the US, night is a quiet pause. The zine closes on a spread between both flags: "I belong to it all" on one page, "somewhere in between" on the other. Not a resolution. Just an honest place to land.</p>
+
+      <div class="flipbook-wrap reveal delay-2">
+        <div class="flipbook" id="flipbook-perzine">
+          <div class="book-stage" id="stage-perzine"></div>
+          <div class="book-shadow"></div>
+          <div class="page-label-strip" id="label-perzine">Page 1 of 8</div>
+          <div class="flipbook-controls">
+            <button class="flip-btn" id="prev-perzine" disabled aria-label="Previous page">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9 2L4 7l5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="flip-counter" id="counter-perzine"><span>1</span> / 8</div>
+            <button class="flip-btn" id="next-perzine" aria-label="Next page">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M5 2l5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+          </div>
+          <div class="flipbook-dots" id="dots-perzine"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 03 LOCKED -->
+  <section class="cs-section">
+    <div class="container-inner container">
+      <span class="section-label reveal"><span class="section-num">03</span>Fanzine</span>
+      <h2 class="section-heading reveal delay-1">Locked.</h2>
+      <p class="body-text reveal delay-2">Escape rooms are an underrated art form. Someone designed every object in that room to be noticed in a specific order, to carry just enough information without giving anything away. Locked is a fanzine about that craft: the puzzle design, the theatrics of the set, the specific anxiety of the countdown clock, and the way a good room makes you feel briefly like a different, smarter person.</p>
+      <p class="body-text reveal delay-2">Twelve pages because escape rooms always give you exactly enough time, and not a minute more.</p>
+
+      <div class="flipbook-wrap reveal delay-2">
+        <div class="flipbook" id="flipbook-locked">
+          <div class="book-stage" id="stage-locked"></div>
+          <div class="book-shadow"></div>
+          <div class="page-label-strip" id="label-locked">Page 1 of 12</div>
+          <div class="flipbook-controls">
+            <button class="flip-btn" id="prev-locked" disabled aria-label="Previous page">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9 2L4 7l5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="flip-counter" id="counter-locked"><span>1</span> / 12</div>
+            <button class="flip-btn" id="next-locked" aria-label="Next page">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M5 2l5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+          </div>
+          <div class="flipbook-dots" id="dots-locked"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 04 A MONSOON WEDDING -->
+  <section class="cs-section">
+    <div class="container-inner container">
+      <span class="section-label reveal"><span class="section-num">04</span>Story Zine</span>
+      <h2 class="section-heading reveal delay-1">A Monsoon Wedding.</h2>
+      <p class="body-text reveal delay-2">My parents got married in the monsoon season. I was not there. But I have seen the photos: the wet ground, the marigolds, the way the light looks different when it is raining and someone is getting dressed at the same time. There is a specific quality to those images that I have been trying to describe for a long time.</p>
+      <p class="body-text reveal delay-2">A Monsoon Wedding is built from those images and from the details you can only get from asking. It is an attempt to reconstruct a day I did not witness into something that feels like a memory. Not a family history. More like the version of a story that lives in the gap between what you know and what you can imagine.</p>
+
+      <div class="pull-quote reveal delay-2">
+        <p>A zine is not a book. It does not have to argue anything or resolve neatly. It just has to feel true while you are holding it.</p>
+      </div>
+
+      <div class="flipbook-wrap reveal delay-2">
+        <div class="flipbook" id="flipbook-monsoon">
+          <div class="book-stage" id="stage-monsoon"></div>
+          <div class="book-shadow"></div>
+          <div class="page-label-strip" id="label-monsoon">Page 1 of 12</div>
+          <div class="flipbook-controls">
+            <button class="flip-btn" id="prev-monsoon" disabled aria-label="Previous page">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9 2L4 7l5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="flip-counter" id="counter-monsoon"><span>1</span> / 12</div>
+            <button class="flip-btn" id="next-monsoon" aria-label="Next page">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M5 2l5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+          </div>
+          <div class="flipbook-dots" id="dots-monsoon"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- NEXT -->
+  <div class="next-project">
+    <p class="next-label reveal">Next project</p>
+    <h2 class="next-title reveal delay-1">Computing for the Arts</h2>
+    <a href="creative.html" class="next-link reveal delay-2">
+      View project
+      <span class="next-link-arrow">
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+          <path d="M2 6h8M6 2l4 4-4 4" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </span>
+    </a>
+  </div>
+
+  <footer>
+    <div class="foot-inner">
+      <p class="foot-name">Mahima Shah</p>
+      <p class="foot-sub">always learning</p>
+      <ul class="foot-links">
+        <li><a href="mailto:mahimashahxyz@gmail.com">Email</a></li>
+        <li><a href="https://www.linkedin.com/in/shahmahima/" target="_blank" rel="noopener">LinkedIn</a></li>
+        <li><a href="https://github.com/mahima-shah" target="_blank" rel="noopener">GitHub</a></li>
+        <li><a href="https://www.youtube.com/@mahimashah" target="_blank" rel="noopener">YouTube</a></li>
+      </ul>
+      <p class="foot-copy">2025 Mahima Shah &nbsp;&middot;&nbsp; Designed with intention</p>
+    </div>
+  </footer>
+
+</div>
+
+<script>
+function initFlipbook(id, totalPages, prefix) {
+  var stage    = document.getElementById('stage-' + id);
+  var prevBtn  = document.getElementById('prev-' + id);
+  var nextBtn  = document.getElementById('next-' + id);
+  var counter  = document.getElementById('counter-' + id);
+  var dotsWrap = document.getElementById('dots-' + id);
+  var labelEl  = document.getElementById('label-' + id);
+  var current  = 0;
+  var animating = false;
+
+  var pages = [];
+  for (var i = 0; i < totalPages; i++) {
+    var page = document.createElement('div');
+    page.className = 'book-page';
+    page.style.zIndex = i === 0 ? '10' : '1';
+    page.style.opacity = i === 0 ? '1' : '0';
+
+    var img = document.createElement('img');
+    img.alt = prefix + ' page ' + (i + 1);
+
+    var ph = document.createElement('div');
+    ph.className = 'page-placeholder';
+    var numStr = (i + 1 < 10 ? '0' : '') + (i + 1);
+    ph.innerHTML = '<span class="page-placeholder-num">' + numStr + '</span><span class="page-placeholder-label">' + prefix + ' &middot; page ' + (i + 1) + '</span>';
+
+    (function(placeholder, image, pageEl) {
+      image.onerror = function() {
+        image.style.display = 'none';
+        pageEl.appendChild(placeholder);
+      };
+    })(ph, img, page);
+
+    img.src = prefix + (i + 1) + '.jpg';
+    page.appendChild(img);
+    stage.appendChild(page);
+    pages.push(page);
+  }
+
+  var dots = [];
+  for (var j = 0; j < totalPages; j++) {
+    var dot = document.createElement('div');
+    dot.className = 'flip-dot' + (j === 0 ? ' active' : '');
+    (function(idx) { dot.addEventListener('click', function() { goTo(idx); }); })(j);
+    dotsWrap.appendChild(dot);
+    dots.push(dot);
+  }
+
+  function updateUI() {
+    counter.innerHTML = '<span>' + (current + 1) + '</span> / ' + totalPages;
+    labelEl.textContent = 'Page ' + (current + 1) + ' of ' + totalPages;
+    prevBtn.disabled = current === 0;
+    nextBtn.disabled = current === totalPages - 1;
+    dots.forEach(function(d, i) { d.classList.toggle('active', i === current); });
+  }
+
+  function goTo(idx) {
+    if (animating || idx === current || idx < 0 || idx >= totalPages) return;
+    animating = true;
+    var from = current;
+    var to = idx;
+    var dir = to > from ? 1 : -1;
+    var outPage = pages[from];
+    var inPage  = pages[to];
+
+    outPage.style.zIndex = '10';
+    inPage.style.zIndex  = '9';
+
+    // Animate out
+    outPage.style.transition = 'transform 0.25s cubic-bezier(0.55,0,1,0.45), opacity 0.25s ease';
+    outPage.style.transform  = dir > 0 ? 'perspective(1200px) rotateY(-80deg) scale(0.97)' : 'perspective(1200px) rotateY(80deg) scale(0.97)';
+    outPage.style.opacity    = '0';
+
+    // Set incoming off-screen
+    inPage.style.transition  = 'none';
+    inPage.style.transform   = dir > 0 ? 'perspective(1200px) rotateY(80deg) scale(0.97)' : 'perspective(1200px) rotateY(-80deg) scale(0.97)';
+    inPage.style.opacity     = '0';
+
+    setTimeout(function() {
+      inPage.style.transition = 'transform 0.25s cubic-bezier(0,0.55,0.45,1), opacity 0.25s ease';
+      inPage.style.transform  = 'none';
+      inPage.style.opacity    = '1';
+    }, 30);
+
+    setTimeout(function() {
+      current = to;
+      pages.forEach(function(p, i) {
+        p.style.transition = '';
+        p.style.transform  = '';
+        p.style.opacity    = i === current ? '1' : '0';
+        p.style.zIndex     = i === current ? '10' : '1';
+      });
+      updateUI();
+      animating = false;
+    }, 300);
+  }
+
+  prevBtn.addEventListener('click', function() { goTo(current - 1); });
+  nextBtn.addEventListener('click', function() { goTo(current + 1); });
+
+  // Keyboard: only when hovering this flipbook
+  var hovered = false;
+  var wrap = document.getElementById('flipbook-' + id);
+  if (wrap) {
+    wrap.addEventListener('mouseenter', function() { hovered = true; });
+    wrap.addEventListener('mouseleave', function() { hovered = false; });
+  }
+  document.addEventListener('keydown', function(e) {
+    if (!hovered) return;
+    if (e.key === 'ArrowRight') goTo(current + 1);
+    if (e.key === 'ArrowLeft')  goTo(current - 1);
+  });
+
+  // Swipe
+  var touchX = 0;
+  stage.addEventListener('touchstart', function(e) { touchX = e.touches[0].clientX; }, {passive:true});
+  stage.addEventListener('touchend', function(e) {
+    var dx = e.changedTouches[0].clientX - touchX;
+    if (Math.abs(dx) > 40) { dx < 0 ? goTo(current + 1) : goTo(current - 1); }
+  }, {passive:true});
+
+  updateUI();
+}
+
+initFlipbook('perzine', 8,  'perzine');
+initFlipbook('locked',  12, 'locked');
+initFlipbook('monsoon', 12, 'monsoon');
+
+// Scroll reveal
+var revEls = document.querySelectorAll('.reveal');
+revEls.forEach(function(el) { el.style.opacity='0'; el.style.transform='translateY(20px)'; });
+requestAnimationFrame(function() {
+  requestAnimationFrame(function() {
+    revEls.forEach(function(el) {
+      el.style.transition = 'opacity 0.7s cubic-bezier(0.16,1,0.3,1), transform 0.7s cubic-bezier(0.16,1,0.3,1)';
+    });
+    if (!('IntersectionObserver' in window)) {
+      revEls.forEach(function(el) { el.style.opacity='1'; el.style.transform='none'; });
+      return;
+    }
+    var io = new IntersectionObserver(function(entries) {
+      entries.forEach(function(e) {
+        if (e.isIntersecting) { e.target.style.opacity='1'; e.target.style.transform='none'; io.unobserve(e.target); }
+      });
+    }, { threshold:0.08, rootMargin:'0px 0px -40px 0px' });
+    revEls.forEach(function(el) { io.observe(el); });
+  });
+});
+
+// Cursor dot
+var dot = document.getElementById('cdot');
+if (dot && window.matchMedia('(pointer: fine)').matches) {
+  var active = false;
+  document.addEventListener('mousemove', function(e) {
+    dot.style.left = e.clientX + 'px';
+    dot.style.top  = e.clientY + 'px';
+    if (!active) { active=true; dot.style.opacity='1'; document.body.classList.add('has-cursor'); }
+  }, {passive:true});
+  document.querySelectorAll('a, button, .flip-dot').forEach(function(el) {
+    el.addEventListener('mouseenter', function() { dot.classList.add('expand'); });
+    el.addEventListener('mouseleave', function() { dot.classList.remove('expand'); });
+  });
+}
+</script>
+</body>
+</html>
