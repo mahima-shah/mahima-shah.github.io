@@ -8,45 +8,37 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet" />
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; font-size: 16px; }
+    *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+    html { scroll-behavior:smooth; }
 
     :root {
-      --bg:          #f5f5f7;
-      --bg-card:     rgba(255,255,255,0.68);
-      --bg-nav:      rgba(245,245,247,0.75);
-      --bg-tint:     rgba(176,80,48,0.04);
-      --border:      rgba(0,0,0,0.08);
-      --text:        #1d1d1f;
-      --text-2:      #515154;
-      --text-3:      #86868b;
-      --accent:      #B05030;
-      --accent-hi:   #C86040;
-      --accent-dim:  rgba(176,80,48,0.09);
-      --accent-tag:  rgba(176,80,48,0.16);
-      --shadow-sm:   0 2px 16px rgba(0,0,0,0.06);
-      --shadow-md:   0 4px 32px rgba(0,0,0,0.09);
-      --shadow-lg:   0 20px 60px rgba(0,0,0,0.11);
-      --blur:        blur(24px);
-      --radius:      18px;
+      --bg:         #f5f5f7;
+      --bg-card:    rgba(255,255,255,0.72);
+      --bg-nav:     rgba(245,245,247,0.75);
+      --bg-tint:    rgba(176,80,48,0.04);
+      --border:     rgba(0,0,0,0.08);
+      --text:       #1d1d1f;
+      --text-2:     #515154;
+      --text-3:     #86868b;
+      --accent:     #B05030;
+      --accent-dim: rgba(176,80,48,0.09);
+      --accent-tag: rgba(176,80,48,0.16);
+      --blur:       blur(24px);
+      --radius:     18px;
     }
-    @media (prefers-color-scheme: dark) {
+    @media (prefers-color-scheme:dark) {
       :root {
-        --bg:          #000000;
-        --bg-card:     rgba(28,28,30,0.82);
-        --bg-nav:      rgba(0,0,0,0.75);
-        --bg-tint:     rgba(212,114,78,0.07);
-        --border:      rgba(255,255,255,0.1);
-        --text:        #f5f5f7;
-        --text-2:      #a1a1a6;
-        --text-3:      #636366;
-        --accent:      #D4724E;
-        --accent-hi:   #E08060;
-        --accent-dim:  rgba(212,114,78,0.12);
-        --accent-tag:  rgba(212,114,78,0.2);
-        --shadow-sm:   0 2px 16px rgba(0,0,0,0.35);
-        --shadow-md:   0 4px 32px rgba(0,0,0,0.45);
-        --shadow-lg:   0 20px 60px rgba(0,0,0,0.65);
+        --bg:         #000;
+        --bg-card:    rgba(28,28,30,0.85);
+        --bg-nav:     rgba(0,0,0,0.75);
+        --bg-tint:    rgba(212,114,78,0.07);
+        --border:     rgba(255,255,255,0.1);
+        --text:       #f5f5f7;
+        --text-2:     #a1a1a6;
+        --text-3:     #636366;
+        --accent:     #D4724E;
+        --accent-dim: rgba(212,114,78,0.12);
+        --accent-tag: rgba(212,114,78,0.2);
       }
     }
 
@@ -58,19 +50,20 @@
     body.has-cursor a, body.has-cursor button { cursor:none; }
     #cdot.expand { width:26px; height:26px; opacity:0.15; }
 
+    /* NAV */
     nav { position:fixed; top:0; left:0; right:0; z-index:800; height:52px; display:flex; align-items:center; justify-content:space-between; padding:0 52px; background:var(--bg-nav); backdrop-filter:var(--blur); -webkit-backdrop-filter:var(--blur); border-bottom:1px solid var(--border); }
     @media (max-width:600px) { nav { padding:0 22px; } }
-    .nav-links { display:flex; gap:36px; list-style:none; align-items:center; }
+    .nav-links { display:flex; gap:36px; list-style:none; }
     .nav-links a { font-size:0.78rem; font-weight:400; letter-spacing:0.04em; color:var(--text-3); text-decoration:none; position:relative; transition:color 0.2s; }
     .nav-links a::after { content:''; position:absolute; bottom:-2px; left:0; width:0; height:1px; background:var(--accent); transition:width 0.25s cubic-bezier(0.16,1,0.3,1); }
     .nav-links a:hover { color:var(--text); }
     .nav-links a:hover::after { width:100%; }
-    .nav-back { display:inline-flex; align-items:center; gap:6px; font-size:0.78rem; font-weight:400; letter-spacing:0.04em; color:var(--text-3); text-decoration:none; transition:color 0.2s; }
+    .nav-back { display:inline-flex; align-items:center; gap:6px; font-size:0.78rem; color:var(--text-3); text-decoration:none; transition:color 0.2s; }
     .nav-back:hover { color:var(--accent); }
     .nav-back svg { transition:transform 0.2s; }
     .nav-back:hover svg { transform:translateX(-3px); }
 
-    .page { padding-top:52px; }
+    .page-wrap { padding-top:52px; }
     .container { max-width:1100px; margin:0 auto; padding:0 40px; }
     @media (max-width:600px) { .container { padding:0 22px; } }
 
@@ -85,21 +78,18 @@
     .cs-meta { display:flex; flex-wrap:wrap; gap:32px; padding-top:36px; border-top:1px solid var(--border); margin-top:36px; }
     .cs-meta-item { display:flex; flex-direction:column; gap:4px; }
     .cs-meta-label { font-size:0.62rem; font-weight:500; letter-spacing:0.16em; text-transform:uppercase; color:var(--text-3); }
-    .cs-meta-value { font-size:0.88rem; font-weight:400; color:var(--text); }
+    .cs-meta-value { font-size:0.88rem; color:var(--text); }
 
     /* SECTIONS */
     .cs-section { padding:80px 40px; border-bottom:1px solid var(--border); }
-    .cs-section:last-of-type { border-bottom:none; }
     .container-inner { max-width:1100px; margin:0 auto; }
     @media (max-width:600px) { .cs-section { padding:60px 22px; } }
     .section-label { display:inline-block; font-size:0.62rem; font-weight:500; letter-spacing:0.18em; text-transform:uppercase; color:var(--accent); margin-bottom:12px; }
-    .section-num { font-size:0.62rem; font-weight:400; letter-spacing:0.1em; color:var(--text-3); margin-right:10px; }
+    .section-num { font-size:0.62rem; letter-spacing:0.1em; color:var(--text-3); margin-right:10px; }
     .section-heading { font-family:'DM Serif Display',Georgia,serif; font-size:clamp(1.8rem,4vw,2.8rem); font-weight:500; line-height:1.12; letter-spacing:-0.015em; color:var(--text); margin-bottom:24px; }
-    .section-heading em { font-style:italic; color:var(--accent); }
     .body-text { font-size:1rem; color:var(--text-2); line-height:1.82; max-width:680px; }
     .body-text + .body-text { margin-top:14px; }
 
-    /* TRIO INTRO CARDS */
     .zine-trio { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-top:40px; }
     @media (max-width:700px) { .zine-trio { grid-template-columns:1fr; } }
     .trio-card { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius); padding:24px 22px; backdrop-filter:var(--blur); display:flex; flex-direction:column; gap:8px; }
@@ -107,101 +97,142 @@
     .trio-name { font-family:'DM Serif Display',Georgia,serif; font-size:1.05rem; font-weight:500; color:var(--text); }
     .trio-desc { font-size:0.82rem; color:var(--text-2); line-height:1.65; }
 
-    /* FLIPBOOK */
-    .flipbook-wrap { margin-top:40px; }
-    .flipbook { position:relative; max-width:480px; }
+    .pull-quote { margin:40px 0 0; padding:28px 32px; border-left:3px solid var(--accent); background:var(--bg-tint); border-radius:0 var(--radius) var(--radius) 0; }
+    .pull-quote p { font-family:'DM Serif Display',Georgia,serif; font-style:italic; font-size:1.15rem; color:var(--text); line-height:1.6; }
 
-    .book-stage {
-      position:relative;
-      width:100%;
-      aspect-ratio:3/4;
-      perspective:1400px;
-      margin:0 auto 0;
-      border-radius:12px;
-      overflow:hidden;
-      box-shadow: 6px 8px 40px rgba(0,0,0,0.18), 0 2px 8px rgba(0,0,0,0.1);
-    }
+    /* ═══════════════════════════
+       PORTRAIT BOOK VIEWER
+       Open book = 2 A4 pages side by side
+       Ratio: two 0.707 pages = 1.414:1 (A4 landscape)
+       State machine:
+         CLOSED  — cover fills full width (single page, centered)
+         OPEN    — left + right pages visible
+         CLOSING — last page fills full width
+    ════════════════════════════ */
+    .book-wrap { margin-top:48px; }
 
-    .book-page {
-      position:absolute;
-      inset:0;
-      background:var(--bg-card);
-      backface-visibility:hidden;
-      display:flex; align-items:center; justify-content:center;
-    }
-    .book-page img {
-      width:100%; height:100%;
-      object-fit:cover;
-      display:block;
-    }
-    .page-placeholder {
-      width:100%; height:100%;
-      display:flex; flex-direction:column; align-items:center; justify-content:center;
-      gap:12px;
-      background: linear-gradient(145deg, var(--bg-card), var(--accent-dim));
-    }
-    .page-placeholder-num {
-      font-family:'DM Serif Display',Georgia,serif;
-      font-size:3.5rem; font-weight:500;
-      color:var(--accent); opacity:0.3; line-height:1;
-    }
-    .page-placeholder-label {
-      font-size:0.68rem; font-weight:500; letter-spacing:0.14em; text-transform:uppercase;
-      color:var(--text-3);
+    /* Outer shell — always the open-book width */
+    .book-outer {
+      position: relative;
+      width: 100%;
+      max-width: 780px;   /* comfortable reading size */
+      margin: 0 auto;
+      /* open aspect: two A4 pages = 2*(1/√2) : 1 = √2 : 1 ≈ 1.414 */
+      aspect-ratio: 1.414 / 1;
+      perspective: 2200px;
     }
 
-    .book-shadow {
-      width:80%; height:14px;
-      background:radial-gradient(ellipse,rgba(0,0,0,0.14) 0%,transparent 70%);
-      margin:0 auto 4px;
-      border-radius:50%;
+    /* Left page — static, always shows "current left" */
+    .bp-left {
+      position: absolute;
+      top: 0; left: 0;
+      width: 50%; height: 100%;
+      overflow: hidden;
+      border-radius: 4px 0 0 4px;
+      background: var(--bg-card);
+      box-shadow: inset -4px 0 12px rgba(0,0,0,0.06);
+      z-index: 4;
+      transition: opacity 0.3s;
+    }
+    .bp-left img { width:100%; height:100%; object-fit:cover; display:block; }
+
+    /* Right half — the page that flips */
+    .bp-right {
+      position: absolute;
+      top: 0; right: 0;
+      width: 50%; height: 100%;
+      transform-origin: left center;
+      transform-style: preserve-3d;
+      z-index: 10;
+      will-change: transform;
     }
 
-    .flipbook-controls {
-      display:flex; align-items:center; justify-content:center; gap:16px;
-      margin-top:18px;
+    .bp-right-face {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      border-radius: 0 4px 4px 0;
+      background: var(--bg-card);
+      backface-visibility: hidden;
     }
-    .flip-btn {
-      width:40px; height:40px; border-radius:50%;
-      background:var(--bg-card); border:1px solid var(--border);
-      display:flex; align-items:center; justify-content:center;
-      color:var(--text-2);
-      transition:background 0.2s, border-color 0.2s, color 0.2s, transform 0.2s;
-      flex-shrink:0; cursor:pointer;
+    .bp-right-face img { width:100%; height:100%; object-fit:cover; display:block; }
+    /* subtle right-edge shadow */
+    .bp-right-face::after { content:''; position:absolute; top:0; right:0; width:28px; height:100%; background:linear-gradient(to left,rgba(0,0,0,0.07),transparent); pointer-events:none; }
+
+    /* Cover overlay — single page centred over the full book width */
+    .bp-cover {
+      position: absolute;
+      top: 0;
+      left: 25%; /* centered = start at 25% of open-book width */
+      width: 50%;
+      height: 100%;
+      overflow: hidden;
+      border-radius: 4px;
+      background: var(--bg-card);
+      box-shadow: 0 8px 40px rgba(0,0,0,0.18), 0 2px 8px rgba(0,0,0,0.1);
+      z-index: 20;
+      transition: opacity 0.35s ease, transform 0.35s ease;
     }
+    .bp-cover img { width:100%; height:100%; object-fit:cover; display:block; }
+    .bp-cover.hidden { opacity:0; pointer-events:none; transform:scale(0.97); }
+
+    /* Spine shadow */
+    .bp-spine {
+      position: absolute;
+      top: 3%; bottom: 3%; left: 50%;
+      width: 2px;
+      transform: translateX(-50%);
+      background: linear-gradient(to bottom, transparent, rgba(0,0,0,0.2) 20%, rgba(0,0,0,0.3) 50%, rgba(0,0,0,0.2) 80%, transparent);
+      pointer-events: none;
+      z-index: 25;
+      transition: opacity 0.35s;
+    }
+    .bp-spine.hidden { opacity: 0; }
+
+    /* Placeholder */
+    .ph { width:100%; height:100%; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; background:linear-gradient(145deg,var(--bg-card),var(--accent-dim)); }
+    .ph-num { font-family:'DM Serif Display',Georgia,serif; font-size:2.8rem; color:var(--accent); opacity:0.28; line-height:1; }
+    .ph-label { font-size:0.62rem; font-weight:500; letter-spacing:0.14em; text-transform:uppercase; color:var(--text-3); }
+
+    /* ═══════════════════════════
+       LANDSCAPE BOOK VIEWER
+       Single page, ratio ~1.55:1
+    ════════════════════════════ */
+    .book-landscape {
+      position: relative;
+      width: 100%;
+      max-width: 900px;
+      margin: 48px auto 0;
+      aspect-ratio: 1.553 / 1;
+      border-radius: 6px;
+      overflow: hidden;
+      background: var(--bg-card);
+      box-shadow: 0 8px 48px rgba(0,0,0,0.13), 0 2px 8px rgba(0,0,0,0.07);
+    }
+    .bl-page { position:absolute; inset:0; }
+    .bl-page img { width:100%; height:100%; object-fit:cover; display:block; }
+
+    /* ═══════════════════════════
+       SHARED CONTROLS
+    ════════════════════════════ */
+    .book-shadow { width:75%; height:18px; background:radial-gradient(ellipse,rgba(0,0,0,0.12) 0%,transparent 70%); margin:0 auto 4px; border-radius:50%; }
+
+    .book-controls { display:flex; align-items:center; justify-content:center; gap:20px; margin-top:20px; }
+    .flip-btn { width:42px; height:42px; border-radius:50%; background:var(--bg-card); border:1px solid var(--border); display:flex; align-items:center; justify-content:center; color:var(--text-2); cursor:pointer; transition:background 0.2s,border-color 0.2s,color 0.2s,transform 0.18s; flex-shrink:0; }
     .flip-btn:hover:not(:disabled) { background:var(--accent-dim); border-color:var(--accent-tag); color:var(--accent); transform:scale(1.08); }
-    .flip-btn:disabled { opacity:0.3; pointer-events:none; }
-    .flip-counter {
-      font-family:'DM Serif Display',Georgia,serif;
-      font-size:0.95rem; color:var(--text-3);
-      min-width:72px; text-align:center; user-select:none;
-    }
-    .flip-counter span { color:var(--text); font-weight:500; }
-    .page-label-strip {
-      text-align:center; margin-top:10px;
-      font-size:0.7rem; font-weight:400; letter-spacing:0.08em;
-      color:var(--text-3); min-height:1.2em;
-    }
-    .flipbook-dots {
-      display:flex; gap:6px; justify-content:center; margin-top:12px; flex-wrap:wrap;
-    }
-    .flip-dot {
-      width:6px; height:6px; border-radius:50%;
-      background:var(--border);
-      transition:background 0.2s, transform 0.2s; cursor:pointer;
-    }
-    .flip-dot.active { background:var(--accent); transform:scale(1.35); }
-
-    /* PULL QUOTE */
-    .pull-quote { margin:40px 0; padding:28px 32px; border-left:3px solid var(--accent); background:var(--bg-tint); border-radius:0 var(--radius) var(--radius) 0; }
-    .pull-quote p { font-family:'DM Serif Display',Georgia,serif; font-style:italic; font-size:1.15rem; color:var(--text); line-height:1.6; margin-bottom:8px; }
-    .pull-quote cite { font-size:0.75rem; font-weight:400; letter-spacing:0.06em; color:var(--text-3); font-style:normal; }
+    .flip-btn:disabled { opacity:0.28; pointer-events:none; }
+    .flip-counter { font-family:'DM Serif Display',Georgia,serif; font-size:1rem; color:var(--text-3); min-width:90px; text-align:center; user-select:none; }
+    .flip-counter span { color:var(--text); }
+    .book-dots { display:flex; gap:6px; justify-content:center; margin-top:12px; flex-wrap:wrap; }
+    .flip-dot { width:6px; height:6px; border-radius:50%; background:var(--border); transition:background 0.2s,transform 0.2s; cursor:pointer; }
+    .flip-dot.active { background:var(--accent); transform:scale(1.4); }
+    .book-hint { text-align:center; margin-top:9px; font-size:0.65rem; color:var(--text-3); letter-spacing:0.06em; }
 
     /* NEXT */
     .next-project { padding:72px 40px; text-align:center; border-top:1px solid var(--border); }
     .next-label { font-size:0.64rem; font-weight:500; letter-spacing:0.18em; text-transform:uppercase; color:var(--text-3); margin-bottom:12px; }
     .next-title { font-family:'DM Serif Display',Georgia,serif; font-size:clamp(1.8rem,4vw,2.8rem); font-weight:500; color:var(--text); margin-bottom:24px; }
-    .next-link { display:inline-flex; align-items:center; gap:8px; font-size:0.82rem; font-weight:400; color:var(--text); text-decoration:none; transition:gap 0.25s; }
+    .next-link { display:inline-flex; align-items:center; gap:8px; font-size:0.82rem; color:var(--text); text-decoration:none; transition:gap 0.25s; }
     .next-link:hover { gap:14px; }
     .next-link-arrow { width:30px; height:30px; border-radius:50%; background:var(--accent); display:flex; align-items:center; justify-content:center; transition:transform 0.25s; }
     .next-link:hover .next-link-arrow { transform:scale(1.1); }
@@ -211,7 +242,7 @@
     .foot-name { font-family:'DM Serif Display',Georgia,serif; font-size:1.5rem; font-weight:500; color:var(--text); margin-bottom:4px; }
     .foot-sub { font-family:'DM Serif Display',Georgia,serif; font-style:italic; font-weight:300; font-size:0.9rem; color:var(--text-3); margin-bottom:24px; }
     .foot-links { display:flex; gap:28px; justify-content:center; list-style:none; flex-wrap:wrap; margin-bottom:20px; }
-    .foot-links a { font-size:0.78rem; font-weight:400; letter-spacing:0.04em; color:var(--text-2); text-decoration:none; transition:color 0.2s; }
+    .foot-links a { font-size:0.78rem; letter-spacing:0.04em; color:var(--text-2); text-decoration:none; transition:color 0.2s; }
     .foot-links a:hover { color:var(--accent); }
     .foot-copy { font-size:0.64rem; color:var(--text-3); letter-spacing:0.06em; }
 
@@ -219,17 +250,24 @@
     .delay-1 { transition-delay:0.08s; }
     .delay-2 { transition-delay:0.18s; }
     .delay-3 { transition-delay:0.28s; }
+
+    @media (max-width:600px) {
+      /* on mobile, portrait book shows single page full width */
+      .bp-left  { display:none; }
+      .bp-cover { left:0; width:100%; }
+      .bp-right { width:100%; }
+      .bp-right-face { border-radius:4px; }
+      .bp-spine { display:none; }
+    }
   </style>
 </head>
 <body>
 <div id="cdot"></div>
-<div class="page">
+<div class="page-wrap">
 
   <nav>
     <a href="index.html" class="nav-back">
-      <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-        <path d="M9 2L4 7l5 5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9 2L4 7l5 5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
       Back
     </a>
     <ul class="nav-links">
@@ -239,25 +277,15 @@
     </ul>
   </nav>
 
-  <!-- HERO -->
   <header class="cs-hero">
     <div class="cs-hero-inner">
       <span class="cs-tag reveal">Zine Making</span>
       <h1 class="cs-title reveal delay-1">Zines</h1>
       <p class="cs-subtitle reveal delay-2">Three zines, three forms. A personal one, a fan one, and a story one. Each uses the format differently but they all share the same logic: make something small that says something real.</p>
       <div class="cs-meta reveal delay-3">
-        <div class="cs-meta-item">
-          <span class="cs-meta-label">Zines</span>
-          <span class="cs-meta-value">3</span>
-        </div>
-        <div class="cs-meta-item">
-          <span class="cs-meta-label">Forms</span>
-          <span class="cs-meta-value">Perzine, Fanzine, Story Zine</span>
-        </div>
-        <div class="cs-meta-item">
-          <span class="cs-meta-label">Role</span>
-          <span class="cs-meta-value">Writer, Designer, Maker</span>
-        </div>
+        <div class="cs-meta-item"><span class="cs-meta-label">Zines</span><span class="cs-meta-value">3</span></div>
+        <div class="cs-meta-item"><span class="cs-meta-label">Forms</span><span class="cs-meta-value">Perzine, Fanzine, Story Zine</span></div>
+        <div class="cs-meta-item"><span class="cs-meta-label">Role</span><span class="cs-meta-value">Writer, Designer, Maker</span></div>
       </div>
     </div>
   </header>
@@ -268,21 +296,20 @@
       <span class="section-label reveal"><span class="section-num">01</span>Overview</span>
       <h2 class="section-heading reveal delay-1">Three zines, three voices.</h2>
       <p class="body-text reveal delay-2">Zines are a form built on directness. No editor, no pitch, no minimum word count. You make it, you fold it, you put it out. The constraint is the medium: a small format that has to say something worth keeping.</p>
-      <p class="body-text reveal delay-2">Each of the three approaches that freedom differently. The perzine is the most personal, it exists to say something true about living between two places. The fanzine is pure enthusiasm compressed into pages about a hobby I genuinely love. The story zine is the most crafted, using the format as a scrapbook for a moment I never witnessed but feel like I know.</p>
-
-      <div class="zine-trio reveal delay-2">
+      <p class="body-text reveal delay-2">Each of the three approaches that freedom differently. The perzine exists to say something true about living between two places. The fanzine is pure enthusiasm compressed into pages about a hobby I genuinely love. The story zine is the most crafted, using the format as a scrapbook for a moment I never witnessed but feel like I know.</p>
+      <div class="zine-trio reveal delay-3">
         <div class="trio-card">
-          <span class="trio-num">01 &nbsp;/ Perzine</span>
+          <span class="trio-num">01 / Perzine</span>
           <span class="trio-name">Untitled</span>
           <p class="trio-desc">8 pages on identity, belonging, and the specific texture of living between India and the US.</p>
         </div>
         <div class="trio-card">
-          <span class="trio-num">02 &nbsp;/ Fanzine</span>
+          <span class="trio-num">02 / Fanzine</span>
           <span class="trio-name">Locked</span>
           <p class="trio-desc">12 pages on escape rooms: the design, the logic, the feeling of getting out with a minute to spare.</p>
         </div>
         <div class="trio-card">
-          <span class="trio-num">03 &nbsp;/ Story Zine</span>
+          <span class="trio-num">03 / Story Zine</span>
           <span class="trio-name">A Monsoon Wedding</span>
           <p class="trio-desc">12 pages reconstructing my parents' wedding from photographs, memory, and the details you only get from asking.</p>
         </div>
@@ -291,89 +318,100 @@
   </section>
 
   <!-- 02 PERZINE -->
-  <section class="cs-section">
+  <section class="cs-section" id="sec-perzine">
     <div class="container-inner container">
       <span class="section-label reveal"><span class="section-num">02</span>Perzine</span>
       <h2 class="section-heading reveal delay-1">Untitled.</h2>
       <p class="body-text reveal delay-2">The perzine moves through a single day split between two worlds. India wakes up to a 6 AM alarm and the rhythm of the house as white noise. The US wakes up to an 8:30 AM buzz and the particular silence of keeping headphones in. One morning starts with a silent buzz, the other begins with a scream of steam. Mumma's chai and snacks made with love on one side, coffee-to-go on the other.</p>
       <p class="body-text reveal delay-2">By night, the streets in India are only just waking up. In the US, night is a quiet pause. The zine closes on a spread between both flags: "I belong to it all" on one page, "somewhere in between" on the other. Not a resolution. Just an honest place to land.</p>
 
-      <div class="flipbook-wrap reveal delay-2">
-        <div class="flipbook" id="flipbook-perzine">
-          <div class="book-stage" id="stage-perzine"></div>
-          <div class="book-shadow"></div>
-          <div class="page-label-strip" id="label-perzine">Page 1 of 8</div>
-          <div class="flipbook-controls">
-            <button class="flip-btn" id="prev-perzine" disabled aria-label="Previous page">
-              <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9 2L4 7l5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            </button>
-            <div class="flip-counter" id="counter-perzine"><span>1</span> / 8</div>
-            <button class="flip-btn" id="next-perzine" aria-label="Next page">
-              <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M5 2l5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            </button>
+      <div class="book-wrap reveal delay-3">
+        <div class="book-outer" id="book-perzine">
+          <!-- left page (inner content) -->
+          <div class="bp-left" id="bpl-perzine"></div>
+          <!-- right page (flips) -->
+          <div class="bp-right" id="bpr-perzine">
+            <div class="bp-right-face" id="bprf-perzine"></div>
           </div>
-          <div class="flipbook-dots" id="dots-perzine"></div>
+          <!-- spine -->
+          <div class="bp-spine" id="spine-perzine"></div>
+          <!-- cover overlay -->
+          <div class="bp-cover" id="bpc-perzine"></div>
         </div>
+        <div class="book-shadow"></div>
+        <div class="book-controls">
+          <button class="flip-btn" id="prev-perzine" disabled>
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9 2L4 7l5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <div class="flip-counter" id="ctr-perzine"><span>1</span> / 8</div>
+          <button class="flip-btn" id="next-perzine">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M5 2l5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+        <div class="book-dots" id="dots-perzine"></div>
+        <p class="book-hint">Arrow keys or swipe to turn pages</p>
       </div>
     </div>
   </section>
 
-  <!-- 03 LOCKED -->
-  <section class="cs-section">
+  <!-- 03 LOCKED (landscape) -->
+  <section class="cs-section" id="sec-locked">
     <div class="container-inner container">
       <span class="section-label reveal"><span class="section-num">03</span>Fanzine</span>
       <h2 class="section-heading reveal delay-1">Locked.</h2>
       <p class="body-text reveal delay-2">Escape rooms are an underrated art form. Someone designed every object in that room to be noticed in a specific order, to carry just enough information without giving anything away. Locked is a fanzine about that craft: the puzzle design, the theatrics of the set, the specific anxiety of the countdown clock, and the way a good room makes you feel briefly like a different, smarter person.</p>
       <p class="body-text reveal delay-2">Twelve pages because escape rooms always give you exactly enough time, and not a minute more.</p>
 
-      <div class="flipbook-wrap reveal delay-2">
-        <div class="flipbook" id="flipbook-locked">
-          <div class="book-stage" id="stage-locked"></div>
-          <div class="book-shadow"></div>
-          <div class="page-label-strip" id="label-locked">Page 1 of 12</div>
-          <div class="flipbook-controls">
-            <button class="flip-btn" id="prev-locked" disabled aria-label="Previous page">
-              <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9 2L4 7l5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            </button>
-            <div class="flip-counter" id="counter-locked"><span>1</span> / 12</div>
-            <button class="flip-btn" id="next-locked" aria-label="Next page">
-              <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M5 2l5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            </button>
-          </div>
-          <div class="flipbook-dots" id="dots-locked"></div>
-        </div>
+      <div class="book-landscape" id="book-locked" style="margin-top:48px;">
+        <div class="bl-page" id="blp-locked"></div>
       </div>
+      <div class="book-shadow" style="margin-top:4px;"></div>
+      <div class="book-controls">
+        <button class="flip-btn" id="prev-locked" disabled>
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9 2L4 7l5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <div class="flip-counter" id="ctr-locked"><span>1</span> / 12</div>
+        <button class="flip-btn" id="next-locked">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M5 2l5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </div>
+      <div class="book-dots" id="dots-locked"></div>
+      <p class="book-hint">Arrow keys or swipe to turn pages</p>
     </div>
   </section>
 
-  <!-- 04 A MONSOON WEDDING -->
-  <section class="cs-section">
+  <!-- 04 MONSOON WEDDING -->
+  <section class="cs-section" id="sec-monsoon">
     <div class="container-inner container">
       <span class="section-label reveal"><span class="section-num">04</span>Story Zine</span>
       <h2 class="section-heading reveal delay-1">A Monsoon Wedding.</h2>
-      <p class="body-text reveal delay-2">My parents got married in the monsoon season. I was not there. But I have seen the photos: the wet ground, the marigolds, the way the light looks different when it is raining and someone is getting dressed at the same time. There is a specific quality to those images that I have been trying to describe for a long time.</p>
+      <p class="body-text reveal delay-2">My parents got married in the monsoon season. I was not there. But I have seen the photos: the wet ground, the marigolds, the way the light looks different when it is raining and someone is getting dressed at the same time.</p>
       <p class="body-text reveal delay-2">A Monsoon Wedding is built from those images and from the details you can only get from asking. It is an attempt to reconstruct a day I did not witness into something that feels like a memory. Not a family history. More like the version of a story that lives in the gap between what you know and what you can imagine.</p>
-
       <div class="pull-quote reveal delay-2">
         <p>A zine is not a book. It does not have to argue anything or resolve neatly. It just has to feel true while you are holding it.</p>
       </div>
 
-      <div class="flipbook-wrap reveal delay-2">
-        <div class="flipbook" id="flipbook-monsoon">
-          <div class="book-stage" id="stage-monsoon"></div>
-          <div class="book-shadow"></div>
-          <div class="page-label-strip" id="label-monsoon">Page 1 of 12</div>
-          <div class="flipbook-controls">
-            <button class="flip-btn" id="prev-monsoon" disabled aria-label="Previous page">
-              <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9 2L4 7l5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            </button>
-            <div class="flip-counter" id="counter-monsoon"><span>1</span> / 12</div>
-            <button class="flip-btn" id="next-monsoon" aria-label="Next page">
-              <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M5 2l5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            </button>
+      <div class="book-wrap reveal delay-3">
+        <div class="book-outer" id="book-monsoon">
+          <div class="bp-left" id="bpl-monsoon"></div>
+          <div class="bp-right" id="bpr-monsoon">
+            <div class="bp-right-face" id="bprf-monsoon"></div>
           </div>
-          <div class="flipbook-dots" id="dots-monsoon"></div>
+          <div class="bp-spine" id="spine-monsoon"></div>
+          <div class="bp-cover" id="bpc-monsoon"></div>
         </div>
+        <div class="book-shadow"></div>
+        <div class="book-controls">
+          <button class="flip-btn" id="prev-monsoon" disabled>
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9 2L4 7l5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <div class="flip-counter" id="ctr-monsoon"><span>1</span> / 12</div>
+          <button class="flip-btn" id="next-monsoon">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M5 2l5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+        <div class="book-dots" id="dots-monsoon"></div>
+        <p class="book-hint">Arrow keys or swipe to turn pages</p>
       </div>
     </div>
   </section>
@@ -385,9 +423,7 @@
     <a href="creative.html" class="next-link reveal delay-2">
       View project
       <span class="next-link-arrow">
-        <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-          <path d="M2 6h8M6 2l4 4-4 4" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6h8M6 2l4 4-4 4" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </span>
     </a>
   </div>
@@ -405,170 +441,444 @@
       <p class="foot-copy">2025 Mahima Shah &nbsp;&middot;&nbsp; Designed with intention</p>
     </div>
   </footer>
-
 </div>
 
 <script>
-function initFlipbook(id, totalPages, prefix) {
-  var stage    = document.getElementById('stage-' + id);
-  var prevBtn  = document.getElementById('prev-' + id);
-  var nextBtn  = document.getElementById('next-' + id);
-  var counter  = document.getElementById('counter-' + id);
-  var dotsWrap = document.getElementById('dots-' + id);
-  var labelEl  = document.getElementById('label-' + id);
-  var current  = 0;
-  var animating = false;
-
-  var pages = [];
-  for (var i = 0; i < totalPages; i++) {
-    var page = document.createElement('div');
-    page.className = 'book-page';
-    page.style.zIndex = i === 0 ? '10' : '1';
-    page.style.opacity = i === 0 ? '1' : '0';
-
-    var img = document.createElement('img');
-    img.alt = prefix + ' page ' + (i + 1);
-
+// ── HELPERS ──
+function fillEl(container, pageIdx, prefix) {
+  container.innerHTML = '';
+  if (pageIdx < 0) return;
+  var im = document.createElement('img');
+  im.alt = prefix + ' p' + (pageIdx + 1);
+  im.onerror = function() {
+    im.remove();
     var ph = document.createElement('div');
-    ph.className = 'page-placeholder';
-    var numStr = (i + 1 < 10 ? '0' : '') + (i + 1);
-    ph.innerHTML = '<span class="page-placeholder-num">' + numStr + '</span><span class="page-placeholder-label">' + prefix + ' &middot; page ' + (i + 1) + '</span>';
+    ph.className = 'ph';
+    ph.innerHTML = '<span class="ph-num">' + (pageIdx < 9 ? '0' : '') + (pageIdx + 1) + '</span><span class="ph-label">' + prefix + '</span>';
+    container.appendChild(ph);
+  };
+  im.src = prefix + (pageIdx + 1) + '.jpg';
+  container.appendChild(im);
+}
 
-    (function(placeholder, image, pageEl) {
-      image.onerror = function() {
-        image.style.display = 'none';
-        pageEl.appendChild(placeholder);
-      };
-    })(ph, img, page);
+// ── PORTRAIT BOOK ──
+// Pages: 0 = cover (shown alone, centred)
+//        1..N-2 = inner spreads shown as left+right pairs: (1,2), (3,4), ...
+//        N-1 = back cover (shown alone, centred) [if total is even]
+// cur = "spread index": 0 = cover, 1 = first open spread, 2 = second, ...
+// For N pages, spreads:
+//   spread 0       → cover only (page 0)
+//   spread 1..k    → open (page 2k-1, page 2k)  where k = spread index
+//   last spread    → back cover only (page N-1)  when N is even
 
-    img.src = prefix + (i + 1) + '.jpg';
-    page.appendChild(img);
-    stage.appendChild(page);
-    pages.push(page);
+function initPortrait(id, total, prefix) {
+  var leftEl  = document.getElementById('bpl-' + id);
+  var rightEl = document.getElementById('bpr-' + id);
+  var faceEl  = document.getElementById('bprf-' + id);
+  var coverEl = document.getElementById('bpc-' + id);
+  var spineEl = document.getElementById('spine-' + id);
+  var prevBtn = document.getElementById('prev-' + id);
+  var nextBtn = document.getElementById('next-' + id);
+  var ctrEl   = document.getElementById('ctr-' + id);
+  var dotsWrap= document.getElementById('dots-' + id);
+  var bookEl  = document.getElementById('book-' + id);
+
+  // total spreads:
+  // spread 0 = cover
+  // spreads 1 .. Math.floor((total-2)/2) = inner open spreads
+  // last spread = back cover (page total-1)
+  var innerSpreads = Math.floor((total - 2) / 2);
+  var totalSpreads = 1 + innerSpreads + 1; // cover + inner + back
+  // For odd total, no distinct back cover spread — last inner spread shows final single page
+  if (total % 2 !== 0) totalSpreads = 1 + Math.ceil((total - 1) / 2);
+
+  var spread = 0;  // current spread index
+  var busy = false;
+
+  // build dots per page (not per spread, for granularity)
+  var dots = [];
+  for (var i = 0; i < total; i++) {
+    var d = document.createElement('div');
+    d.className = 'flip-dot';
+    (function(idx){ d.addEventListener('click', function(){ jumpToPage(idx); }); })(i);
+    dotsWrap.appendChild(d); dots.push(d);
   }
 
-  var dots = [];
-  for (var j = 0; j < totalPages; j++) {
-    var dot = document.createElement('div');
-    dot.className = 'flip-dot' + (j === 0 ? ' active' : '');
-    (function(idx) { dot.addEventListener('click', function() { goTo(idx); }); })(j);
-    dotsWrap.appendChild(dot);
-    dots.push(dot);
+  function spreadToPages(s) {
+    // returns { left, right, isCover, isBack }
+    if (s === 0) return { left:-1, right:-1, isCover:true,  isBack:false };
+    var lastSpread = totalSpreads - 1;
+    if (s === lastSpread && total % 2 === 0) return { left:-1, right:-1, isCover:false, isBack:true };
+    var leftPage  = (s - 1) * 2 + 1;  // 1,3,5,...
+    var rightPage = leftPage + 1;
+    if (rightPage >= total) rightPage = -1;
+    return { left:leftPage, right:rightPage, isCover:false, isBack:false };
+  }
+
+  function activeDots(s) {
+    var p = spreadToPages(s);
+    if (p.isCover) return [0];
+    if (p.isBack)  return [total - 1];
+    var arr = [];
+    if (p.left  >= 0) arr.push(p.left);
+    if (p.right >= 0) arr.push(p.right);
+    return arr;
+  }
+
+  function renderInstant() {
+    var p = spreadToPages(spread);
+
+    if (p.isCover) {
+      // Show cover centred, hide internals
+      fillEl(coverEl, 0, prefix);
+      coverEl.classList.remove('hidden');
+      spineEl.classList.add('hidden');
+      leftEl.style.opacity = '0';
+      rightEl.style.opacity = '0';
+    } else if (p.isBack) {
+      // Show back cover centred
+      fillEl(coverEl, total - 1, prefix);
+      coverEl.classList.remove('hidden');
+      spineEl.classList.add('hidden');
+      leftEl.style.opacity = '0';
+      rightEl.style.opacity = '0';
+    } else {
+      // Open spread
+      coverEl.classList.add('hidden');
+      spineEl.classList.remove('hidden');
+      leftEl.style.opacity = '1';
+      rightEl.style.opacity = '1';
+      fillEl(leftEl, p.left,  prefix);
+      fillEl(faceEl, p.right >= 0 ? p.right : -1, prefix);
+      rightEl.style.transition = 'none';
+      rightEl.style.transform  = 'rotateY(0deg)';
+    }
+
+    updateUI();
   }
 
   function updateUI() {
-    counter.innerHTML = '<span>' + (current + 1) + '</span> / ' + totalPages;
-    labelEl.textContent = 'Page ' + (current + 1) + ' of ' + totalPages;
-    prevBtn.disabled = current === 0;
-    nextBtn.disabled = current === totalPages - 1;
-    dots.forEach(function(d, i) { d.classList.toggle('active', i === current); });
+    // counter shows page range
+    var p = spreadToPages(spread);
+    var pageNum = p.isCover ? 1 : p.isBack ? total : (p.left + 1);
+    ctrEl.innerHTML = '<span>' + pageNum + '</span> / ' + total;
+    prevBtn.disabled = (spread === 0);
+    nextBtn.disabled = (spread === totalSpreads - 1);
+    var active = activeDots(spread);
+    dots.forEach(function(d, i){ d.classList.toggle('active', active.indexOf(i) >= 0); });
   }
 
-  function goTo(idx) {
-    if (animating || idx === current || idx < 0 || idx >= totalPages) return;
-    animating = true;
-    var from = current;
-    var to = idx;
-    var dir = to > from ? 1 : -1;
-    var outPage = pages[from];
-    var inPage  = pages[to];
+  function flipForward() {
+    if (busy || spread >= totalSpreads - 1) return;
+    busy = true;
 
-    outPage.style.zIndex = '10';
-    inPage.style.zIndex  = '9';
+    var fromP = spreadToPages(spread);
+    var toSpread = spread + 1;
+    var toP = spreadToPages(toSpread);
 
-    // Animate out
-    outPage.style.transition = 'transform 0.25s cubic-bezier(0.55,0,1,0.45), opacity 0.25s ease';
-    outPage.style.transform  = dir > 0 ? 'perspective(1200px) rotateY(-80deg) scale(0.97)' : 'perspective(1200px) rotateY(80deg) scale(0.97)';
-    outPage.style.opacity    = '0';
+    if (fromP.isCover) {
+      // Cover → first open spread: cover slides/fades left, pages appear
+      spread = toSpread;
+      fillEl(leftEl, toP.left,  prefix);
+      fillEl(faceEl, toP.right >= 0 ? toP.right : -1, prefix);
+      leftEl.style.opacity = '0';
+      rightEl.style.opacity = '0';
+      rightEl.style.transition = 'none';
+      rightEl.style.transform  = 'rotateY(0deg)';
 
-    // Set incoming off-screen
-    inPage.style.transition  = 'none';
-    inPage.style.transform   = dir > 0 ? 'perspective(1200px) rotateY(80deg) scale(0.97)' : 'perspective(1200px) rotateY(-80deg) scale(0.97)';
-    inPage.style.opacity     = '0';
+      coverEl.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+      coverEl.style.transform  = 'translateX(-25%) scale(0.97)';
+      coverEl.style.opacity    = '0';
 
-    setTimeout(function() {
-      inPage.style.transition = 'transform 0.25s cubic-bezier(0,0.55,0.45,1), opacity 0.25s ease';
-      inPage.style.transform  = 'none';
-      inPage.style.opacity    = '1';
-    }, 30);
+      setTimeout(function() {
+        coverEl.classList.add('hidden');
+        coverEl.style.transition = '';
+        coverEl.style.transform  = '';
+        spineEl.classList.remove('hidden');
+        leftEl.style.transition  = 'opacity 0.3s ease';
+        rightEl.style.transition = 'opacity 0.3s ease';
+        leftEl.style.opacity     = '1';
+        rightEl.style.opacity    = '1';
+        setTimeout(function() {
+          leftEl.style.transition  = '';
+          rightEl.style.transition = '';
+          updateUI(); busy = false;
+        }, 320);
+      }, 420);
 
-    setTimeout(function() {
-      current = to;
-      pages.forEach(function(p, i) {
-        p.style.transition = '';
-        p.style.transform  = '';
-        p.style.opacity    = i === current ? '1' : '0';
-        p.style.zIndex     = i === current ? '10' : '1';
-      });
-      updateUI();
-      animating = false;
-    }, 300);
+    } else if (toP.isBack) {
+      // Last open spread → back cover
+      spread = toSpread;
+      fillEl(coverEl, total - 1, prefix);
+      coverEl.style.opacity   = '0';
+      coverEl.style.transform = 'translateX(25%) scale(0.97)';
+      coverEl.classList.remove('hidden');
+
+      // animate right page folding away
+      rightEl.style.transition = 'transform 0.45s cubic-bezier(0.77,0,0.175,1), opacity 0.3s ease';
+      rightEl.style.transform  = 'rotateY(-90deg)';
+      rightEl.style.opacity    = '0.3';
+
+      setTimeout(function() {
+        leftEl.style.transition = 'opacity 0.25s ease';
+        leftEl.style.opacity    = '0';
+        spineEl.classList.add('hidden');
+        coverEl.style.transition = 'opacity 0.35s ease, transform 0.35s ease';
+        coverEl.style.opacity    = '1';
+        coverEl.style.transform  = '';
+        setTimeout(function() {
+          rightEl.style.transition = '';
+          rightEl.style.transform  = '';
+          rightEl.style.opacity    = '1';
+          leftEl.style.transition  = '';
+          updateUI(); busy = false;
+        }, 380);
+      }, 460);
+
+    } else {
+      // Normal spread flip forward
+      rightEl.style.transition = 'transform 0.52s cubic-bezier(0.77,0,0.175,1)';
+      rightEl.style.transform  = 'rotateY(-180deg)';
+
+      setTimeout(function() {
+        spread = toSpread;
+        var np = spreadToPages(spread);
+        if (np.isBack) {
+          // handled next call
+        }
+        fillEl(leftEl, np.left,  prefix);
+        fillEl(faceEl, np.right >= 0 ? np.right : -1, prefix);
+        rightEl.style.transition = 'none';
+        rightEl.style.transform  = 'rotateY(0deg)';
+        updateUI(); busy = false;
+      }, 530);
+    }
   }
 
-  prevBtn.addEventListener('click', function() { goTo(current - 1); });
-  nextBtn.addEventListener('click', function() { goTo(current + 1); });
+  function flipBack() {
+    if (busy || spread === 0) return;
+    busy = true;
 
-  // Keyboard: only when hovering this flipbook
+    var fromP = spreadToPages(spread);
+    var toSpread = spread - 1;
+    var toP = spreadToPages(toSpread);
+
+    if (fromP.isBack) {
+      // Back cover → last open spread
+      spread = toSpread;
+      fillEl(leftEl, toP.left,  prefix);
+      fillEl(faceEl, toP.right >= 0 ? toP.right : -1, prefix);
+      leftEl.style.opacity = '0';
+      rightEl.style.opacity = '0';
+      rightEl.style.transition = 'none';
+      rightEl.style.transform  = 'rotateY(0deg)';
+
+      coverEl.style.transition = 'opacity 0.35s ease, transform 0.35s ease';
+      coverEl.style.opacity    = '0';
+      coverEl.style.transform  = 'translateX(25%) scale(0.97)';
+
+      setTimeout(function() {
+        coverEl.classList.add('hidden');
+        coverEl.style.transition = '';
+        coverEl.style.transform  = '';
+        spineEl.classList.remove('hidden');
+        leftEl.style.transition  = 'opacity 0.3s ease';
+        rightEl.style.transition = 'opacity 0.3s ease';
+        leftEl.style.opacity     = '1';
+        rightEl.style.opacity    = '1';
+        setTimeout(function() {
+          leftEl.style.transition  = '';
+          rightEl.style.transition = '';
+          updateUI(); busy = false;
+        }, 320);
+      }, 370);
+
+    } else if (toP.isCover) {
+      // First open spread → cover
+      spread = toSpread;
+      fillEl(coverEl, 0, prefix);
+      coverEl.style.opacity   = '0';
+      coverEl.style.transform = 'translateX(-25%) scale(0.97)';
+      coverEl.classList.remove('hidden');
+
+      rightEl.style.transition = 'transform 0.45s cubic-bezier(0.77,0,0.175,1), opacity 0.3s ease';
+      rightEl.style.transform  = 'rotateY(-90deg)';
+      rightEl.style.opacity    = '0.3';
+
+      setTimeout(function() {
+        leftEl.style.transition = 'opacity 0.25s ease';
+        leftEl.style.opacity    = '0';
+        spineEl.classList.add('hidden');
+        coverEl.style.transition = 'opacity 0.35s ease, transform 0.35s ease';
+        coverEl.style.opacity    = '1';
+        coverEl.style.transform  = '';
+        setTimeout(function() {
+          rightEl.style.transition = '';
+          rightEl.style.transform  = '';
+          rightEl.style.opacity    = '1';
+          leftEl.style.transition  = '';
+          updateUI(); busy = false;
+        }, 380);
+      }, 460);
+
+    } else {
+      // Normal spread flip back: start flipped, load content, unfold
+      fillEl(leftEl, toP.left,  prefix);
+      fillEl(faceEl, toP.right >= 0 ? toP.right : -1, prefix);
+      rightEl.style.transition = 'none';
+      rightEl.style.transform  = 'rotateY(-180deg)';
+      rightEl.getBoundingClientRect();
+      rightEl.style.transition = 'transform 0.52s cubic-bezier(0.77,0,0.175,1)';
+      rightEl.style.transform  = 'rotateY(0deg)';
+      spread = toSpread;
+      setTimeout(function() { updateUI(); busy = false; }, 530);
+    }
+  }
+
+  function jumpToPage(pageIdx) {
+    var targetSpread;
+    if (pageIdx === 0) targetSpread = 0;
+    else if (pageIdx === total - 1 && total % 2 === 0) targetSpread = totalSpreads - 1;
+    else {
+      targetSpread = Math.floor((pageIdx - 1) / 2) + 1;
+    }
+    if (targetSpread === spread) return;
+    spread = targetSpread;
+    renderInstant();
+  }
+
+  // keyboard
   var hovered = false;
-  var wrap = document.getElementById('flipbook-' + id);
-  if (wrap) {
-    wrap.addEventListener('mouseenter', function() { hovered = true; });
-    wrap.addEventListener('mouseleave', function() { hovered = false; });
+  var section = document.getElementById('sec-' + id);
+  if (section) {
+    section.addEventListener('mouseenter', function(){ hovered=true; });
+    section.addEventListener('mouseleave', function(){ hovered=false; });
   }
-  document.addEventListener('keydown', function(e) {
+  document.addEventListener('keydown', function(e){
     if (!hovered) return;
-    if (e.key === 'ArrowRight') goTo(current + 1);
-    if (e.key === 'ArrowLeft')  goTo(current - 1);
+    if (e.key==='ArrowRight') flipForward();
+    if (e.key==='ArrowLeft')  flipBack();
   });
-
-  // Swipe
-  var touchX = 0;
-  stage.addEventListener('touchstart', function(e) { touchX = e.touches[0].clientX; }, {passive:true});
-  stage.addEventListener('touchend', function(e) {
-    var dx = e.changedTouches[0].clientX - touchX;
-    if (Math.abs(dx) > 40) { dx < 0 ? goTo(current + 1) : goTo(current - 1); }
+  // swipe
+  var tx = 0;
+  bookEl.addEventListener('touchstart', function(e){ tx=e.touches[0].clientX; }, {passive:true});
+  bookEl.addEventListener('touchend',   function(e){
+    var dx = e.changedTouches[0].clientX - tx;
+    if (Math.abs(dx)>40){ dx<0 ? flipForward() : flipBack(); }
   }, {passive:true});
 
-  updateUI();
+  prevBtn.addEventListener('click', flipBack);
+  nextBtn.addEventListener('click', flipForward);
+
+  renderInstant();
 }
 
-initFlipbook('perzine', 8,  'perzine');
-initFlipbook('locked',  12, 'locked');
-initFlipbook('monsoon', 12, 'monsoon');
+// ── LANDSCAPE VIEWER ──
+function initLandscape(id, total, prefix) {
+  var pageEl  = document.getElementById('blp-' + id);
+  var bookEl  = document.getElementById('book-' + id);
+  var prevBtn = document.getElementById('prev-' + id);
+  var nextBtn = document.getElementById('next-' + id);
+  var ctrEl   = document.getElementById('ctr-' + id);
+  var dotsWrap= document.getElementById('dots-' + id);
+  var cur = 0, busy = false;
 
-// Scroll reveal
-var revEls = document.querySelectorAll('.reveal');
-revEls.forEach(function(el) { el.style.opacity='0'; el.style.transform='translateY(20px)'; });
-requestAnimationFrame(function() {
-  requestAnimationFrame(function() {
-    revEls.forEach(function(el) {
-      el.style.transition = 'opacity 0.7s cubic-bezier(0.16,1,0.3,1), transform 0.7s cubic-bezier(0.16,1,0.3,1)';
-    });
-    if (!('IntersectionObserver' in window)) {
-      revEls.forEach(function(el) { el.style.opacity='1'; el.style.transform='none'; });
-      return;
+  var dots = [];
+  for (var i=0; i<total; i++) {
+    var d = document.createElement('div');
+    d.className = 'flip-dot';
+    (function(idx){ d.addEventListener('click', function(){ goTo(idx,idx>cur?1:-1); }); })(i);
+    dotsWrap.appendChild(d); dots.push(d);
+  }
+
+  function render() {
+    fillEl(pageEl, cur, prefix);
+    ctrEl.innerHTML = '<span>'+(cur+1)+'</span> / '+total;
+    prevBtn.disabled = cur<=0;
+    nextBtn.disabled = cur>=total-1;
+    dots.forEach(function(d,i){ d.classList.toggle('active',i===cur); });
+  }
+
+  function goTo(idx, dir) {
+    if (busy||idx<0||idx>=total||idx===cur) return;
+    busy=true;
+    pageEl.style.transition='transform 0.27s cubic-bezier(0.55,0,1,0.45),opacity 0.27s ease';
+    pageEl.style.transform = dir>0 ? 'translateY(-5%) scale(0.97)' : 'translateY(5%) scale(0.97)';
+    pageEl.style.opacity='0';
+    setTimeout(function(){
+      cur=idx;
+      fillEl(pageEl, cur, prefix);
+      pageEl.style.transition='none';
+      pageEl.style.transform = dir>0 ? 'translateY(5%) scale(0.97)' : 'translateY(-5%) scale(0.97)';
+      pageEl.style.opacity='0';
+      pageEl.getBoundingClientRect();
+      pageEl.style.transition='transform 0.27s cubic-bezier(0,0.55,0.45,1),opacity 0.27s ease';
+      pageEl.style.transform='none';
+      pageEl.style.opacity='1';
+      ctrEl.innerHTML='<span>'+(cur+1)+'</span> / '+total;
+      prevBtn.disabled=cur<=0;
+      nextBtn.disabled=cur>=total-1;
+      dots.forEach(function(d,i){ d.classList.toggle('active',i===cur); });
+      setTimeout(function(){ busy=false; }, 290);
+    }, 280);
+  }
+
+  prevBtn.addEventListener('click', function(){ goTo(cur-1,-1); });
+  nextBtn.addEventListener('click', function(){ goTo(cur+1, 1); });
+
+  var hovered=false;
+  var section=document.getElementById('sec-locked');
+  if(section){
+    section.addEventListener('mouseenter',function(){ hovered=true; });
+    section.addEventListener('mouseleave',function(){ hovered=false; });
+  }
+  document.addEventListener('keydown',function(e){
+    if(!hovered) return;
+    if(e.key==='ArrowRight'||e.key==='ArrowDown') goTo(cur+1, 1);
+    if(e.key==='ArrowLeft' ||e.key==='ArrowUp')   goTo(cur-1,-1);
+  });
+  var tx=0;
+  bookEl.addEventListener('touchstart',function(e){ tx=e.touches[0].clientX; },{passive:true});
+  bookEl.addEventListener('touchend',  function(e){
+    var dx=e.changedTouches[0].clientX-tx;
+    if(Math.abs(dx)>40){ dx<0?goTo(cur+1,1):goTo(cur-1,-1); }
+  },{passive:true});
+
+  render();
+}
+
+// ── INIT ──
+initPortrait('perzine', 8,  'perzine');
+initLandscape('locked', 12, 'locked');
+initPortrait('monsoon', 12, 'monsoon');
+
+// ── SCROLL REVEAL ──
+var revEls=document.querySelectorAll('.reveal');
+revEls.forEach(function(el){ el.style.opacity='0'; el.style.transform='translateY(20px)'; });
+requestAnimationFrame(function(){
+  requestAnimationFrame(function(){
+    revEls.forEach(function(el){ el.style.transition='opacity 0.7s cubic-bezier(0.16,1,0.3,1),transform 0.7s cubic-bezier(0.16,1,0.3,1)'; });
+    if(!('IntersectionObserver' in window)){
+      revEls.forEach(function(el){ el.style.opacity='1'; el.style.transform='none'; }); return;
     }
-    var io = new IntersectionObserver(function(entries) {
-      entries.forEach(function(e) {
-        if (e.isIntersecting) { e.target.style.opacity='1'; e.target.style.transform='none'; io.unobserve(e.target); }
-      });
-    }, { threshold:0.08, rootMargin:'0px 0px -40px 0px' });
-    revEls.forEach(function(el) { io.observe(el); });
+    var io=new IntersectionObserver(function(entries){
+      entries.forEach(function(e){ if(e.isIntersecting){ e.target.style.opacity='1'; e.target.style.transform='none'; io.unobserve(e.target); } });
+    },{threshold:0.06,rootMargin:'0px 0px -40px 0px'});
+    revEls.forEach(function(el){ io.observe(el); });
   });
 });
 
-// Cursor dot
-var dot = document.getElementById('cdot');
-if (dot && window.matchMedia('(pointer: fine)').matches) {
-  var active = false;
-  document.addEventListener('mousemove', function(e) {
-    dot.style.left = e.clientX + 'px';
-    dot.style.top  = e.clientY + 'px';
-    if (!active) { active=true; dot.style.opacity='1'; document.body.classList.add('has-cursor'); }
-  }, {passive:true});
-  document.querySelectorAll('a, button, .flip-dot').forEach(function(el) {
-    el.addEventListener('mouseenter', function() { dot.classList.add('expand'); });
-    el.addEventListener('mouseleave', function() { dot.classList.remove('expand'); });
+// ── CURSOR ──
+var dot=document.getElementById('cdot');
+if(dot&&window.matchMedia('(pointer:fine)').matches){
+  var active=false;
+  document.addEventListener('mousemove',function(e){
+    dot.style.left=e.clientX+'px'; dot.style.top=e.clientY+'px';
+    if(!active){ active=true; dot.style.opacity='1'; document.body.classList.add('has-cursor'); }
+  },{passive:true});
+  document.querySelectorAll('a,button,.flip-dot').forEach(function(el){
+    el.addEventListener('mouseenter',function(){ dot.classList.add('expand'); });
+    el.addEventListener('mouseleave',function(){ dot.classList.remove('expand'); });
   });
 }
 </script>
