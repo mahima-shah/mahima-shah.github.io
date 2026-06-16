@@ -101,28 +101,35 @@
     .pull-quote p { font-family:'DM Serif Display',Georgia,serif; font-style:italic; font-size:1.15rem; color:var(--text); line-height:1.6; }
 
     /* ═══════════════════════════
-       PORTRAIT BOOK VIEWER
-       Open book = 2 A4 pages side by side
-       Ratio: two 0.707 pages = 1.414:1 (A4 landscape)
-       State machine:
-         CLOSED  — cover fills full width (single page, centered)
-         OPEN    — left + right pages visible
-         CLOSING — last page fills full width
+       SIDE-BY-SIDE LAYOUT: text left, book right
     ════════════════════════════ */
-    .book-wrap { margin-top:48px; }
+    .zine-split {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 60px;
+      align-items: start;
+      margin-top: 0;
+    }
+    .zine-split-text { display:flex; flex-direction:column; gap:0; }
+    .zine-split-book { position:relative; }
+    @media (max-width:860px) {
+      .zine-split { grid-template-columns:1fr; gap:40px; }
+    }
 
-    /* Outer shell — always the open-book width */
+    /* ═══════════════════════════
+       PORTRAIT BOOK VIEWER
+       Open book = 2 A4 pages side by side → 1.414:1
+       CLOSED state: only cover shown, right side hidden
+    ════════════════════════════ */
     .book-outer {
       position: relative;
       width: 100%;
-      max-width: 780px;   /* comfortable reading size */
-      margin: 0 auto;
-      /* open aspect: two A4 pages = 2*(1/√2) : 1 = √2 : 1 ≈ 1.414 */
+      /* open aspect: two A4 pages = √2:1 */
       aspect-ratio: 1.414 / 1;
       perspective: 2200px;
     }
 
-    /* Left page — static, always shows "current left" */
+    /* Left page — static */
     .bp-left {
       position: absolute;
       top: 0; left: 0;
@@ -136,7 +143,7 @@
     }
     .bp-left img { width:100%; height:100%; object-fit:cover; display:block; }
 
-    /* Right half — the page that flips */
+    /* Right page wrapper — flips around its left edge */
     .bp-right {
       position: absolute;
       top: 0; right: 0;
@@ -146,6 +153,8 @@
       z-index: 10;
       will-change: transform;
     }
+    /* Hide right entirely in closed state */
+    .bp-right.closed { visibility: hidden; }
 
     .bp-right-face {
       position: absolute;
@@ -156,14 +165,13 @@
       backface-visibility: hidden;
     }
     .bp-right-face img { width:100%; height:100%; object-fit:cover; display:block; }
-    /* subtle right-edge shadow */
     .bp-right-face::after { content:''; position:absolute; top:0; right:0; width:28px; height:100%; background:linear-gradient(to left,rgba(0,0,0,0.07),transparent); pointer-events:none; }
 
-    /* Cover overlay — single page centred over the full book width */
+    /* Cover — sits over the full book, centred as a single page */
     .bp-cover {
       position: absolute;
       top: 0;
-      left: 25%; /* centered = start at 25% of open-book width */
+      left: 25%;
       width: 50%;
       height: 100%;
       overflow: hidden;
@@ -322,10 +330,12 @@
     <div class="container-inner container">
       <span class="section-label reveal"><span class="section-num">02</span>Perzine</span>
       <h2 class="section-heading reveal delay-1">Untitled.</h2>
-      <p class="body-text reveal delay-2">The perzine moves through a single day split between two worlds. India wakes up to a 6 AM alarm and the rhythm of the house as white noise. The US wakes up to an 8:30 AM buzz and the particular silence of keeping headphones in. One morning starts with a silent buzz, the other begins with a scream of steam. Mumma's chai and snacks made with love on one side, coffee-to-go on the other.</p>
-      <p class="body-text reveal delay-2">By night, the streets in India are only just waking up. In the US, night is a quiet pause. The zine closes on a spread between both flags: "I belong to it all" on one page, "somewhere in between" on the other. Not a resolution. Just an honest place to land.</p>
-
-      <div class="book-wrap reveal delay-3">
+      <div class="zine-split reveal delay-2">
+        <div class="zine-split-text">
+          <p class="body-text">The perzine moves through a single day split between two worlds. India wakes up to a 6 AM alarm and the rhythm of the house as white noise. The US wakes up to an 8:30 AM buzz and the particular silence of keeping headphones in. One morning starts with a silent buzz, the other begins with a scream of steam. Mumma's chai and snacks made with love on one side, coffee-to-go on the other.</p>
+          <p class="body-text" style="margin-top:14px;">By night, the streets in India are only just waking up. In the US, night is a quiet pause. The zine closes on a spread between both flags: "I belong to it all" on one page, "somewhere in between" on the other. Not a resolution. Just an honest place to land.</p>
+        </div>
+        <div class="zine-split-book">
         <div class="book-outer" id="book-perzine">
           <!-- left page (inner content) -->
           <div class="bp-left" id="bpl-perzine"></div>
@@ -347,10 +357,11 @@
           <button class="flip-btn" id="next-perzine">
             <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M5 2l5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </button>
-        </div>
+        </div><!-- end book-controls -->
         <div class="book-dots" id="dots-perzine"></div>
         <p class="book-hint">Arrow keys or swipe to turn pages</p>
-      </div>
+        </div><!-- end zine-split-book -->
+      </div><!-- end zine-split -->
     </div>
   </section>
 
@@ -385,13 +396,15 @@
     <div class="container-inner container">
       <span class="section-label reveal"><span class="section-num">04</span>Story Zine</span>
       <h2 class="section-heading reveal delay-1">A Monsoon Wedding.</h2>
-      <p class="body-text reveal delay-2">My parents got married in the monsoon season. I was not there. But I have seen the photos: the wet ground, the marigolds, the way the light looks different when it is raining and someone is getting dressed at the same time.</p>
-      <p class="body-text reveal delay-2">A Monsoon Wedding is built from those images and from the details you can only get from asking. It is an attempt to reconstruct a day I did not witness into something that feels like a memory. Not a family history. More like the version of a story that lives in the gap between what you know and what you can imagine.</p>
-      <div class="pull-quote reveal delay-2">
-        <p>A zine is not a book. It does not have to argue anything or resolve neatly. It just has to feel true while you are holding it.</p>
-      </div>
-
-      <div class="book-wrap reveal delay-3">
+      <div class="zine-split reveal delay-2">
+        <div class="zine-split-text">
+          <p class="body-text">My parents got married in the monsoon season. I was not there. But I have seen the photos: the wet ground, the marigolds, the way the light looks different when it is raining and someone is getting dressed at the same time.</p>
+          <p class="body-text" style="margin-top:14px;">A Monsoon Wedding is built from those images and from the details you can only get from asking. It is an attempt to reconstruct a day I did not witness into something that feels like a memory. Not a family history. More like the version of a story that lives in the gap between what you know and what you can imagine.</p>
+          <div class="pull-quote" style="margin-top:28px;">
+            <p>A zine is not a book. It does not have to argue anything or resolve neatly. It just has to feel true while you are holding it.</p>
+          </div>
+        </div>
+        <div class="zine-split-book">
         <div class="book-outer" id="book-monsoon">
           <div class="bp-left" id="bpl-monsoon"></div>
           <div class="bp-right" id="bpr-monsoon">
@@ -412,7 +425,8 @@
         </div>
         <div class="book-dots" id="dots-monsoon"></div>
         <p class="book-hint">Arrow keys or swipe to turn pages</p>
-      </div>
+        </div><!-- end zine-split-book -->
+      </div><!-- end zine-split -->
     </div>
   </section>
 
@@ -529,25 +543,22 @@ function initPortrait(id, total, prefix) {
     var p = spreadToPages(spread);
 
     if (p.isCover) {
-      // Show cover centred, hide internals
       fillEl(coverEl, 0, prefix);
       coverEl.classList.remove('hidden');
       spineEl.classList.add('hidden');
       leftEl.style.opacity = '0';
-      rightEl.style.opacity = '0';
+      rightEl.classList.add('closed');   // hide right entirely
     } else if (p.isBack) {
-      // Show back cover centred
       fillEl(coverEl, total - 1, prefix);
       coverEl.classList.remove('hidden');
       spineEl.classList.add('hidden');
       leftEl.style.opacity = '0';
-      rightEl.style.opacity = '0';
+      rightEl.classList.add('closed');   // hide right entirely
     } else {
-      // Open spread
       coverEl.classList.add('hidden');
       spineEl.classList.remove('hidden');
       leftEl.style.opacity = '1';
-      rightEl.style.opacity = '1';
+      rightEl.classList.remove('closed');
       fillEl(leftEl, p.left,  prefix);
       fillEl(faceEl, p.right >= 0 ? p.right : -1, prefix);
       rightEl.style.transition = 'none';
@@ -577,11 +588,12 @@ function initPortrait(id, total, prefix) {
     var toP = spreadToPages(toSpread);
 
     if (fromP.isCover) {
-      // Cover → first open spread: cover slides/fades left, pages appear
+      // Cover → first open spread: cover slides left, pages appear
       spread = toSpread;
       fillEl(leftEl, toP.left,  prefix);
       fillEl(faceEl, toP.right >= 0 ? toP.right : -1, prefix);
       leftEl.style.opacity = '0';
+      rightEl.classList.remove('closed');
       rightEl.style.opacity = '0';
       rightEl.style.transition = 'none';
       rightEl.style.transform  = 'rotateY(0deg)';
@@ -614,7 +626,6 @@ function initPortrait(id, total, prefix) {
       coverEl.style.transform = 'translateX(25%) scale(0.97)';
       coverEl.classList.remove('hidden');
 
-      // animate right page folding away
       rightEl.style.transition = 'transform 0.45s cubic-bezier(0.77,0,0.175,1), opacity 0.3s ease';
       rightEl.style.transform  = 'rotateY(-90deg)';
       rightEl.style.opacity    = '0.3';
@@ -627,6 +638,7 @@ function initPortrait(id, total, prefix) {
         coverEl.style.opacity    = '1';
         coverEl.style.transform  = '';
         setTimeout(function() {
+          rightEl.classList.add('closed');
           rightEl.style.transition = '';
           rightEl.style.transform  = '';
           rightEl.style.opacity    = '1';
@@ -669,6 +681,7 @@ function initPortrait(id, total, prefix) {
       fillEl(leftEl, toP.left,  prefix);
       fillEl(faceEl, toP.right >= 0 ? toP.right : -1, prefix);
       leftEl.style.opacity = '0';
+      rightEl.classList.remove('closed');
       rightEl.style.opacity = '0';
       rightEl.style.transition = 'none';
       rightEl.style.transform  = 'rotateY(0deg)';
