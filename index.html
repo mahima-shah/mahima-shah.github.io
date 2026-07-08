@@ -20,14 +20,14 @@
       --text:        #1d1d1f;
       --text-2:      #515154;
       --text-3:      #86868b;
-      --accent:      #B05030;
-      --accent-hi:   #C86040;
-      --accent-dim:  rgba(176,80,48,0.1);
-      --accent-tag:  rgba(176,80,48,0.15);
+      --accent:      #7B2D3E;
+      --accent-hi:   #93394C;
+      --accent-dim:  rgba(123,45,62,0.1);
+      --accent-tag:  rgba(123,45,62,0.15);
       --wm-stroke:   rgba(0,0,0,0.07);
-      --orb-1:       rgba(176,80,48,0.22);
+      --orb-1:       rgba(123,45,62,0.22);
       --orb-2:       rgba(80,80,180,0.1);
-      --orb-3:       rgba(176,80,48,0.14);
+      --orb-3:       rgba(123,45,62,0.14);
       --shadow-card: 0 2px 24px rgba(0,0,0,0.07), 0 1px 4px rgba(0,0,0,0.04);
       --shadow-lg:   0 24px 80px rgba(0,0,0,0.11);
       --blur:        blur(24px);
@@ -43,14 +43,14 @@
         --text:        #f5f5f7;
         --text-2:      #a1a1a6;
         --text-3:      #636366;
-        --accent:      #D4724E;
-        --accent-hi:   #E08060;
-        --accent-dim:  rgba(212,114,78,0.13);
-        --accent-tag:  rgba(212,114,78,0.2);
+        --accent:      #B85368;
+        --accent-hi:   #C96479;
+        --accent-dim:  rgba(184,83,104,0.13);
+        --accent-tag:  rgba(184,83,104,0.2);
         --wm-stroke:   rgba(255,255,255,0.12);
-        --orb-1:       rgba(212,114,78,0.35);
+        --orb-1:       rgba(184,83,104,0.35);
         --orb-2:       rgba(100,100,200,0.15);
-        --orb-3:       rgba(212,114,78,0.2);
+        --orb-3:       rgba(184,83,104,0.2);
         --shadow-card: 0 2px 32px rgba(0,0,0,0.5);
         --shadow-lg:   0 24px 80px rgba(0,0,0,0.65);
       }
@@ -307,30 +307,30 @@
     .a2-light { position:absolute;width:500px;height:500px;top:-180px;right:-100px; background:radial-gradient(circle at 40% 30%,rgba(200,120,80,0.22) 0%,rgba(180,100,60,0.08) 40%,transparent 70%);pointer-events:none; }
     .a2-lines { position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;padding:0 40px; }
     .a2-rule { width:100%;height:1px;background:linear-gradient(90deg,transparent 0%,rgba(255,255,255,0.05) 30%,rgba(255,255,255,0.05) 70%,transparent 100%);margin:22px 0; }
-    .a2-rule.hi { background:linear-gradient(90deg,transparent 0%,rgba(212,114,78,0.32) 30%,rgba(212,114,78,0.32) 60%,transparent 100%); }
+    .a2-rule.hi { background:linear-gradient(90deg,transparent 0%,rgba(184,83,104,0.32) 30%,rgba(184,83,104,0.32) 60%,transparent 100%); }
     .a2-center { position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;z-index:2; }
     .a2-big { font-family:'DM Serif Display',Georgia,serif;font-size:4.2rem;font-weight:300;color:rgba(255,255,255,0.08);letter-spacing:-0.02em;line-height:1; }
-    .a2-small { font-size:0.58rem;font-weight:500;letter-spacing:0.32em;text-transform:uppercase;color:rgba(212,114,78,0.48); }
+    .a2-small { font-size:0.58rem;font-weight:500;letter-spacing:0.32em;text-transform:uppercase;color:rgba(184,83,104,0.48); }
     .a2-dots { position:absolute;bottom:28px;right:32px;display:grid;grid-template-columns:repeat(4,1fr);gap:6px;z-index:2; }
-    .a2-dot { width:4px;height:4px;border-radius:50%;background:rgba(212,114,78,0.25); }
-    .a2-dot.on { background:rgba(212,114,78,0.75);animation:dblink 3s ease-in-out infinite alternate; }
+    .a2-dot { width:4px;height:4px;border-radius:50%;background:rgba(184,83,104,0.25); }
+    .a2-dot.on { background:rgba(184,83,104,0.75);animation:dblink 3s ease-in-out infinite alternate; }
     @keyframes dblink { to { opacity:0.25; } }
 
     /* VibeNote */
     .vibe-scene { background:#0E0B14; }
     .vibe-wash { position:absolute;border-radius:50%;filter:blur(72px);pointer-events:none; }
-    .vw1 { width:360px;height:360px;background:radial-gradient(circle,rgba(176,80,48,0.3),transparent 65%);top:-70px;left:-50px;animation:vw1a 10s ease-in-out infinite alternate; }
-    .vw2 { width:280px;height:280px;background:radial-gradient(circle,rgba(120,60,160,0.28),transparent 65%);bottom:-50px;right:-30px;animation:vw2a 13s ease-in-out infinite alternate; }
+    .vw1 { width:360px;height:360px;background:radial-gradient(circle,rgba(123,45,62,0.3),transparent 65%);top:-70px;left:-50px;animation:vw1a 10s ease-in-out infinite alternate; }
+    .vw2 { width:280px;height:280px;background:radial-gradient(circle,rgba(74,21,40,0.28),transparent 65%);bottom:-50px;right:-30px;animation:vw2a 13s ease-in-out infinite alternate; }
     .vw3 { width:200px;height:200px;background:radial-gradient(circle,rgba(200,160,80,0.12),transparent 65%);top:40%;left:55%;animation:vw3a 8s ease-in-out infinite alternate; }
     @keyframes vw1a { to{transform:translate(40px,30px) scale(1.1);} }
     @keyframes vw2a { to{transform:translate(-30px,-40px) scale(1.08);} }
     @keyframes vw3a { to{transform:translate(-20px,20px) scale(0.9);} }
     .vibe-glass { position:relative;z-index:2;width:158px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:24px;padding:28px 20px 22px;display:flex;flex-direction:column;align-items:center;gap:14px;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);box-shadow:0 8px 40px rgba(0,0,0,0.3),inset 0 1px 0 rgba(255,255,255,0.1);animation:gfloat 5s ease-in-out infinite alternate; }
     @keyframes gfloat { to{transform:translateY(-8px);} }
-    .vibe-icon { width:52px;height:52px;border-radius:16px;background:linear-gradient(145deg,rgba(176,80,48,0.9),rgba(120,50,150,0.9));display:flex;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(176,80,48,0.4); }
+    .vibe-icon { width:52px;height:52px;border-radius:16px;background:linear-gradient(145deg,rgba(123,45,62,0.9),rgba(74,21,40,0.9));display:flex;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(123,45,62,0.4); }
     .vibe-label { font-family:'DM Serif Display',Georgia,serif;font-size:0.95rem;font-weight:500;color:rgba(255,255,255,0.72);letter-spacing:0.03em; }
     .vibe-bar { width:100%;height:3px;border-radius:2px;background:rgba(255,255,255,0.07);position:relative;overflow:hidden; }
-    .vibe-bar::after { content:'';position:absolute;left:0;top:0;bottom:0;width:65%;background:linear-gradient(90deg,rgba(176,80,48,0.8),rgba(120,50,150,0.6));border-radius:2px;animation:bshift 4s ease-in-out infinite alternate; }
+    .vibe-bar::after { content:'';position:absolute;left:0;top:0;bottom:0;width:65%;background:linear-gradient(90deg,rgba(123,45,62,0.8),rgba(74,21,40,0.6));border-radius:2px;animation:bshift 4s ease-in-out infinite alternate; }
     @keyframes bshift { to{width:82%;} }
     .vibe-sub { font-size:0.56rem;font-weight:400;letter-spacing:0.16em;text-transform:uppercase;color:rgba(255,255,255,0.22); }
 
@@ -533,7 +533,7 @@
               <div style="height:8px;background:#fff;border-radius:4px;width:35%;"></div>
             </div>
             <div style="position:relative;z-index:2;text-align:center;">
-              <div style="width:56px;height:56px;border-radius:16px;background:linear-gradient(135deg,var(--accent),rgba(120,50,150,0.9));margin:0 auto 12px;display:flex;align-items:center;justify-content:center;">
+              <div style="width:56px;height:56px;border-radius:16px;background:linear-gradient(135deg,var(--accent),rgba(74,21,40,0.9));margin:0 auto 12px;display:flex;align-items:center;justify-content:center;">
                 <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
                   <rect x="5" y="5" width="18" height="18" rx="5" stroke="white" stroke-width="1.5"/>
                   <circle cx="14" cy="14" r="4.5" stroke="white" stroke-width="1.5"/>
@@ -636,8 +636,8 @@
                   <circle cx="14" cy="16" r="4" fill="url(#vg2)"/>
                   <defs>
                     <radialGradient id="vg2" cx="50%" cy="50%" r="50%">
-                      <stop offset="0%" stop-color="rgba(176,80,48,0.9)"/>
-                      <stop offset="100%" stop-color="rgba(120,50,150,0.9)"/>
+                      <stop offset="0%" stop-color="rgba(123,45,62,0.9)"/>
+                      <stop offset="100%" stop-color="rgba(74,21,40,0.9)"/>
                     </radialGradient>
                   </defs>
                 </svg>
@@ -710,16 +710,16 @@
           </div>
           <div class="card-vis">
             <div class="cv" style="background:#1a0f0a; overflow:hidden; padding:0; position:relative;">
-              <div style="position:absolute;inset:0;background:radial-gradient(ellipse at 40% 50%,rgba(176,80,48,0.28),transparent 65%);"></div>
+              <div style="position:absolute;inset:0;background:radial-gradient(ellipse at 40% 50%,rgba(123,45,62,0.28),transparent 65%);"></div>
               <div style="position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:10px;padding:32px;">
                 <span style="font-family:'DM Serif Display',Georgia,serif;font-size:3rem;font-weight:500;color:rgba(255,255,255,0.08);letter-spacing:-0.02em;line-height:1;">Zines</span>
                 <div style="display:flex;flex-direction:column;gap:7px;width:100%;max-width:180px;">
-                  <div style="height:1px;background:rgba(212,114,78,0.35);width:100%;"></div>
-                  <span style="font-size:0.6rem;font-weight:500;letter-spacing:0.18em;text-transform:uppercase;color:rgba(212,114,78,0.55);text-align:center;">Locked</span>
+                  <div style="height:1px;background:rgba(184,83,104,0.35);width:100%;"></div>
+                  <span style="font-size:0.6rem;font-weight:500;letter-spacing:0.18em;text-transform:uppercase;color:rgba(184,83,104,0.55);text-align:center;">Locked</span>
                   <div style="height:1px;background:rgba(255,255,255,0.07);width:100%;"></div>
-                  <span style="font-size:0.6rem;font-weight:500;letter-spacing:0.18em;text-transform:uppercase;color:rgba(212,114,78,0.4);text-align:center;">A Monsoon Wedding</span>
+                  <span style="font-size:0.6rem;font-weight:500;letter-spacing:0.18em;text-transform:uppercase;color:rgba(184,83,104,0.4);text-align:center;">A Monsoon Wedding</span>
                   <div style="height:1px;background:rgba(255,255,255,0.07);width:100%;"></div>
-                  <span style="font-size:0.6rem;font-weight:500;letter-spacing:0.18em;text-transform:uppercase;color:rgba(212,114,78,0.3);text-align:center;">Perzine</span>
+                  <span style="font-size:0.6rem;font-weight:500;letter-spacing:0.18em;text-transform:uppercase;color:rgba(184,83,104,0.3);text-align:center;">Perzine</span>
                   <div style="height:1px;background:rgba(255,255,255,0.05);width:100%;"></div>
                 </div>
               </div>
