@@ -15,14 +15,14 @@
       --bg:         #f5f5f7;
       --bg-card:    rgba(255,255,255,0.72);
       --bg-nav:     rgba(245,245,247,0.75);
-      --bg-tint:    rgba(176,80,48,0.04);
+      --bg-tint:    rgba(123,45,62,0.04);
       --border:     rgba(0,0,0,0.08);
       --text:       #1d1d1f;
       --text-2:     #515154;
       --text-3:     #86868b;
-      --accent:     #B05030;
-      --accent-dim: rgba(176,80,48,0.09);
-      --accent-tag: rgba(176,80,48,0.16);
+      --accent:     #7B2D3E;
+      --accent-dim: rgba(123,45,62,0.09);
+      --accent-tag: rgba(123,45,62,0.16);
       --blur:       blur(24px);
       --radius:     18px;
     }
@@ -31,14 +31,14 @@
         --bg:         #000;
         --bg-card:    rgba(28,28,30,0.85);
         --bg-nav:     rgba(0,0,0,0.75);
-        --bg-tint:    rgba(212,114,78,0.07);
+        --bg-tint:    rgba(184,83,104,0.07);
         --border:     rgba(255,255,255,0.1);
         --text:       #f5f5f7;
         --text-2:     #a1a1a6;
         --text-3:     #636366;
-        --accent:     #D4724E;
-        --accent-dim: rgba(212,114,78,0.12);
-        --accent-tag: rgba(212,114,78,0.2);
+        --accent:     #B85368;
+        --accent-dim: rgba(184,83,104,0.12);
+        --accent-tag: rgba(184,83,104,0.2);
       }
     }
 
@@ -166,6 +166,7 @@
     }
     .bp-right-face img { width:100%; height:100%; object-fit:cover; display:block; }
     .bp-right-face::after { content:''; position:absolute; top:0; right:0; width:28px; height:100%; background:linear-gradient(to left,rgba(0,0,0,0.07),transparent); pointer-events:none; }
+    .bp-right-back { transform: rotateY(180deg); }
 
     /* Cover — sits over the full book, centred as a single page */
     .bp-cover {
@@ -342,6 +343,7 @@
           <!-- right page (flips) -->
           <div class="bp-right" id="bpr-perzine">
             <div class="bp-right-face" id="bprf-perzine"></div>
+            <div class="bp-right-face bp-right-back" id="bprb-perzine"></div>
           </div>
           <!-- spine -->
           <div class="bp-spine" id="spine-perzine"></div>
@@ -409,6 +411,7 @@
           <div class="bp-left" id="bpl-monsoon"></div>
           <div class="bp-right" id="bpr-monsoon">
             <div class="bp-right-face" id="bprf-monsoon"></div>
+            <div class="bp-right-face bp-right-back" id="bprb-monsoon"></div>
           </div>
           <div class="bp-spine" id="spine-monsoon"></div>
           <div class="bp-cover" id="bpc-monsoon"></div>
@@ -489,6 +492,7 @@ function initPortrait(id, total, prefix) {
   var leftEl  = document.getElementById('bpl-' + id);
   var rightEl = document.getElementById('bpr-' + id);
   var faceEl  = document.getElementById('bprf-' + id);
+  var backEl  = document.getElementById('bprb-' + id);
   var coverEl = document.getElementById('bpc-' + id);
   var spineEl = document.getElementById('spine-' + id);
   var prevBtn = document.getElementById('prev-' + id);
@@ -648,22 +652,25 @@ function initPortrait(id, total, prefix) {
       }, 460);
 
     } else {
-      // Normal spread flip forward
-      rightEl.style.transition = 'transform 0.52s cubic-bezier(0.77,0,0.175,1)';
+      // Normal spread flip forward — preload the back face before turning,
+      // and swap the left page at the halfway point when the turning page
+      // is edge-on and invisible, so nothing pops in after the fact.
+      var dur = 620;
+      fillEl(backEl, toP.right >= 0 ? toP.right : -1, prefix);
+      rightEl.style.transition = 'transform ' + dur + 'ms cubic-bezier(0.45,0,0.2,1)';
       rightEl.style.transform  = 'rotateY(-180deg)';
 
       setTimeout(function() {
+        fillEl(leftEl, toP.left, prefix);
+      }, dur / 2);
+
+      setTimeout(function() {
         spread = toSpread;
-        var np = spreadToPages(spread);
-        if (np.isBack) {
-          // handled next call
-        }
-        fillEl(leftEl, np.left,  prefix);
-        fillEl(faceEl, np.right >= 0 ? np.right : -1, prefix);
+        fillEl(faceEl, toP.right >= 0 ? toP.right : -1, prefix);
         rightEl.style.transition = 'none';
         rightEl.style.transform  = 'rotateY(0deg)';
         updateUI(); busy = false;
-      }, 530);
+      }, dur);
     }
   }
 
@@ -735,16 +742,25 @@ function initPortrait(id, total, prefix) {
       }, 460);
 
     } else {
-      // Normal spread flip back: start flipped, load content, unfold
-      fillEl(leftEl, toP.left,  prefix);
-      fillEl(faceEl, toP.right >= 0 ? toP.right : -1, prefix);
-      rightEl.style.transition = 'none';
-      rightEl.style.transform  = 'rotateY(-180deg)';
-      rightEl.getBoundingClientRect();
-      rightEl.style.transition = 'transform 0.52s cubic-bezier(0.77,0,0.175,1)';
-      rightEl.style.transform  = 'rotateY(0deg)';
-      spread = toSpread;
-      setTimeout(function() { updateUI(); busy = false; }, 530);
+      // Normal spread flip back — mirror of flipForward: preload the back
+      // face with the page we're turning to, swap the left page at the
+      // midpoint while the turning page is edge-on, then land flat.
+      var durB = 620;
+      fillEl(backEl, toP.right >= 0 ? toP.right : -1, prefix);
+      rightEl.style.transition = 'transform ' + durB + 'ms cubic-bezier(0.45,0,0.2,1)';
+      rightEl.style.transform  = 'rotateY(180deg)';
+
+      setTimeout(function() {
+        fillEl(leftEl, toP.left, prefix);
+      }, durB / 2);
+
+      setTimeout(function() {
+        spread = toSpread;
+        fillEl(faceEl, toP.right >= 0 ? toP.right : -1, prefix);
+        rightEl.style.transition = 'none';
+        rightEl.style.transform  = 'rotateY(0deg)';
+        updateUI(); busy = false;
+      }, durB);
     }
   }
 
