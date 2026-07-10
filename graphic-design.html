@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Graphic Design, Mahima Shah</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; font-size: 16px; }
+
+    :root {
+      --bg:          #f5f5f7;
+      --bg-card:     rgba(255,255,255,0.68);
+      --bg-nav:      rgba(245,245,247,0.75);
+      --bg-tint:     rgba(123,45,62,0.04);
+      --border:      rgba(0,0,0,0.08);
+      --text:        #1d1d1f;
+      --text-2:      #515154;
+      --text-3:      #86868b;
+      --accent:      #7B2D3E;
+      --accent-hi:   #93394C;
+      --accent-dim:  rgba(123,45,62,0.09);
+      --accent-tag:  rgba(123,45,62,0.16);
+      --shadow-sm:   0 2px 16px rgba(0,0,0,0.06);
+      --shadow-md:   0 4px 32px rgba(0,0,0,0.09);
+      --shadow-lg:   0 20px 60px rgba(0,0,0,0.11);
+      --blur:        blur(24px);
+      --radius:      18px;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg:          #000000;
+        --bg-card:     rgba(28,28,30,0.82);
+        --bg-nav:      rgba(0,0,0,0.75);
+        --bg-tint:     rgba(184,83,104,0.07);
+        --border:      rgba(255,255,255,0.1);
+        --text:        #f5f5f7;
+        --text-2:      #a1a1a6;
+        --text-3:      #636366;
+        --accent:      #B85368;
+        --accent-hi:   #C96479;
+        --accent-dim:  rgba(184,83,104,0.12);
+        --accent-tag:  rgba(184,83,104,0.2);
+        --shadow-sm:   0 2px 16px rgba(0,0,0,0.35);
+        --shadow-md:   0 4px 32px rgba(0,0,0,0.45);
+        --shadow-lg:   0 20px 60px rgba(0,0,0,0.65);
+      }
+    }
+
+    body { background:var(--bg); color:var(--text); font-family:'DM Sans',-apple-system,sans-serif; font-weight:300; line-height:1.6; overflow-x:hidden; -webkit-font-smoothing:antialiased; }
+
+    /* cursor dot */
+    #cdot { display:none; position:fixed; width:9px; height:9px; border-radius:50%; background:var(--accent); pointer-events:none; z-index:9999; opacity:0; transform:translate(-50%,-50%); transition:width .18s,height .18s,opacity .15s; left:-100px; top:-100px; }
+    @media (pointer:fine) { #cdot { display:block; } }
+    body.has-cursor { cursor:none; }
+    body.has-cursor a, body.has-cursor button { cursor:none; }
+    #cdot.expand { width:26px; height:26px; opacity:0.15; }
+
+    /* NAV */
+    nav { position:fixed; top:0; left:0; right:0; z-index:800; height:52px; display:flex; align-items:center; justify-content:space-between; padding:0 52px; background:var(--bg-nav); backdrop-filter:var(--blur); -webkit-backdrop-filter:var(--blur); border-bottom:1px solid var(--border); }
+    @media (max-width:600px) { nav { padding:0 22px; } }
+    .nav-links { display:flex; gap:36px; list-style:none; align-items:center; }
+    .nav-links a { font-size:0.78rem; font-weight:400; letter-spacing:0.04em; color:var(--text-3); text-decoration:none; position:relative; transition:color 0.2s; }
+    .nav-links a::after { content:''; position:absolute; bottom:-2px; left:0; width:0; height:1px; background:var(--accent); transition:width 0.25s cubic-bezier(0.16,1,0.3,1); }
+    .nav-links a:hover { color:var(--text); }
+    .nav-links a:hover::after { width:100%; }
+    .nav-back { display:inline-flex; align-items:center; gap:6px; font-size:0.78rem; font-weight:400; letter-spacing:0.04em; color:var(--text-3); text-decoration:none; transition:color 0.2s; }
+    .nav-back:hover { color:var(--accent); }
+    .nav-back svg { transition:transform 0.2s; }
+    .nav-back:hover svg { transform:translateX(-3px); }
+
+    /* LAYOUT */
+    .page { padding-top:52px; }
+    .container { max-width:1100px; margin:0 auto; padding:0 40px; }
+    @media (max-width:600px) { .container { padding:0 22px; } }
+
+    /* HERO */
+    .cs-hero { padding:80px 40px 72px; border-bottom:1px solid var(--border); position:relative; overflow:hidden; }
+    .cs-hero::before { content:''; position:absolute; inset:0; background:radial-gradient(ellipse at 70% 50%, var(--accent-dim), transparent 65%); pointer-events:none; }
+    .cs-hero-inner { max-width:1100px; margin:0 auto; position:relative; z-index:1; }
+    .cs-tag { display:inline-block; font-size:0.64rem; font-weight:500; letter-spacing:0.16em; text-transform:uppercase; color:var(--accent); background:var(--accent-dim); border:1px solid var(--accent-tag); padding:4px 12px; border-radius:100px; margin-bottom:20px; }
+    .cs-title { font-family:'DM Serif Display',Georgia,serif; font-size:clamp(2.8rem,7vw,5.5rem); font-weight:600; line-height:1.0; letter-spacing:-0.02em; color:var(--text); margin-bottom:20px; }
+    .cs-title .tw-cursor { display:inline-block; width:3px; height:0.72em; margin-left:4px; background:var(--accent); vertical-align:-0.05em; animation:tw-blink 0.9s step-end infinite; }
+    .cs-title .tw-cursor.tw-cursor-fade { animation:none; opacity:0; transition:opacity 0.6s ease; }
+    @keyframes tw-blink { 50% { opacity:0; } }
+    .cs-subtitle { font-size:clamp(1rem,2vw,1.15rem); color:var(--text-2); line-height:1.7; max-width:600px; }
+    .cs-meta { display:flex; flex-wrap:wrap; gap:32px; padding-top:36px; border-top:1px solid var(--border); margin-top:36px; }
+    .cs-meta-item { display:flex; flex-direction:column; gap:4px; }
+    .cs-meta-label { font-size:0.62rem; font-weight:500; letter-spacing:0.16em; text-transform:uppercase; color:var(--text-3); }
+    .cs-meta-value { font-size:0.88rem; font-weight:400; color:var(--text); }
+
+    /* SECTIONS */
+    .cs-section { padding:76px 40px; border-bottom:1px solid var(--border); }
+    .cs-section:last-of-type { border-bottom:none; }
+    .container-inner { max-width:1100px; margin:0 auto; }
+    @media (max-width:600px) { .cs-section { padding:56px 22px; } }
+    .section-label { display:inline-flex; align-items:center; gap:10px; font-size:0.62rem; font-weight:500; letter-spacing:0.18em; text-transform:uppercase; color:var(--accent); margin-bottom:12px; }
+    .section-num { font-size:0.62rem; font-weight:400; letter-spacing:0.1em; color:var(--text-3); }
+    .proj-medium { font-size:0.62rem; font-weight:400; letter-spacing:0.02em; text-transform:none; color:var(--text-3); font-style:italic; }
+    .proj-medium::before { content:'\2022'; margin-right:10px; color:var(--text-3); font-style:normal; }
+    .section-heading { font-family:'DM Serif Display',Georgia,serif; font-size:clamp(1.8rem,4vw,2.8rem); font-weight:500; line-height:1.12; letter-spacing:-0.015em; color:var(--text); margin-bottom:22px; }
+    .section-heading em { font-style:italic; color:var(--accent); }
+    .body-text { font-size:1rem; color:var(--text-2); line-height:1.82; max-width:620px; }
+    .body-text + .body-text { margin-top:14px; }
+
+    /* STAT STRIP */
+    .stat-strip { display:flex; flex-wrap:wrap; gap:2px; margin:40px 0; }
+    .stat-card { flex:1; min-width:150px; background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius); padding:24px 22px; backdrop-filter:var(--blur); }
+    .stat-val { font-family:'DM Serif Display',Georgia,serif; font-size:2.2rem; font-weight:500; color:var(--accent); line-height:1; display:block; margin-bottom:6px; }
+    .stat-desc { font-size:0.8rem; font-weight:400; color:var(--text-3); line-height:1.4; }
+
+    /* PULL QUOTE */
+    .pull-quote { margin:32px 0 0; padding:24px 28px; border-left:3px solid var(--accent); background:var(--bg-tint); border-radius:0 var(--radius) var(--radius) 0; max-width:620px; }
+    .pull-quote p { font-family:'DM Serif Display',Georgia,serif; font-style:italic; font-size:1.08rem; color:var(--text); line-height:1.55; margin-bottom:6px; }
+    .pull-quote cite { font-size:0.72rem; font-weight:400; letter-spacing:0.06em; color:var(--text-3); font-style:normal; }
+
+    /* PROJECT SPLIT LAYOUT — media + text */
+    .proj-split { display:grid; grid-template-columns:1fr 1fr; gap:52px; align-items:center; }
+    .proj-split.rev .proj-media { order:2; }
+    .proj-split.rev .proj-text { order:1; }
+    @media (max-width:860px) {
+      .proj-split { grid-template-columns:1fr; gap:32px; }
+      .proj-split.rev .proj-media { order:1; }
+      .proj-split.rev .proj-text { order:2; }
+    }
+    .proj-media {
+      border-radius:var(--radius); overflow:hidden;
+      border:1px solid var(--border); box-shadow:var(--shadow-md);
+      background:var(--bg-card);
+    }
+    .proj-media img { width:100%; height:auto; display:block; }
+    .proj-media-pair { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+    .proj-media-pair .proj-media { grid-column:auto; }
+    @media (max-width:520px) { .proj-media-pair { grid-template-columns:1fr; } }
+    .proj-media-cap { font-size:0.68rem; color:var(--text-3); letter-spacing:0.04em; margin-top:8px; text-align:center; }
+
+    /* full-width text-only project (no artwork on file) */
+    .proj-full { max-width:680px; }
+
+    /* PROJECT TAGS */
+    .proj-tags { display:flex; flex-wrap:wrap; gap:6px; margin-top:18px; }
+    .proj-tag { font-size:0.68rem; font-weight:400; color:var(--text-3); background:var(--accent-dim); border:1px solid var(--accent-tag); padding:3px 10px; border-radius:100px; }
+
+    /* NEXT PROJECT */
+    .next-project { padding:72px 40px; text-align:center; border-top:1px solid var(--border); }
+    .next-label { font-size:0.64rem; font-weight:500; letter-spacing:0.18em; text-transform:uppercase; color:var(--text-3); margin-bottom:12px; }
+    .next-title { font-family:'DM Serif Display',Georgia,serif; font-size:clamp(1.8rem,4vw,2.8rem); font-weight:500; color:var(--text); margin-bottom:24px; }
+    .next-link { display:inline-flex; align-items:center; gap:8px; font-size:0.82rem; font-weight:400; color:var(--text); text-decoration:none; transition:gap 0.25s; }
+    .next-link:hover { gap:14px; }
+    .next-link-arrow { width:30px; height:30px; border-radius:50%; background:var(--accent); display:flex; align-items:center; justify-content:center; transition:transform 0.25s; }
+    .next-link:hover .next-link-arrow { transform:scale(1.1); }
+
+    /* FOOTER */
+    footer { border-top:1px solid var(--border); padding:48px 40px 36px; text-align:center; }
+    .foot-inner { max-width:1100px; margin:0 auto; }
+    .foot-name { font-family:'DM Serif Display',Georgia,serif; font-size:1.5rem; font-weight:500; color:var(--text); margin-bottom:4px; }
+    .foot-sub { font-family:'DM Serif Display',Georgia,serif; font-style:italic; font-weight:300; font-size:0.9rem; color:var(--text-3); margin-bottom:24px; }
+    .foot-links { display:flex; gap:28px; justify-content:center; list-style:none; flex-wrap:wrap; margin-bottom:20px; }
+    .foot-links a { font-size:0.78rem; font-weight:400; letter-spacing:0.04em; color:var(--text-2); text-decoration:none; transition:color 0.2s; }
+    .foot-links a:hover { color:var(--accent); }
+    .foot-copy { font-size:0.64rem; color:var(--text-3); letter-spacing:0.06em; }
+
+    .reveal { opacity:1; transform:none; }
+    .delay-1 { transition-delay:0.08s; }
+    .delay-2 { transition-delay:0.18s; }
+    .delay-3 { transition-delay:0.28s; }
+  </style>
+</head>
+<body>
+<div id="cdot"></div>
+<div class="page">
+
+  <nav>
+    <a href="index.html" class="nav-back">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+        <path d="M9 2L4 7l5 5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      Back
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html#about">About</a></li>
+      <li><a href="index.html#work">Work</a></li>
+      <li><a href="index.html#contact">Contact</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <header class="cs-hero">
+    <div class="cs-hero-inner">
+      <span class="cs-tag reveal">Graphic Design</span>
+      <h1 class="cs-title reveal delay-1">Graphic Design</h1>
+      <p class="cs-subtitle reveal delay-2">Nine projects across Illustrator, InDesign, and Photoshop, each one a different way of thinking about a visual problem, from illustration and typography to branding, editorial layout, and motion.</p>
+      <div class="cs-meta reveal delay-3">
+        <div class="cs-meta-item">
+          <span class="cs-meta-label">University</span>
+          <span class="cs-meta-value">University of Michigan</span>
+        </div>
+        <div class="cs-meta-item">
+          <span class="cs-meta-label">Tools</span>
+          <span class="cs-meta-value">Illustrator, InDesign, Photoshop</span>
+        </div>
+        <div class="cs-meta-item">
+          <span class="cs-meta-label">Projects</span>
+          <span class="cs-meta-value">9</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- 01 OVERVIEW -->
+  <section class="cs-section">
+    <div class="container-inner container">
+      <span class="section-label reveal"><span class="section-num">01</span>Overview</span>
+      <h2 class="section-heading reveal delay-1">Learning to <em>trust instinct.</em></h2>
+      <p class="body-text reveal delay-2">I signed up for an introductory graphic design course wanting to explore a side of creativity I had not had much chance to pursue. I have always been drawn to the intersection of technology and design, and this felt like the right place to learn the tools behind it. After spending most of college thinking in code, data, and systems, I wanted a space where there was not always one right answer.</p>
+      <p class="body-text reveal delay-2">It pushed me to slow down, sketch, experiment, and trust my own instincts. Along the way I learned Illustrator, InDesign, and Photoshop, and more than anything, I rediscovered how much I enjoy making things simply because they are interesting.</p>
+
+      <div class="stat-strip">
+        <div class="stat-card reveal delay-1">
+          <span class="stat-val">9</span>
+          <span class="stat-desc">projects spanning illustration, typography, branding, editorial, digital art, and animation</span>
+        </div>
+        <div class="stat-card reveal delay-2">
+          <span class="stat-val">3</span>
+          <span class="stat-desc">Adobe tools learned from the ground up: Illustrator, InDesign, and Photoshop</span>
+        </div>
+        <div class="stat-card reveal delay-3">
+          <span class="stat-val">3</span>
+          <span class="stat-desc">formats explored: print collateral, digital interfaces, and hand-drawn motion</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 02 ROBOT COMPANION -->
+  <section class="cs-section">
+    <div class="container-inner container">
+      <span class="section-label reveal"><span class="section-num">02</span>Vector Illustration<span class="proj-medium">Illustrator</span></span>
+      <h2 class="section-heading reveal delay-1">Robot Companion</h2>
+      <div class="proj-split reveal delay-2">
+        <div class="proj-media">
+          <img src="graphic-robot-companion.png" alt="Robot Companion, a panda-shaped robot vector illustration made in Illustrator" />
+        </div>
+        <div class="proj-text">
+          <p class="body-text">Pandas have always been one of my favorite animals, so I turned the robot prompt into something a little more playful. I sketched and experimented for a while before landing on a design that balanced mechanical detail with personality.</p>
+          <p class="body-text">As one of my first Illustrator projects, it taught me Bezier curves, shape building, the pathfinder tool, layers, and color palettes. Equal parts technical challenge and creative fun, it is still one of my favorite pieces to come out of this course.</p>
+          <div class="proj-tags">
+            <span class="proj-tag">Bezier Curves</span>
+            <span class="proj-tag">Pathfinder</span>
+            <span class="proj-tag">Color Palettes</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 03 TEAM -->
+  <section class="cs-section">
+    <div class="container-inner container">
+      <span class="section-label reveal"><span class="section-num">03</span>Typography<span class="proj-medium">Illustrator</span></span>
+      <h2 class="section-heading reveal delay-1">TEAM</h2>
+      <div class="proj-split rev reveal delay-2">
+        <div class="proj-media">
+          <img src="graphic-team.png" alt="Hand-built typography spelling TEAM, using puzzle pieces and varied letterforms" />
+        </div>
+        <div class="proj-text">
+          <p class="body-text">I chose the word TEAM because it lent itself naturally to visual storytelling: puzzle pieces, different letterforms, and varying styles, all reinforcing the idea of people coming together.</p>
+          <p class="body-text">Recreating each letter by hand gave me a new appreciation for typography, from building smooth vector paths and minimizing anchor points to thinking carefully about spacing, proportion, and balance. It is one of those projects that changed how I notice type in everyday life.</p>
+          <div class="proj-tags">
+            <span class="proj-tag">Custom Letterforms</span>
+            <span class="proj-tag">Vector Paths</span>
+            <span class="proj-tag">Composition</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 04 DREAMSCAPE -->
+  <section class="cs-section">
+    <div class="container-inner container">
+      <span class="section-label reveal"><span class="section-num">04</span>Brand Identity<span class="proj-medium">Illustrator</span></span>
+      <h2 class="section-heading reveal delay-1">Dreamscape</h2>
+      <div class="proj-split reveal delay-2">
+        <div class="proj-media">
+          <img src="graphic-dreamscape.png" alt="Dreamscape logo and brand identity design" />
+        </div>
+        <div class="proj-text">
+          <p class="body-text">For this project I designed a visual identity for the design course itself. I imagined Dreamscape as a place where ideas could be explored freely and creativity felt limitless.</p>
+          <p class="body-text">Designing a logo taught me that branding is about more than making something look interesting. In critique, feedback pointed out that Dreamscape could easily read as landscape, making the concept less immediately clear. That note has stayed with me since.</p>
+          <div class="pull-quote">
+            <p>Good branding should spark curiosity without creating confusion.</p>
+            <cite>On the Dreamscape critique</cite>
+          </div>
+          <div class="proj-tags">
+            <span class="proj-tag">Logo Design</span>
+            <span class="proj-tag">Brand Identity</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 05 MUMBAI, EXPLAINED -->
+  <section class="cs-section">
+    <div class="container-inner container">
+      <span class="section-label reveal"><span class="section-num">05</span>Information Design<span class="proj-medium">Illustrator</span></span>
+      <h2 class="section-heading reveal delay-1">Mumbai, Explained</h2>
+      <div class="proj-full">
+        <p class="body-text reveal delay-2">I could not pass up the chance to tell people about my hometown. Most of my classmates had probably never been to Mumbai, so I wanted to capture what makes it such a unique place.</p>
+        <p class="body-text reveal delay-2">Illustrator was the biggest challenge here: nothing was ready to drag and drop, so every icon, layout, chart, and illustration had to be built and refined from scratch. It gave me a much deeper appreciation for the craft behind something that looks simple.</p>
+        <div class="proj-tags reveal delay-2">
+          <span class="proj-tag">Custom Icons</span>
+          <span class="proj-tag">Data Visualization</span>
+          <span class="proj-tag">Layout</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 06 EXPLORING UMMA -->
+  <section class="cs-section">
+    <div class="container-inner container">
+      <span class="section-label reveal"><span class="section-num">06</span>Editorial Design<span class="proj-medium">InDesign</span></span>
+      <h2 class="section-heading reveal delay-1">Exploring UMMA</h2>
+      <div class="proj-split rev reveal delay-2">
+        <div class="proj-media">
+          <img src="graphic-umma-cover.jpg" alt="Cover of Exploring UMMA, an editorial booklet about the University of Michigan Museum of Art" />
+        </div>
+        <div class="proj-text">
+          <p class="body-text">Compared to some of the other projects, this one felt surprisingly natural. I have always enjoyed designing documents and presentations, so learning InDesign felt like an extension of something I already liked doing, just with much more control.</p>
+          <p class="body-text">Working with grids, paragraph styles, typography, and multi-page layouts showed me how thoughtful structure can quietly guide someone's reading experience. It was a nice reminder that good design is often the part people don't notice.</p>
+          <div class="proj-tags">
+            <span class="proj-tag">Grid Systems</span>
+            <span class="proj-tag">Paragraph Styles</span>
+            <span class="proj-tag">Multi-page Layout</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 07 SHELL OF A PERSON -->
+  <section class="cs-section">
+    <div class="container-inner container">
+      <span class="section-label reveal"><span class="section-num">07</span>Digital Art<span class="proj-medium">Photoshop</span></span>
+      <h2 class="section-heading reveal delay-1">Shell of a Person</h2>
+      <div class="proj-split reveal delay-2">
+        <div class="proj-media">
+          <img src="graphic-shell.jpg" alt="A portrait assembled entirely from photographs of seashells" />
+        </div>
+        <div class="proj-text">
+          <p class="body-text">This was the steepest learning curve of the whole course and one of my favorite projects overall. I spent days feeling completely stuck before the idea finally came together: a portrait assembled entirely from seashells, inspired by one of my best friend's photos because the pose had exactly the composition I wanted.</p>
+          <p class="body-text">Once I had a direction, I learned an incredible amount about Photoshop, from masking and compositing to adjustment layers, color correction, and blending images together seamlessly. More than anything though, it taught me to trust the creative process. Sometimes the hardest part isn't making the artwork, it's finding the idea worth making.</p>
+          <div class="proj-tags">
+            <span class="proj-tag">Masking</span>
+            <span class="proj-tag">Compositing</span>
+            <span class="proj-tag">Color Correction</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 08 SEE LEVEL -->
+  <section class="cs-section">
+    <div class="container-inner container">
+      <span class="section-label reveal"><span class="section-num">08</span>Web Design<span class="proj-medium">Photoshop</span></span>
+      <h2 class="section-heading reveal delay-1">See Level</h2>
+      <div class="proj-split rev reveal delay-2">
+        <div class="proj-media">
+          <img src="graphic-seelevel.jpg" alt="See Level, a fictional travel company homepage mockup designed in Photoshop" />
+        </div>
+        <div class="proj-text">
+          <p class="body-text">Long before I built websites with HTML and CSS, I was designing them in Photoshop. We were asked to create the homepage for a fictional travel company, balancing navigation, imagery, typography, and content hierarchy for a scrolling landing page.</p>
+          <p class="body-text">It was my first time thinking about interfaces from a user's perspective rather than just arranging things to look nice. Looking back, I can see how this project quietly introduced me to many of the ideas that eventually led me toward product and web design.</p>
+          <div class="proj-tags">
+            <span class="proj-tag">Web Mockup</span>
+            <span class="proj-tag">Visual Hierarchy</span>
+            <span class="proj-tag">UI Layout</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 09 A LIGHT HOME -->
+  <section class="cs-section">
+    <div class="container-inner container">
+      <span class="section-label reveal"><span class="section-num">09</span>Social Impact Design<span class="proj-medium">Illustrator</span></span>
+      <h2 class="section-heading reveal delay-1">A Light Home</h2>
+      <div class="proj-split reveal delay-2">
+        <div>
+          <div class="proj-media-pair">
+            <div class="proj-media">
+              <img src="graphic-lighthome-poster.jpg" alt="Be the Light That Leads Someone Home, a social impact poster about homelessness" />
+            </div>
+            <div class="proj-media">
+              <img src="graphic-lighthome-moodboard.jpg" alt="Mood board for the Be the Light social impact poster, exploring purple tones and imagery around home and hope" />
+            </div>
+          </div>
+          <p class="proj-media-cap">Final poster, and the mood board that shaped it</p>
+        </div>
+        <div class="proj-text">
+          <p class="body-text">Designing for a social cause required a different way of thinking. Before creating the final poster, we built mood boards and explored multiple concepts, which was something I had never really done before.</p>
+          <p class="body-text">The biggest challenge wasn't using Illustrator. It was deciding what story I wanted the design to tell. Throughout the process I learned that visual choices, from imagery to composition, shape how people interpret a message just as much as the words themselves.</p>
+          <div class="proj-tags">
+            <span class="proj-tag">Mood Boarding</span>
+            <span class="proj-tag">Concept Development</span>
+            <span class="proj-tag">Poster Design</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 10 TWENTY-FOUR FRAMES -->
+  <section class="cs-section">
+    <div class="container-inner container">
+      <span class="section-label reveal"><span class="section-num">10</span>Frame-by-Frame Animation<span class="proj-medium">Photoshop</span></span>
+      <h2 class="section-heading reveal delay-1">Twenty-Four Frames</h2>
+      <div class="proj-split rev reveal delay-2">
+        <div class="proj-media">
+          <img src="graphic-frames.gif" alt="A looping hand-drawn animation about an alien, a UFO, and an unsuspecting person walking by" />
+        </div>
+        <div class="proj-text">
+          <p class="body-text">This quickly became one of my favorite projects because it gave me an excuse to pick up my iPad and draw again after a long time. I created a looping animation about an alien, a UFO, and an unsuspecting person walking by, drawing every frame individually before assembling everything in Photoshop.</p>
+          <p class="body-text">Beyond learning timeline animation and frame sequencing, it reminded me how rewarding it feels to slow down and create something entirely by hand. It's probably the project that best captures why I wanted to take this course in the first place: to practice creativity for the sake of creativity.</p>
+          <div class="proj-tags">
+            <span class="proj-tag">Timeline Animation</span>
+            <span class="proj-tag">Frame Sequencing</span>
+            <span class="proj-tag">Hand-drawn</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- NEXT -->
+  <div class="next-project">
+    <p class="next-label reveal">Next project</p>
+    <h2 class="next-title reveal delay-1">Search Engine</h2>
+    <a href="search-engine.html" class="next-link reveal delay-2">
+      View project
+      <span class="next-link-arrow">
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6h8M6 2l4 4-4 4" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </span>
+    </a>
+  </div>
+
+  <footer>
+    <div class="foot-inner">
+      <p class="foot-name">Mahima Shah</p>
+      <p class="foot-sub">always learning</p>
+      <ul class="foot-links">
+        <li><a href="mailto:mahimashahxyz@gmail.com">Email</a></li>
+        <li><a href="https://www.linkedin.com/in/shahmahima/" target="_blank" rel="noopener">LinkedIn</a></li>
+        <li><a href="https://github.com/mahima-shah" target="_blank" rel="noopener">GitHub</a></li>
+        <li><a href="https://www.youtube.com/@mahimashah" target="_blank" rel="noopener">YouTube</a></li>
+      </ul>
+      <p class="foot-copy">2025 Mahima Shah &nbsp;&middot;&nbsp; Designed with intention</p>
+    </div>
+  </footer>
+
+</div>
+
+<script>
+  // Scroll reveal
+  var revEls = document.querySelectorAll('.reveal');
+  revEls.forEach(function(el) {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(20px)';
+  });
+  requestAnimationFrame(function() {
+    requestAnimationFrame(function() {
+      revEls.forEach(function(el) {
+        el.style.transition = 'opacity 0.7s cubic-bezier(0.16,1,0.3,1), transform 0.7s cubic-bezier(0.16,1,0.3,1)';
+      });
+      if (!('IntersectionObserver' in window)) {
+        revEls.forEach(function(el) { el.style.opacity='1'; el.style.transform='none'; });
+        return;
+      }
+      var io = new IntersectionObserver(function(entries) {
+        entries.forEach(function(e) {
+          if (e.isIntersecting) {
+            e.target.style.opacity = '1';
+            e.target.style.transform = 'none';
+            io.unobserve(e.target);
+          }
+        });
+      }, { threshold: 0.06, rootMargin: '0px 0px -40px 0px' });
+      revEls.forEach(function(el) { io.observe(el); });
+    });
+  });
+
+  // Orange dot cursor
+  var dot = document.getElementById('cdot');
+  if (dot && window.matchMedia('(pointer: fine)').matches) {
+    var active = false;
+    document.addEventListener('mousemove', function(e) {
+      dot.style.left = e.clientX + 'px';
+      dot.style.top  = e.clientY + 'px';
+      if (!active) {
+        active = true;
+        dot.style.opacity = '1';
+        document.body.classList.add('has-cursor');
+      }
+    }, {passive:true});
+    document.querySelectorAll('a, button').forEach(function(el) {
+      el.addEventListener('mouseenter', function() { dot.classList.add('expand'); });
+      el.addEventListener('mouseleave', function() { dot.classList.remove('expand'); });
+    });
+  }
+
+  // Typewriter heading reveal
+  (function(){
+    var el = document.querySelector('.cs-title');
+    if (!el) return;
+    var text = el.textContent;
+    el.setAttribute('aria-label', text);
+    el.innerHTML = '<span class="tw-text" aria-hidden="true"></span><span class="tw-cursor" aria-hidden="true"></span>';
+    var textSpan = el.querySelector('.tw-text');
+    var cursor = el.querySelector('.tw-cursor');
+    var started = false;
+    function type(){
+      if (started) return;
+      started = true;
+      var i = 0, speed = 46;
+      (function step(){
+        textSpan.textContent = text.slice(0, i);
+        i++;
+        if (i <= text.length) {
+          setTimeout(step, speed);
+        } else {
+          setTimeout(function(){ cursor.classList.add('tw-cursor-fade'); }, 850);
+        }
+      })();
+    }
+    if ('IntersectionObserver' in window) {
+      var io = new IntersectionObserver(function(entries){
+        entries.forEach(function(e){ if (e.isIntersecting) { type(); io.unobserve(el); } });
+      }, {threshold:0.3});
+      io.observe(el);
+    } else {
+      textSpan.textContent = text;
+    }
+  })();
+</script>
+</body>
+</html>
