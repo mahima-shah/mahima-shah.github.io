@@ -222,6 +222,7 @@
     .about-heading-row {
       margin-bottom: 48px;
     }
+
     .about-body-row {
       display: grid; grid-template-columns: 1fr 300px;
       gap: 56px; align-items: center;
@@ -229,6 +230,7 @@
     @media (max-width: 860px) { .about-body-row { grid-template-columns: 1fr; gap: 40px; } }
 
     .pills { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 28px; }
+    .pills-full { max-width: 620px; margin-top: 32px; }
     .pill {
       font-size: 0.75rem; font-weight: 400; color: var(--text-2);
       background: var(--bg-card); border: 1px solid var(--border);
@@ -422,20 +424,20 @@
         <p class="sec-body reveal reveal-left delay-1" style="margin-top:14px;">
           Outside of data and design, I love to travel and document the moments that shape how I see the world. I'm always experimenting with new crafts, from tactile ones like crocheting to digital projects on Procreate. If I'm not making something, I'm probably just catching up on a favorite series.
         </p>
-        <div class="pills reveal reveal-up delay-2">
-          <span class="pill">UI / UX</span>
-          <span class="pill">Figma</span>
-          <span class="pill">Design Systems</span>
-          <span class="pill">Prototyping</span>
-          <span class="pill">User Research</span>
-          <span class="pill">Visual Design</span>
-        </div>
       </div>
       <div class="photo-col reveal reveal-right delay-1">
         <div class="photo-frame">
           <img src="profile-pic.jpg" alt="Mahima Shah" />
         </div>
       </div>
+    </div>
+    <div class="pills pills-full reveal reveal-up delay-2">
+      <span class="pill">UI / UX</span>
+      <span class="pill">Figma</span>
+      <span class="pill">Design Systems</span>
+      <span class="pill">Prototyping</span>
+      <span class="pill">User Research</span>
+      <span class="pill">Visual Design</span>
     </div>
   </div>
 </section>
@@ -830,6 +832,64 @@
     secs.forEach(function(s) { if (window.scrollY >= s.offsetTop-80) current=s.id; });
     navAs.forEach(function(a) { a.style.color = a.getAttribute('href')==='#'+current ? 'var(--text)' : ''; });
   }, {passive:true});
+
+  // Scroll-pinned, letter-by-letter text highlight — About title
+  (function() {
+    var heading = document.getElementById('about-title');
+    var pinWrap = document.querySelector('.about-heading-pin');
+    if (!heading || !pinWrap) return;
+
+    // Split every character of the heading (including inside <em>) into its own span,
+    // preserving the em wrapper so the accent color still applies.
+    function wrapChars(el) {
+      Array.prototype.slice.call(el.childNodes).forEach(function(node) {
+        if (node.nodeType === Node.TEXT_NODE) {
+          var frag = document.createDocumentFragment();
+          var text = node.textContent;
+          for (var i = 0; i < text.length; i++) {
+            var span = document.createElement('span');
+            span.className = 'sc';
+            span.textContent = text[i];
+            frag.appendChild(span);
+          }
+          el.replaceChild(frag, node);
+        } else if (node.nodeType === Node.ELEMENT_NODE) {
+          wrapChars(node);
+        }
+      });
+    }
+    wrapChars(heading);
+
+    var chars = heading.querySelectorAll('.sc');
+    var ticking = false;
+
+    function update() {
+      var rect = pinWrap.getBoundingClientRect();
+      var vh = window.innerHeight;
+      var total = pinWrap.offsetHeight - vh; // scroll distance covered while pinned
+      var progress;
+      if (total <= 0) {
+        progress = rect.top <= 0 ? 1 : 0;
+      } else {
+        progress = -rect.top / total;
+      }
+      progress = Math.max(0, Math.min(1, progress));
+      var activeCount = Math.round(progress * chars.length);
+      chars.forEach(function(c, i) {
+        c.classList.toggle('active', i < activeCount);
+      });
+      ticking = false;
+    }
+    function onScroll() {
+      if (!ticking) {
+        requestAnimationFrame(update);
+        ticking = true;
+      }
+    }
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll);
+    update();
+  })();
 
   // Orange dot cursor
   var dot = document.getElementById('cdot');
