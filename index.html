@@ -345,6 +345,17 @@
     .gd-chips { position:absolute;bottom:26px;left:0;right:0;display:flex;gap:8px;justify-content:center;z-index:2; }
     .gd-chip { font-family:'DM Sans',sans-serif;font-size:0.62rem;font-weight:500;letter-spacing:0.04em;color:rgba(255,255,255,0.55);background:rgba(184,83,104,0.14);border:1px solid rgba(184,83,104,0.28);padding:4px 11px;border-radius:100px; }
 
+    /* ML / ICU Mortality */
+    .ml-scene { background:#0A0F14; }
+    .ml-light { position:absolute;width:480px;height:480px;top:-160px;left:-100px; background:radial-gradient(circle at 50% 50%,rgba(184,83,104,0.2) 0%,rgba(184,83,104,0.07) 45%,transparent 70%);pointer-events:none; }
+    .ml-grid-lines { position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,0.035) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.035) 1px,transparent 1px);background-size:28px 28px; }
+    .ml-curve { position:absolute;inset:0;z-index:2; }
+    .ml-center { position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;z-index:3; }
+    .ml-big { font-family:'DM Serif Display',Georgia,serif;font-size:3.6rem;font-weight:500;color:rgba(255,255,255,0.9);letter-spacing:-0.02em;line-height:1; }
+    .ml-small { font-size:0.58rem;font-weight:500;letter-spacing:0.32em;text-transform:uppercase;color:rgba(184,83,104,0.6); }
+    .ml-tags { position:absolute;bottom:26px;left:0;right:0;display:flex;gap:8px;justify-content:center;z-index:3; }
+    .ml-tag { font-family:'DM Sans',sans-serif;font-size:0.62rem;font-weight:500;letter-spacing:0.04em;color:rgba(255,255,255,0.55);background:rgba(184,83,104,0.14);border:1px solid rgba(184,83,104,0.28);padding:4px 11px;border-radius:100px; }
+
     /* ── FOOTER ── */
     footer { border-top: 1px solid var(--border); padding: 48px 24px 36px; text-align: center; }
     .foot-inner { max-width: 1100px; margin: 0 auto; }
@@ -557,6 +568,48 @@
         </div>
       </a>
 
+      <!-- ICU Mortality Prediction -->
+      <a class="card reveal reveal-up delay-1" href="icu-mortality.html" aria-label="ICU Mortality Prediction project">
+        <div class="card-info">
+          <p class="card-num">03 &nbsp;/&nbsp; Machine Learning</p>
+          <h3 class="card-title">ICU Mortality Prediction</h3>
+          <p class="card-desc">An end-to-end classical ML pipeline that turns 12,000 messy, irregularly sampled ICU records into calibrated mortality predictions, using feature engineering, regularized logistic regression, kernel methods, and a bootstrapped evaluation with a held-out challenge submission.</p>
+          <div class="card-tags">
+            <span class="tag">Python</span>
+            <span class="tag">scikit-learn</span>
+            <span class="tag">Feature Engineering</span>
+            <span class="tag">Kernel Methods</span>
+          </div>
+          <span class="card-cta">
+            Read about it
+            <span class="cta-dot">
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                <path d="M2 6h8M6 2l4 4-4 4" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </span>
+          </span>
+        </div>
+        <div class="card-vis">
+          <div class="cv ml-scene">
+            <div class="ml-light"></div>
+            <div class="ml-grid-lines"></div>
+            <svg class="ml-curve" viewBox="0 0 400 340" preserveAspectRatio="none" aria-hidden="true">
+              <polyline points="40,300 60,250 90,190 130,140 180,100 240,70 300,50 360,40" fill="none" stroke="rgba(184,83,104,0.55)" stroke-width="2.5" />
+              <line x1="40" y1="300" x2="360" y2="40" stroke="rgba(255,255,255,0.12)" stroke-width="1.5" stroke-dasharray="4 5" />
+            </svg>
+            <div class="ml-center">
+              <span class="ml-big">0.81</span>
+              <span class="ml-small">AUROC</span>
+            </div>
+            <div class="ml-tags" aria-hidden="true">
+              <span class="ml-tag">L1</span>
+              <span class="ml-tag">RBF</span>
+              <span class="ml-tag">CV</span>
+            </div>
+          </div>
+        </div>
+      </a>
+
       </div><!-- end .cards (build) -->
     </div><!-- end .cards-group (build) -->
 
@@ -571,7 +624,7 @@
       <!-- A2Ventures -->
       <a class="card reveal reveal-up delay-2" href="a2ventures.html" aria-label="A2Ventures project">
         <div class="card-info">
-          <p class="card-num">03 &nbsp;/&nbsp; UX Research &amp; Design</p>
+          <p class="card-num">04 &nbsp;/&nbsp; UX Research &amp; Design</p>
           <h3 class="card-title">A2Ventures</h3>
           <p class="card-desc">A mobile app that motivates University of Michigan students to explore Ann Arbor through a curated weekly location, a points-based rewards system, and partner store discounts. Built through 15 interviews, speed dating, and four rounds of usability testing.</p>
           <div class="card-tags">
@@ -618,7 +671,7 @@
       <!-- VibeNote -->
       <a class="card flip reveal reveal-up delay-3" href="vibenote.html" aria-label="VibeNote project">
         <div class="card-info">
-          <p class="card-num">04 &nbsp;/&nbsp; Interaction Design</p>
+          <p class="card-num">05 &nbsp;/&nbsp; Interaction Design</p>
           <h3 class="card-title">VibeNote</h3>
           <p class="card-desc">A micro-interaction concept that lets you attach a mood, memory, or lyric when sharing a song. Designed for mobile and smartwatch, applying five UX laws and core interaction design principles to make music sharing feel more human.</p>
           <div class="card-tags">
@@ -674,7 +727,7 @@
 
         <a class="card reveal reveal-up delay-1" href="creative.html" aria-label="Creative work — Computing for the Arts">
           <div class="card-info">
-            <p class="card-num">05 &nbsp;/&nbsp; Creative Computing</p>
+            <p class="card-num">06 &nbsp;/&nbsp; Creative Computing</p>
             <h3 class="card-title">Computing for the Arts</h3>
             <p class="card-desc">Eight projects built in Snap! — generative geometry, pixel filters, a soundscape about getting ready with roommates, a fireworks show driven by your microphone, a side-scroller game, data art, a web page built entirely with code blocks, and a final interactive collage inspired by Rauschenberg and Man Ray.</p>
             <div class="card-tags">
@@ -701,7 +754,7 @@
 
         <a class="card flip reveal reveal-up delay-2" href="zines.html" aria-label="Zines — Locked, A Monsoon Wedding, and a perzine">
           <div class="card-info">
-            <p class="card-num">06 &nbsp;/&nbsp; Zine Making</p>
+            <p class="card-num">07 &nbsp;/&nbsp; Zine Making</p>
             <h3 class="card-title">Zines</h3>
             <p class="card-desc">Three hand-crafted zines across three different forms: a personal perzine, a fanzine about escape rooms called Locked, and A Monsoon Wedding, a story zine about my parents' wedding built from photographs and memory.</p>
             <div class="card-tags">
@@ -740,7 +793,7 @@
 
         <a class="card reveal reveal-up delay-3" href="graphic-design.html" aria-label="Graphic Design — exploring Illustrator, InDesign, and Photoshop">
           <div class="card-info">
-            <p class="card-num">07 &nbsp;/&nbsp; Graphic Design</p>
+            <p class="card-num">08 &nbsp;/&nbsp; Graphic Design</p>
             <h3 class="card-title">Graphic Design</h3>
             <p class="card-desc">Nine projects exploring Illustrator, InDesign, and Photoshop — a robot illustration, hand-built typography, a brand identity, an information poster about Mumbai, an editorial spread, a seashell portrait, a travel site mockup, a social impact poster, and a hand-drawn animation.</p>
             <div class="card-tags">

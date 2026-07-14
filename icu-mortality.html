@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ICU Mortality Prediction, Mahima Shah</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; font-size: 16px; }
+
+    :root {
+      --bg:          #f5f5f7;
+      --bg-card:     rgba(255,255,255,0.68);
+      --bg-nav:      rgba(245,245,247,0.75);
+      --bg-tint:     rgba(123,45,62,0.04);
+      --border:      rgba(0,0,0,0.08);
+      --text:        #1d1d1f;
+      --text-2:      #515154;
+      --text-3:      #86868b;
+      --accent:      #7B2D3E;
+      --accent-hi:   #93394C;
+      --accent-dim:  rgba(123,45,62,0.09);
+      --accent-tag:  rgba(123,45,62,0.16);
+      --shadow-sm:   0 2px 16px rgba(0,0,0,0.06);
+      --shadow-md:   0 4px 32px rgba(0,0,0,0.09);
+      --shadow-lg:   0 20px 60px rgba(0,0,0,0.11);
+      --blur:        blur(24px);
+      --radius:      18px;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg:          #000000;
+        --bg-card:     rgba(28,28,30,0.82);
+        --bg-nav:      rgba(0,0,0,0.75);
+        --bg-tint:     rgba(184,83,104,0.07);
+        --border:      rgba(255,255,255,0.1);
+        --text:        #f5f5f7;
+        --text-2:      #a1a1a6;
+        --text-3:      #636366;
+        --accent:      #B85368;
+        --accent-hi:   #C96479;
+        --accent-dim:  rgba(184,83,104,0.12);
+        --accent-tag:  rgba(184,83,104,0.2);
+        --shadow-sm:   0 2px 16px rgba(0,0,0,0.35);
+        --shadow-md:   0 4px 32px rgba(0,0,0,0.45);
+        --shadow-lg:   0 20px 60px rgba(0,0,0,0.65);
+      }
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', -apple-system, sans-serif;
+      font-weight: 300;
+      line-height: 1.6;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* cursor dot */
+    #cdot { display:none; position:fixed; width:9px; height:9px; border-radius:50%; background:var(--accent); pointer-events:none; z-index:9999; opacity:0; transform:translate(-50%,-50%); transition:width .18s,height .18s,opacity .15s; left:-100px; top:-100px; }
+    @media (pointer:fine) { #cdot { display:block; } }
+    body.has-cursor { cursor:none; }
+    body.has-cursor a, body.has-cursor button { cursor:none; }
+    #cdot.expand { width:26px; height:26px; opacity:0.15; }
+
+    /* NAV */
+    nav { position:fixed; top:0; left:0; right:0; z-index:800; height:52px; display:flex; align-items:center; justify-content:space-between; padding:0 52px; background:var(--bg-nav); backdrop-filter:var(--blur); -webkit-backdrop-filter:var(--blur); border-bottom:1px solid var(--border); }
+    @media (max-width:600px) { nav { padding:0 22px; } }
+    .nav-links { display:flex; gap:36px; list-style:none; align-items:center; }
+    .nav-links a { font-size:0.78rem; font-weight:400; letter-spacing:0.04em; color:var(--text-3); text-decoration:none; position:relative; transition:color 0.2s; }
+    .nav-links a::after { content:''; position:absolute; bottom:-2px; left:0; width:0; height:1px; background:var(--accent); transition:width 0.25s cubic-bezier(0.16,1,0.3,1); }
+    .nav-links a:hover { color:var(--text); }
+    .nav-links a:hover::after { width:100%; }
+    .nav-back { display:inline-flex; align-items:center; gap:6px; font-size:0.78rem; font-weight:400; letter-spacing:0.04em; color:var(--text-3); text-decoration:none; transition:color 0.2s; }
+    .nav-back:hover { color:var(--accent); }
+    .nav-back svg { transition:transform 0.2s; }
+    .nav-back:hover svg { transform:translateX(-3px); }
+
+    /* LAYOUT */
+    .page { padding-top: 52px; }
+    .container { max-width: 1100px; margin: 0 auto; padding: 0 40px; }
+
+    /* HERO */
+    .cs-hero { padding: 80px 40px 72px; border-bottom: 1px solid var(--border); position: relative; overflow: hidden; }
+    .cs-hero::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 70% 50%, var(--accent-dim), transparent 65%); pointer-events: none; }
+    .cs-hero-inner { max-width: 1100px; margin: 0 auto; position: relative; z-index: 1; }
+    .cs-tag { display:inline-block; font-size:0.64rem; font-weight:500; letter-spacing:0.16em; text-transform:uppercase; color:var(--accent); background:var(--accent-dim); border:1px solid var(--accent-tag); padding:4px 12px; border-radius:100px; margin-bottom:20px; }
+    .cs-title { font-family:'DM Serif Display',Georgia,serif; font-size:clamp(2.6rem,6.4vw,5rem); font-weight:600; line-height:1.0; letter-spacing:-0.02em; color:var(--text); margin-bottom:20px; }
+    .cs-title .tw-cursor { display:inline-block; width:3px; height:0.72em; margin-left:4px; background:var(--accent); vertical-align:-0.05em; animation:tw-blink 0.9s step-end infinite; }
+    .cs-title .tw-cursor.tw-cursor-fade { animation:none; opacity:0; transition:opacity 0.6s ease; }
+    @keyframes tw-blink { 50% { opacity:0; } }
+    .cs-subtitle { font-size:clamp(1rem,2vw,1.15rem); color:var(--text-2); line-height:1.7; max-width:640px; margin-bottom:0; }
+    .cs-meta { display:flex; flex-wrap:wrap; gap:32px; padding-top:36px; border-top:1px solid var(--border); margin-top:36px; }
+    .cs-meta-item { display:flex; flex-direction:column; gap:4px; }
+    .cs-meta-label { font-size:0.62rem; font-weight:500; letter-spacing:0.16em; text-transform:uppercase; color:var(--text-3); }
+    .cs-meta-value { font-size:0.88rem; font-weight:400; color:var(--text); }
+
+    /* SECTIONS */
+    .cs-section { padding: 80px 40px; border-bottom: 1px solid var(--border); }
+    .cs-section:last-of-type { border-bottom: none; }
+    .container-inner { max-width: 1100px; margin: 0 auto; }
+    .section-label { display:inline-block; font-size:0.62rem; font-weight:500; letter-spacing:0.18em; text-transform:uppercase; color:var(--accent); margin-bottom:12px; }
+    .section-num { font-size:0.62rem; font-weight:400; letter-spacing:0.1em; color:var(--text-3); margin-right:10px; }
+    .section-heading { font-family:'DM Serif Display',Georgia,serif; font-size:clamp(1.8rem,4vw,2.8rem); font-weight:500; line-height:1.12; letter-spacing:-0.015em; color:var(--text); margin-bottom:24px; }
+    .section-heading em { font-style:italic; color:var(--accent); }
+    .body-text { font-size:1rem; color:var(--text-2); line-height:1.82; max-width:680px; }
+    .body-text + .body-text { margin-top:14px; }
+
+    /* STAT STRIP */
+    .stat-strip { display:flex; flex-wrap:wrap; gap:2px; margin:40px 0; }
+    .stat-card { flex:1; min-width:140px; background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius); padding:24px 22px; backdrop-filter:var(--blur); -webkit-backdrop-filter:var(--blur); }
+    .stat-val { font-family:'DM Serif Display',Georgia,serif; font-size:2.2rem; font-weight:500; color:var(--accent); line-height:1; display:block; margin-bottom:6px; }
+    .stat-desc { font-size:0.8rem; font-weight:400; color:var(--text-3); line-height:1.4; }
+
+    /* ARCHITECTURE DIAGRAM */
+    .arch-diagram { margin: 40px 0; background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 40px; backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur); overflow-x: auto; }
+    .arch-row { display:flex; align-items:center; justify-content:center; gap:0; flex-wrap:nowrap; }
+    .arch-box { background: var(--accent-dim); border: 1px solid var(--accent-tag); border-radius: 12px; padding: 16px 20px; text-align:center; min-width:150px; }
+    .arch-box.highlight { background: var(--accent); border-color: var(--accent); }
+    .arch-box.highlight .arch-label { color: #fff; }
+    .arch-box.highlight .arch-sub { color: rgba(255,255,255,0.7); }
+    .arch-label { font-family:'DM Serif Display',Georgia,serif; font-size:0.95rem; font-weight:500; color:var(--text); display:block; margin-bottom:4px; }
+    .arch-sub { font-size:0.72rem; color:var(--text-3); letter-spacing:0.04em; display:block; }
+    .arch-arrow { color:var(--accent); font-size:1.2rem; padding:0 12px; flex-shrink:0; opacity:0.6; }
+    @media (max-width:760px) { .arch-row { flex-direction:column; } .arch-arrow { transform:rotate(90deg); } }
+
+    /* TWO / THREE COL CARDS */
+    .cards-2col { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:36px; }
+    @media (max-width:640px) { .cards-2col { grid-template-columns:1fr; } }
+    .cards-3col { display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; margin-top:36px; }
+    @media (max-width:720px) { .cards-3col { grid-template-columns:1fr; } }
+
+    .insight-card { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius); padding:28px 26px; backdrop-filter:var(--blur); -webkit-backdrop-filter:var(--blur); }
+    .insight-card-icon { width:36px; height:36px; border-radius:10px; background:var(--accent-dim); border:1px solid var(--accent-tag); display:flex; align-items:center; justify-content:center; margin-bottom:14px; }
+    .insight-card-title { font-family:'DM Serif Display',Georgia,serif; font-size:1.1rem; font-weight:500; color:var(--text); margin-bottom:8px; line-height:1.2; }
+    .insight-card-body { font-size:0.88rem; color:var(--text-2); line-height:1.72; }
+
+    /* CODE SNIPPET */
+    .code-block { margin:28px 0; background:rgba(0,0,0,0.04); border:1px solid var(--border); border-radius:12px; padding:20px 24px; overflow-x:auto; font-family:'SF Mono','Fira Code',monospace; font-size:0.8rem; color:var(--text-2); line-height:1.7; }
+    @media (prefers-color-scheme:dark) { .code-block { background:rgba(255,255,255,0.04); } }
+    .code-block .kw { color:var(--accent); }
+    .code-block .cm { color:var(--text-3); font-style:italic; }
+
+    /* PULL QUOTE */
+    .pull-quote { margin:40px 0; padding:28px 32px; border-left:3px solid var(--accent); background:var(--bg-tint); border-radius:0 var(--radius) var(--radius) 0; }
+    .pull-quote p { font-family:'DM Serif Display',Georgia,serif; font-style:italic; font-size:1.1rem; color:var(--text); line-height:1.6; margin-bottom:8px; }
+    .pull-quote cite { font-size:0.75rem; font-weight:400; letter-spacing:0.06em; color:var(--text-3); font-style:normal; }
+
+    /* IMAGE SHOWCASE */
+    .image-showcase { margin:40px 0; display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+    @media (max-width:640px) { .image-showcase { grid-template-columns:1fr; } }
+    .showcase-img { border-radius:var(--radius); overflow:hidden; border:1px solid var(--border); box-shadow:var(--shadow-md); background:var(--bg-card); }
+    .showcase-img img { width:100%; height:100%; object-fit:contain; display:block; background:#fff; }
+    .showcase-label { font-size:0.72rem; font-weight:400; letter-spacing:0.06em; color:var(--text-3); margin-top:10px; text-align:center; }
+
+    .image-single { margin:40px 0; border-radius:var(--radius); overflow:hidden; border:1px solid var(--border); box-shadow:var(--shadow-md); background:#fff; }
+    .image-single img { width:100%; height:auto; display:block; }
+
+    /* STACK PILLS */
+    .stack-row { display:flex; flex-wrap:wrap; gap:8px; margin-top:28px; }
+    .stack-pill { font-size:0.75rem; font-weight:400; color:var(--text-2); background:var(--bg-card); border:1px solid var(--border); padding:5px 14px; border-radius:100px; backdrop-filter:var(--blur); }
+
+    /* REFLECT */
+    .reflect-card { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius); padding:26px 22px; backdrop-filter:var(--blur); -webkit-backdrop-filter:var(--blur); }
+    .reflect-icon { font-size:1.2rem; margin-bottom:12px; display:block; }
+    .reflect-title { font-family:'DM Serif Display',Georgia,serif; font-size:1rem; font-weight:500; color:var(--text); margin-bottom:8px; }
+    .reflect-body { font-size:0.84rem; color:var(--text-2); line-height:1.7; }
+
+    /* NEXT PROJECT */
+    .next-project { padding:72px 40px; text-align:center; border-top:1px solid var(--border); }
+    .next-label { font-size:0.64rem; font-weight:500; letter-spacing:0.18em; text-transform:uppercase; color:var(--text-3); margin-bottom:12px; }
+    .next-title { font-family:'DM Serif Display',Georgia,serif; font-size:clamp(1.8rem,4vw,2.8rem); font-weight:500; color:var(--text); margin-bottom:24px; }
+    .next-link { display:inline-flex; align-items:center; gap:8px; font-size:0.82rem; font-weight:400; color:var(--text); text-decoration:none; transition:gap 0.25s; }
+    .next-link:hover { gap:14px; }
+    .next-link-arrow { width:30px; height:30px; border-radius:50%; background:var(--accent); display:flex; align-items:center; justify-content:center; transition:transform 0.25s; }
+    .next-link:hover .next-link-arrow { transform:scale(1.1); }
+
+    /* FOOTER */
+    footer { border-top:1px solid var(--border); padding:48px 40px 36px; text-align:center; }
+    .foot-inner { max-width:1100px; margin:0 auto; }
+    .foot-name { font-family:'DM Serif Display',Georgia,serif; font-size:1.5rem; font-weight:500; color:var(--text); margin-bottom:4px; }
+    .foot-sub { font-family:'DM Serif Display',Georgia,serif; font-style:italic; font-weight:300; font-size:0.9rem; color:var(--text-3); margin-bottom:24px; }
+    .foot-links { display:flex; gap:28px; justify-content:center; list-style:none; flex-wrap:wrap; margin-bottom:20px; }
+    .foot-links a { font-size:0.78rem; font-weight:400; letter-spacing:0.04em; color:var(--text-2); text-decoration:none; transition:color 0.2s; }
+    .foot-links a:hover { color:var(--accent); }
+    .foot-copy { font-size:0.64rem; color:var(--text-3); letter-spacing:0.06em; }
+
+    .reveal { opacity:1; transform:none; }
+    .delay-1 { transition-delay:0.08s; }
+    .delay-2 { transition-delay:0.18s; }
+    .delay-3 { transition-delay:0.28s; }
+      /* cursor dot */
+    #cdot {
+      display: none;
+      position: fixed;
+      width: 9px; height: 9px;
+      border-radius: 50%;
+      background: var(--accent);
+      pointer-events: none;
+      z-index: 9999;
+      opacity: 0;
+      transform: translate(-50%, -50%);
+      transition: width 0.18s ease, height 0.18s ease, opacity 0.15s ease;
+      will-change: left, top;
+    }
+    @media (pointer: fine) {
+      #cdot { display: block; }
+    }
+    body.has-cursor { cursor: none; }
+    body.has-cursor a,
+    body.has-cursor button,
+    body.has-cursor .card,
+    body.has-cursor .pill { cursor: none; }
+    #cdot.expand { width: 26px; height: 26px; opacity: 0.15; }
+  </style>
+</head>
+<body>
+<div id="cdot"></div>
+<div class="page">
+
+  <nav>
+    <a href="index.html" class="nav-back">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+        <path d="M9 2L4 7l5 5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      Back
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html#about">About</a></li>
+      <li><a href="index.html#work">Work</a></li>
+      <li><a href="index.html#contact">Contact</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <header class="cs-hero">
+    <div class="cs-hero-inner">
+      <span class="cs-tag reveal">Machine Learning</span>
+      <h1 class="cs-title reveal delay-1">ICU Mortality Prediction</h1>
+      <p class="cs-subtitle reveal delay-2">A classical machine learning pipeline that turns messy, irregularly sampled ICU records into calibrated mortality predictions, built end to end, from raw timestamped measurements to a bootstrapped evaluation and a held-out challenge submission.</p>
+      <div class="cs-meta reveal delay-3">
+        <div class="cs-meta-item">
+          <span class="cs-meta-label">Role</span>
+          <span class="cs-meta-value">Solo, Feature Engineering &amp; Modeling</span>
+        </div>
+        <div class="cs-meta-item">
+          <span class="cs-meta-label">Dataset</span>
+          <span class="cs-meta-value">12,000 ICU admissions</span>
+        </div>
+        <div class="cs-meta-item">
+          <span class="cs-meta-label">Stack</span>
+          <span class="cs-meta-value">Python · scikit-learn · NumPy · Pandas</span>
+        </div>
+        <div class="cs-meta-item">
+          <span class="cs-meta-label">Focus</span>
+          <span class="cs-meta-value">Feature engineering, regularization, kernels, uncertainty</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- 01 OVERVIEW -->
+  <section class="cs-section">
+    <div class="container-inner container">
+      <span class="section-label reveal"><span class="section-num">01</span>Overview</span>
+      <h2 class="section-heading reveal delay-1">Real patient data, <em>not a clean CSV.</em></h2>
+      <p class="body-text reveal delay-2">Every patient in this dataset arrives as a raw, timestamped log of everything measured during their first 48 hours in the ICU: heart rate, temperature, lab values, and dozens more, recorded at irregular intervals, with missing entries and repeated readings scattered throughout. None of that can go straight into a classifier.</p>
+      <p class="body-text reveal delay-3">The real work of this project was turning 12,000 of these irregular, patient-specific histories into a single comparable feature matrix, then building, tuning, and honestly evaluating models that could predict who would survive their hospital stay based only on those first 48 hours.</p>
+
+      <div class="stat-strip">
+        <div class="stat-card reveal delay-1">
+          <span class="stat-val">12K</span>
+          <span class="stat-desc">ICU patient admissions, each its own timestamped record</span>
+        </div>
+        <div class="stat-card reveal delay-2">
+          <span class="stat-val">40</span>
+          <span class="stat-desc">engineered features per patient, static and time-varying</span>
+        </div>
+        <div class="stat-card reveal delay-3">
+          <span class="stat-val">7</span>
+          <span class="stat-desc">performance metrics tracked per model configuration</span>
+        </div>
+        <div class="stat-card reveal delay-3">
+          <span class="stat-val">1,000</span>
+          <span class="stat-desc">bootstrap resamples used to estimate real uncertainty</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 02 FEATURE ENGINEERING -->
+  <section class="cs-section">
+    <div class="container-inner container">
+      <span class="section-label reveal"><span class="section-num">02</span>Feature Engineering</span>
+      <h2 class="section-heading reveal delay-1">From a timestamped log <em>to a feature vector.</em></h2>
+      <p class="body-text reveal delay-2">Each patient's raw file is a table of three columns: a timestamp, a variable name, and a value. Some variables, like age and height, are recorded once at admission. Others, like heart rate, might be measured once, many times, or not at all over the full 48 hours. Unknown observations are explicitly encoded as -1, which first had to be converted to a proper missing value before anything else could happen.</p>
+      <p class="body-text reveal delay-3">For static, time-invariant variables, I kept the raw value as its own feature. For every time-varying variable, I summarized the entire 48-hour window with a single number: its maximum observed value. A patient's heart rate readings of 73, 81, 77, and 91 collapse into one feature, <code>max_HR = 91</code>. If a variable was never measured for a patient, that feature stayed undefined rather than being guessed at this stage.</p>
+
+      <div class="arch-diagram reveal delay-2">
+        <div class="arch-row">
+          <div class="arch-box">
+            <span class="arch-label">Raw Admission Log</span>
+            <span class="arch-sub">Time · Variable · Value rows</span>
+          </div>
+          <span class="arch-arrow">→</span>
+          <div class="arch-box highlight">
+            <span class="arch-label">generate_feature_vector()</span>
+            <span class="arch-sub">static values + max() per variable</span>
+          </div>
+          <span class="arch-arrow">→</span>
+          <div class="arch-box">
+            <span class="arch-label">Feature Dictionary</span>
+            <span class="arch-sub">Age, Height, max_HR, max_Temp, ...</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="code-block reveal delay-2">
+        <span class="cm"># HR readings collapse into a single summary feature</span><br>
+        HR: [73, 81, 77, 91] &nbsp;→&nbsp; <span class="kw">max_HR</span> = 91<br>
+        Creatinine: [0.8, 1.0, 1.5, 2.1] &nbsp;→&nbsp; <span class="kw">max_Creatinine</span> = 2.1<br>
+        RespRate: [] &nbsp;(never measured)&nbsp; →&nbsp; <span class="kw">max_RespRate</span> = NaN
+      </div>
+
+      <div class="cards-2col">
+        <div class="insight-card reveal delay-1">
+          <div class="insight-card-icon">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M8 2C8 2 3 5.5 3 9.5C3 12.5 5.24 14 8 14C10.76 14 13 12.5 13 9.5C13 5.5 8 2 8 2Z" stroke="var(--accent)" stroke-width="1.2"/>
+            </svg>
+          </div>
+          <h3 class="insight-card-title">One number can hide unintended meaning</h3>
+          <p class="insight-card-body">A categorical variable like ICU type was originally represented as a single number, which quietly implies an ordering that isn't real. A linear model would treat "ICU type 4" as if it were four times "ICU type 1," a relationship with no clinical meaning. Representing it as a set of binary indicators instead removes that false ordinal assumption.</p>
+        </div>
+        <div class="insight-card reveal delay-2">
+          <div class="insight-card-icon">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M4 8h8M8 4l4 4-4 4" stroke="var(--accent)" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <h3 class="insight-card-title">Max is a simple summary, with limits</h3>
+          <p class="insight-card-body">Reducing a whole 48-hour trajectory to its maximum is easy to compute and clinically intuitive, since spikes often matter. But it throws away everything about how a variable trended, and it's sensitive to a single noisy or erroneous reading. Mean, variance, and slope over time are all summary statistics that could add signal a single max misses.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 03 PREPROCESSING -->
+  <section class="cs-section">
+    <div class="container-inner container">
+      <span class="section-label reveal"><span class="section-num">03</span>Preprocessing</span>
+      <h2 class="section-heading reveal delay-1">Filling gaps, <em>and putting features on the same scale.</em></h2>
+      <p class="body-text reveal delay-2">With a feature matrix in hand, two problems remained: missing values, since not every variable is measured for every patient, and wildly different scales, since a lab value and a heart rate live on completely different numeric ranges. I built each stage as a standalone, reusable function before touching any model.</p>
+
+      <div class="cards-2col">
+        <div class="insight-card reveal delay-1">
+          <div class="insight-card-icon">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M3 5h10M3 8h7M3 11h4" stroke="var(--accent)" stroke-width="1.3" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <h3 class="insight-card-title">Mean imputation</h3>
+          <p class="insight-card-body">Each feature column was imputed independently, replacing missing values with the mean of that column's observed values across the population. This assumes values are missing more or less at random, and that a typical value won't badly distort a patient's overall picture, an assumption worth naming rather than hiding.</p>
+        </div>
+        <div class="insight-card reveal delay-2">
+          <div class="insight-card-icon">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <circle cx="8" cy="8" r="5.5" stroke="var(--accent)" stroke-width="1.2"/>
+              <path d="M8 5v3l2 1.5" stroke="var(--accent)" stroke-width="1.2" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <h3 class="insight-card-title">Min-max normalization</h3>
+          <p class="insight-card-body">Every feature was rescaled to sit between 0 and 1. Without this step, regularization penalizes features on larger numeric scales far less than features on smaller ones, which quietly biases the model toward whichever variables happen to have bigger raw ranges rather than whichever are actually more predictive.</p>
+        </div>
+        <div class="insight-card reveal delay-1">
+          <div class="insight-card-icon">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <rect x="2" y="4" width="12" height="8" rx="1.5" stroke="var(--accent)" stroke-width="1.2"/>
+              <path d="M5 4V3M11 4V3" stroke="var(--accent)" stroke-width="1.2" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <h3 class="insight-card-title">Stratified 5-fold cross-validation</h3>
+          <p class="insight-card-body">Hyperparameters were selected using 5-fold CV that preserves the ratio of positive to negative labels in every fold. With an imbalanced outcome, an unstratified split could easily leave a fold with almost no positive cases, making its validation score unreliable.</p>
+        </div>
+        <div class="insight-card reveal delay-2">
+          <div class="insight-card-icon">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M8 3v10M4 9l4 4 4-4" stroke="var(--accent)" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <h3 class="insight-card-title">Bootstrapping for uncertainty</h3>
+          <p class="insight-card-body">Rather than reporting one test score, I resampled the test set with replacement 1,000 times, recomputing each metric each time, to get a distribution of plausible performance rather than a single lucky or unlucky number.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 04 MODEL SELECTION -->
+  <section class="cs-section">
+    <div class="container-inner container">
+      <span class="section-label reveal"><span class="section-num">04</span>Model Selection &amp; Regularization</span>
+      <h2 class="section-heading reveal delay-1">Linear models, <em>tuned honestly.</em></h2>
+      <p class="body-text reveal delay-2">I compared regularized logistic regression against kernel ridge regression, sweeping both the regularization strength and the regularization type across a grid, using cross-validation performance rather than training performance to pick a winner for each metric.</p>
+
+      <div class="code-block reveal delay-2">
+        J(θ) &nbsp;=&nbsp; z(θ) &nbsp;+&nbsp; <span class="kw">C</span> · Σ loss(x, y; θ)<br><br>
+        <span class="cm"># z(θ) is the regularization penalty (L1 or L2)</span><br>
+        <span class="cm"># C controls how much the loss is allowed to dominate the penalty</span>
+      </div>
+
+      <div class="image-single reveal delay-2">
+        <img src="L0_Norm.png" alt="Line chart showing the L0 norm of the model weight vector against regularization strength C, for L1 and L2 penalties" />
+      </div>
+      <p class="showcase-label reveal delay-2">Number of non-zero coefficients (the ℓ0-norm of θ) as C increases, for L1 versus L2 regularization</p>
+
+      <div class="cards-2col">
+        <div class="insight-card reveal delay-1">
+          <div class="insight-card-icon">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M4 8h8M8 4l4 4-4 4" stroke="var(--accent)" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <h3 class="insight-card-title">What C actually controls</h3>
+          <p class="insight-card-body">A small C means heavy regularization: the model keeps its weights close to zero and stays simple. A large C shifts the balance toward fitting the training data closely, which can improve training fit but risks overfitting to noise the model hasn't actually seen generalize.</p>
+        </div>
+        <div class="insight-card reveal delay-2">
+          <div class="insight-card-icon">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <rect x="3" y="3" width="4" height="4" rx="1" stroke="var(--accent)" stroke-width="1.2"/>
+              <rect x="9" y="3" width="4" height="4" rx="1" stroke="var(--accent)" stroke-width="1.2"/>
+              <rect x="3" y="9" width="4" height="4" rx="1" stroke="var(--accent)" stroke-width="1.2"/>
+            </svg>
+          </div>
+          <h3 class="insight-card-title">L1 finds sparsity, L2 doesn't</h3>
+          <p class="insight-card-body">The plot above shows it directly: with L1 regularization, the number of non-zero coefficients starts near zero and grows as C increases, meaning L1 actively performs feature selection at low C. L2 keeps nearly every coefficient non-zero regardless of C, shrinking weights toward zero without ever fully eliminating them.</p>
+        </div>
+        <div class="insight-card reveal delay-1">
+          <div class="insight-card-icon">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <circle cx="8" cy="8" r="5.5" stroke="var(--accent)" stroke-width="1.2"/>
+              <path d="M8 4v4l3 1.5" stroke="var(--accent)" stroke-width="1.2" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <h3 class="insight-card-title">Kernel ridge, for non-linear structure</h3>
+          <p class="insight-card-body">Alongside logistic regression, I trained kernel ridge regression with a linear kernel, which behaves almost identically to plain regularized regression, and with an RBF kernel, which implicitly maps features into a higher-dimensional space to capture relationships a straight line can't.</p>
+        </div>
+        <div class="insight-card reveal delay-2">
+          <div class="insight-card-icon">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M3 8l3 3 7-7" stroke="var(--accent)" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <h3 class="insight-card-title">Reading the coefficients</h3>
+          <p class="insight-card-body">In the L1 model, the most positive coefficients belonged to features like max Bilirubin, max BUN, and max heart rate, all of which push predicted mortality risk up as they increase. The most negative belonged to features like max GCS (consciousness score) and max urine output, which are protective. Features with a coefficient of exactly zero simply don't factor into the model's decision at all.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 05 DECISION BOUNDARIES -->
+  <section class="cs-section">
+    <div class="container-inner container">
+      <span class="section-label reveal"><span class="section-num">05</span>Decision Boundaries, Compared</span>
+      <h2 class="section-heading reveal delay-1">Two ways to draw <em>the same line.</em></h2>
+      <p class="body-text reveal delay-2">Before scaling up to the full feature matrix, I compared logistic regression against least-squares regression used as a classifier, on a small 1D toy dataset. Both approaches ultimately produce a single decision boundary, but they get there very differently: one models a probability with a sigmoid, the other fits a straight line and thresholds it at 0.5.</p>
+
+      <div class="image-showcase reveal delay-2">
+        <div>
+          <div class="showcase-img">
+            <img src="logreg_boundary.png" alt="Logistic regression decision boundary on a 1D toy dataset, negative points on the left, positive points on the right" />
+          </div>
+          <p class="showcase-label">Logistic regression's sigmoid-based decision boundary</p>
+        </div>
+        <div>
+          <div class="showcase-img">
+            <img src="optimal_boundary_1d.png" alt="Optimal 1D decision boundary with no training, showing the ideal separating line between negative and positive points" />
+          </div>
+          <p class="showcase-label">The optimal boundary for this toy set, with no training required</p>
+        </div>
+        <div>
+          <div class="showcase-img">
+            <img src="linreg_prediction.png" alt="Linear regression prediction line with a thresholded decision boundary at y equals 0.5" />
+          </div>
+          <p class="showcase-label">Linear regression's continuous prediction, thresholded at y = 0.5</p>
+        </div>
+        <div>
+          <div class="showcase-img">
+            <img src="optimal_boundary_2d.png" alt="Least squares regression line and decision boundary plotted against the 2D toy dataset" />
+          </div>
+          <p class="showcase-label">The least-squares line and the boundary it implies</p>
+        </div>
+      </div>
+
+      <p class="body-text reveal delay-2">On this toy set, both approaches land on nearly the same boundary. The interesting part is why: logistic regression squashes its output into a probability and is fairly robust to points far from the boundary, while linear regression fits a straight line through the labels themselves, which means far-away points can pull the fitted line, and therefore the boundary, in ways that have nothing to do with actual classification accuracy.</p>
+    </div>
+  </section>
+
+  <!-- 06 CLASS IMBALANCE -->
+  <section class="cs-section">
+    <div class="container-inner container">
+      <span class="section-label reveal"><span class="section-num">06</span>Class Imbalance</span>
+      <h2 class="section-heading reveal delay-1">When accuracy <em>lies to you.</em></h2>
+      <p class="body-text reveal delay-2">Far more patients survive than die in this dataset, so a model that predicts "survives" for everyone can post a deceptively high accuracy while being clinically useless. To address this, I modified the logistic loss to weight positive and negative classes asymmetrically, penalizing mistakes on the minority class more heavily.</p>
+
+      <div class="image-single reveal delay-2">
+        <img src="roc_comparison.png" alt="ROC curves comparing a logistic regression model with equal class weights against one with a five-times higher weight on the positive class" />
+      </div>
+      <p class="showcase-label reveal delay-2">ROC curves for equal class weights versus a 5x weight on the positive (death) class</p>
+
+      <div class="cards-2col">
+        <div class="insight-card reveal delay-1">
+          <div class="insight-card-icon">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M8 2C8 2 3 5.5 3 9.5C3 12.5 5.24 14 8 14C10.76 14 13 12.5 13 9.5C13 5.5 8 2 8 2Z" stroke="var(--accent)" stroke-width="1.2"/>
+            </svg>
+          </div>
+          <h3 class="insight-card-title">What heavier positive weights do</h3>
+          <p class="insight-card-body">Raising the weight on positive examples pushes the model to prioritize correctly classifying patients who die, even at the cost of more false alarms. In practice this meant sensitivity jumped dramatically while specificity and precision dropped, a direct and expected tradeoff rather than a bug.</p>
+        </div>
+        <div class="insight-card reveal delay-2">
+          <div class="insight-card-icon">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M4 8h8M8 4l4 4-4 4" stroke="var(--accent)" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <h3 class="insight-card-title">AUROC barely moved</h3>
+          <p class="insight-card-body">Threshold-independent, ranking-based metrics like AUROC and average precision stayed nearly flat across class weights, while threshold-dependent metrics like accuracy, sensitivity, and specificity swung wildly. Class weighting mostly reshuffles where the decision threshold falls, not how well the model ranks patients by risk overall.</p>
+        </div>
+      </div>
+
+      <div class="pull-quote reveal delay-2">
+        <p>An already-trained classifier with reasonable AUROC but poor sensitivity doesn't need retraining. Sweeping the decision threshold on its existing scores can often recover the sensitivity a class-weighted model would have given, without touching the model itself.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 07 EVALUATION -->
+  <section class="cs-section">
+    <div class="container-inner container">
+      <span class="section-label reveal"><span class="section-num">07</span>Evaluation</span>
+      <h2 class="section-heading reveal delay-1">One number <em>isn't enough.</em></h2>
+      <p class="body-text reveal delay-2">A single test-set score can be a lucky or unlucky draw. Instead, I resampled the test set with replacement 1,000 times, recomputed every metric on each resample, and reported the median alongside the empirical 2.5th and 97.5th percentiles as a 95% confidence interval. This turns a point estimate into a real picture of how much the model's performance could plausibly vary.</p>
+
+      <div class="cards-2col">
+        <div class="insight-card reveal delay-1">
+          <div class="insight-card-icon">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M8 2v4l3 2" stroke="var(--accent)" stroke-width="1.3" stroke-linecap="round"/>
+              <circle cx="8" cy="8" r="5.5" stroke="var(--accent)" stroke-width="1.2"/>
+            </svg>
+          </div>
+          <h3 class="insight-card-title">Median over mean</h3>
+          <p class="insight-card-body">Reporting the median of 1,000 bootstrap resamples, rather than the mean, keeps the summary robust to the occasional resample that happens to draw an unusually easy or hard subset of patients.</p>
+        </div>
+        <div class="insight-card reveal delay-2">
+          <div class="insight-card-icon">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <rect x="3" y="3" width="10" height="10" rx="1.5" stroke="var(--accent)" stroke-width="1.2"/>
+              <path d="M6 8l2 2 3-3" stroke="var(--accent)" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <h3 class="insight-card-title">A confidence interval, not a checkmark</h3>
+          <p class="insight-card-body">Two models with similar median AUROC can look identical until you see their confidence intervals. A narrower interval means the model's performance is more consistent across resamples of the same underlying population, which matters more than the point estimate alone.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 08 CHALLENGE -->
+  <section class="cs-section">
+    <div class="container-inner container">
+      <span class="section-label reveal"><span class="section-num">08</span>The Challenge</span>
+      <h2 class="section-heading reveal delay-1">Scaling up, <em>and rebuilding the pipeline.</em></h2>
+      <p class="body-text reveal delay-2">For a final challenge, I moved to a larger 10,000-patient training set and redesigned the baseline pipeline into a single scikit-learn Pipeline, so preprocessing would fold cleanly into cross-validation instead of leaking information from the full dataset into each fold.</p>
+
+      <div class="cards-2col">
+        <div class="insight-card reveal delay-1">
+          <div class="insight-card-icon">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M3 5h10M3 8h7M3 11h4" stroke="var(--accent)" stroke-width="1.3" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <h3 class="insight-card-title">Median imputation + missingness indicators</h3>
+          <p class="insight-card-body">I switched from mean to median imputation for robustness to skewed lab values, and added a binary indicator column for every feature marking whether it was originally missing. In medical data, the fact that a test was never ordered can itself be predictive.</p>
+        </div>
+        <div class="insight-card reveal delay-2">
+          <div class="insight-card-icon">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <circle cx="8" cy="8" r="5.5" stroke="var(--accent)" stroke-width="1.2"/>
+              <path d="M8 5v3l2 1.5" stroke="var(--accent)" stroke-width="1.2" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <h3 class="insight-card-title">Standardization + balanced L1</h3>
+          <p class="insight-card-body">Features were standardized to zero mean and unit variance before an L1-regularized logistic regression with balanced class weights, chosen after sweeping C and both penalty types for the best combined AUROC and F1.</p>
+        </div>
+        <div class="insight-card reveal delay-1">
+          <div class="insight-card-icon">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M8 3v10M4 9l4 4 4-4" stroke="var(--accent)" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <h3 class="insight-card-title">Out-of-fold thresholding</h3>
+          <p class="insight-card-body">Rather than picking a decision threshold on the same data the model was trained on, I used 5-fold cross-validated, out-of-fold decision scores to sweep 400 candidate thresholds and select the one that maximized F1 honestly, on predictions the model hadn't seen during that fold's training.</p>
+        </div>
+        <div class="insight-card reveal delay-2">
+          <div class="insight-card-icon">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M3 8l3 3 7-7" stroke="var(--accent)" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <h3 class="insight-card-title">Refit, then hold out</h3>
+          <p class="insight-card-body">Once the threshold was chosen out-of-fold, the pipeline was refit on the full training set and applied to a genuinely held-out set with no labels available to me, producing both binary predictions and continuous risk scores for submission.</p>
+        </div>
+      </div>
+
+      <div class="code-block reveal delay-2">
+        pipe = Pipeline([<br>
+        &nbsp;&nbsp;("imputer", <span class="kw">SimpleImputer</span>(strategy="median", add_indicator=True)),<br>
+        &nbsp;&nbsp;("scaler", <span class="kw">StandardScaler</span>()),<br>
+        &nbsp;&nbsp;("clf", <span class="kw">LogisticRegression</span>(penalty="l1", C=0.05, class_weight="balanced",<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;solver="liblinear", fit_intercept=True, max_iter=5000)),<br>
+        ])<br><br>
+        <span class="cm"># out-of-fold decision scores, then threshold swept to maximize F1</span><br>
+        oof_scores = cross_val_predict(pipe, X, y, cv=cv, method="decision_function")
+      </div>
+
+      <div class="stat-strip reveal delay-2">
+        <div class="stat-card">
+          <span class="stat-val">0.81</span>
+          <span class="stat-desc">out-of-fold AUROC, estimated honestly on unseen folds</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-val">0.48</span>
+          <span class="stat-desc">out-of-fold F1 at the selected decision threshold</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-val">10K</span>
+          <span class="stat-desc">patients used to train the final challenge model</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 09 STACK -->
+  <section class="cs-section">
+    <div class="container-inner container">
+      <span class="section-label reveal"><span class="section-num">09</span>Stack</span>
+      <h2 class="section-heading reveal delay-1">What it's <em>built with.</em></h2>
+      <p class="body-text reveal delay-2">The feature extraction, imputation, and normalization logic was written from scratch, with scikit-learn handling model fitting, cross-validation utilities, and the final pipeline composition.</p>
+      <div class="stack-row reveal delay-2">
+        <span class="stack-pill">Python</span>
+        <span class="stack-pill">scikit-learn</span>
+        <span class="stack-pill">NumPy</span>
+        <span class="stack-pill">Pandas</span>
+        <span class="stack-pill">Matplotlib</span>
+        <span class="stack-pill">Joblib</span>
+        <span class="stack-pill">Logistic Regression</span>
+        <span class="stack-pill">Kernel Ridge Regression</span>
+        <span class="stack-pill">Bootstrap Confidence Intervals</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 10 REFLECTION -->
+  <section class="cs-section">
+    <div class="container-inner container">
+      <span class="section-label reveal"><span class="section-num">10</span>Reflection</span>
+      <h2 class="section-heading reveal delay-1">What I <em>took away.</em></h2>
+
+      <div class="cards-3col">
+        <div class="reflect-card reveal delay-1">
+          <span class="reflect-icon">🧩</span>
+          <h4 class="reflect-title">Feature representation is half the model</h4>
+          <p class="reflect-body">Choosing to summarize each variable with its max, and deciding how to impute what's missing, shaped the final predictions just as much as which classifier I picked. Model selection got most of the attention going in, but data representation deserved just as much.</p>
+        </div>
+        <div class="reflect-card reveal delay-2">
+          <span class="reflect-icon">🎛️</span>
+          <h4 class="reflect-title">Regularization is a knob, not a fix</h4>
+          <p class="reflect-body">Watching the ℓ0-norm plot made L1 versus L2 tangible in a way the math alone hadn't. L1 doesn't just shrink weights, it actively decides which features get to matter at all, which is a very different kind of control than L2's uniform shrinkage.</p>
+        </div>
+        <div class="reflect-card reveal delay-3">
+          <span class="reflect-icon">📐</span>
+          <h4 class="reflect-title">Honest evaluation takes real discipline</h4>
+          <p class="reflect-body">Bootstrapping test performance and selecting decision thresholds out-of-fold both felt like extra steps at first. In practice they were the difference between a number I could trust and a number that just happened to look good once.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- NEXT PROJECT -->
+  <div class="next-project">
+    <p class="next-label reveal">Next project</p>
+    <h2 class="next-title reveal delay-1">Search Engine</h2>
+    <a href="search-engine.html" class="next-link reveal delay-2">
+      View case study
+      <span class="next-link-arrow">
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+          <path d="M2 6h8M6 2l4 4-4 4" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </span>
+    </a>
+  </div>
+
+  <footer>
+    <div class="foot-inner">
+      <p class="foot-name">Mahima Shah</p>
+      <p class="foot-sub">always learning</p>
+      <ul class="foot-links">
+        <li><a href="mailto:mahimashahxyz@gmail.com">Email</a></li>
+        <li><a href="https://www.linkedin.com/in/shahmahima/" target="_blank" rel="noopener">LinkedIn</a></li>
+        <li><a href="https://github.com/mahima-shah" target="_blank" rel="noopener">GitHub</a></li>
+        <li><a href="https://www.youtube.com/@mahimashah" target="_blank" rel="noopener">YouTube</a></li>
+      </ul>
+      <p class="foot-copy">2025 Mahima Shah &nbsp;&middot;&nbsp; Designed with intention</p>
+    </div>
+  </footer>
+
+</div>
+<script>
+  // Scroll reveal
+  var revEls = document.querySelectorAll('.reveal');
+  revEls.forEach(function(el) {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(20px)';
+  });
+  requestAnimationFrame(function() {
+    requestAnimationFrame(function() {
+      revEls.forEach(function(el) {
+        el.style.transition = 'opacity 0.7s cubic-bezier(0.16,1,0.3,1), transform 0.7s cubic-bezier(0.16,1,0.3,1)';
+      });
+      if (!('IntersectionObserver' in window)) {
+        revEls.forEach(function(el) { el.style.opacity='1'; el.style.transform='none'; });
+        return;
+      }
+      var io = new IntersectionObserver(function(entries) {
+        entries.forEach(function(e) {
+          if (e.isIntersecting) {
+            e.target.style.opacity = '1';
+            e.target.style.transform = 'none';
+            io.unobserve(e.target);
+          }
+        });
+      }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+      revEls.forEach(function(el) { io.observe(el); });
+    });
+  });
+
+  // Orange dot cursor
+  var dot = document.getElementById('cdot');
+  if (dot && window.matchMedia('(pointer: fine)').matches) {
+    var active = false;
+    document.addEventListener('mousemove', function(e) {
+      dot.style.left = e.clientX + 'px';
+      dot.style.top  = e.clientY + 'px';
+      if (!active) {
+        active = true;
+        dot.style.opacity = '1';
+        document.body.classList.add('has-cursor');
+      }
+    }, {passive:true});
+    document.querySelectorAll('a, button, .card, .pill').forEach(function(el) {
+      el.addEventListener('mouseenter', function() { dot.classList.add('expand'); });
+      el.addEventListener('mouseleave', function() { dot.classList.remove('expand'); });
+    });
+  }
+  // Typewriter heading reveal
+  (function(){
+    var el = document.querySelector('.cs-title');
+    if(!el) return;
+    var text = el.textContent;
+    el.setAttribute('aria-label', text);
+    el.innerHTML = '<span class="tw-text" aria-hidden="true"></span><span class="tw-cursor" aria-hidden="true"></span>';
+    var textSpan = el.querySelector('.tw-text');
+    var cursor = el.querySelector('.tw-cursor');
+    var started = false;
+    function type(){
+      if (started) return;
+      started = true;
+      var i = 0, speed = 46;
+      (function step(){
+        textSpan.textContent = text.slice(0, i);
+        i++;
+        if (i <= text.length) {
+          setTimeout(step, speed);
+        } else {
+          setTimeout(function(){ cursor.classList.add('tw-cursor-fade'); }, 850);
+        }
+      })();
+    }
+    if ('IntersectionObserver' in window) {
+      var io = new IntersectionObserver(function(entries){
+        entries.forEach(function(e){ if (e.isIntersecting) { type(); io.unobserve(el); } });
+      }, {threshold:0.3});
+      io.observe(el);
+    } else {
+      textSpan.textContent = text;
+    }
+  })();
+</script>
+</body>
+</html>
