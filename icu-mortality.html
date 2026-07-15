@@ -164,6 +164,21 @@
     .stack-row { display:flex; flex-wrap:wrap; gap:8px; margin-top:28px; }
     .stack-pill { font-size:0.75rem; font-weight:400; color:var(--text-2); background:var(--bg-card); border:1px solid var(--border); padding:5px 14px; border-radius:100px; backdrop-filter:var(--blur); }
 
+    /* DATA TABLE */
+    .data-table { width: 100%; border-collapse: collapse; margin: 28px 0; font-size: 0.85rem; background: var(--bg-card); border-radius: var(--radius); overflow: hidden; border: 1px solid var(--border); }
+    .data-table th, .data-table td { padding: 12px 16px; text-align: left; border-bottom: 1px solid var(--border); }
+    .data-table th { font-size: 0.64rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-3); background: rgba(0,0,0,0.02); }
+    .data-table td { color: var(--text-2); }
+    .data-table tr:last-child td { border-bottom: none; }
+    .data-table td.num, .data-table th.num { text-align: right; font-family: 'SF Mono','Fira Code',monospace; }
+    .data-table tr.hi td { color: var(--text); font-weight: 500; }
+    .data-table tr.hi { background: var(--accent-dim); }
+    .data-table-wrap { overflow-x: auto; }
+    .table-caption { font-size:0.72rem; color:var(--text-3); letter-spacing:0.04em; margin-top:-16px; margin-bottom:28px; }
+
+    /* CODE LABEL */
+    .code-label { font-size: 0.64rem; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-3); margin: 26px 0 -12px; display:block; }
+
     /* REFLECT */
     .reflect-card { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius); padding:26px 22px; backdrop-filter:var(--blur); -webkit-backdrop-filter:var(--blur); }
     .reflect-icon { font-size:1.2rem; margin-bottom:12px; display:block; }
@@ -326,6 +341,30 @@
         RespRate: [] &nbsp;(never measured)&nbsp; →&nbsp; <span class="kw">max_RespRate</span> = NaN
       </div>
 
+      <div class="code-label reveal delay-2">generate_feature_vector(df)</div>
+      <div class="code-block reveal delay-2">
+<span class="kw">def</span> generate_feature_vector(df: pd.DataFrame) -> dict[str, float]:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;static_variables = config["static"]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;timeseries_variables = config["timeseries"]<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="cm"># replace unknown observations (-1) with a real missing value</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;df_replaced = df.replace(-1, np.nan)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;static, timeseries = df_replaced.iloc[0:5], df_replaced.iloc[5:]<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;feature_dict = {}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">for</span> idx, row <span class="kw">in</span> static.iterrows():<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;feature_dict[row['Variable']] = row['Value']<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="cm"># every time-varying variable collapses to its max over 48 hours</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">for</span> variable <span class="kw">in</span> timeseries['Variable'].unique():<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">if not</span> isinstance(variable, str):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">continue</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;vals = timeseries[timeseries['Variable'] == variable]['Value']<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;feature_dict["max_" + variable] = vals.max()<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">return</span> feature_dict
+      </div>
+
       <div class="cards-2col">
         <div class="insight-card reveal delay-1">
           <div class="insight-card-icon">
@@ -396,6 +435,21 @@
           <p class="insight-card-body">Rather than reporting one test score, I resampled the test set with replacement 1,000 times, recomputing each metric each time, to get a distribution of plausible performance rather than a single lucky or unlucky number.</p>
         </div>
       </div>
+
+      <div class="code-label reveal delay-2">impute_missing_values(X) &amp; normalize_feature_matrix(X)</div>
+      <div class="code-block reveal delay-2">
+<span class="kw">def</span> impute_missing_values(X: npt.NDArray) -> npt.NDArray:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">for</span> col <span class="kw">in</span> range(X.shape[1]):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;mean_val = np.nanmean(X[:, col])<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;missing = np.isnan(X[:, col])<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;X[missing, col] = mean_val<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">return</span> X<br>
+<br>
+<span class="kw">def</span> normalize_feature_matrix(X: npt.NDArray) -> npt.NDArray:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="cm"># rescale every column to [0, 1] with respect to the population</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;scaler = MinMaxScaler()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">return</span> scaler.fit_transform(X)
+      </div>
     </div>
   </section>
 
@@ -411,6 +465,39 @@
         <span class="cm"># z(θ) is the regularization penalty (L1 or L2)</span><br>
         <span class="cm"># C controls how much the loss is allowed to dominate the penalty</span>
       </div>
+
+      <div class="code-label reveal delay-2">select_param_logreg(X, y, metric, C_range, penalties)</div>
+      <div class="code-block reveal delay-2">
+best_performance = float("-inf")<br>
+best_C, best_penalty = None, None<br>
+<br>
+<span class="kw">for</span> penalty <span class="kw">in</span> penalties:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">for</span> C <span class="kw">in</span> C_range:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;clf = LogisticRegression(penalty=penalty, C=C, solver='liblinear',<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fit_intercept=False, random_state=seed)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;mean_perf, _, _ = cv_performance(clf, X, y, metric=metric, k=k)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">if</span> mean_perf > best_performance:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;best_performance = mean_perf<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;best_C, best_penalty = C, penalty
+      </div>
+
+      <p class="body-text reveal delay-2" style="margin-top:8px;">Sweeping every metric against a grid of C values in powers of ten, for both ℓ1 and ℓ2 penalties, surfaced a different winning configuration for almost every metric:</p>
+
+      <div class="data-table-wrap reveal delay-2">
+        <table class="data-table">
+          <thead><tr><th>Metric</th><th class="num">C</th><th>Penalty</th><th class="num">Mean (Min, Max) CV</th></tr></thead>
+          <tbody>
+            <tr><td>Accuracy</td><td class="num">0.001</td><td>L1</td><td class="num">0.8600 (0.8594, 0.8625)</td></tr>
+            <tr><td>Precision</td><td class="num">1</td><td>L2</td><td class="num">0.6024 (0.1667, 1.0000)</td></tr>
+            <tr><td>F1-score</td><td class="num">10</td><td>L2</td><td class="num">0.2265 (0.1587, 0.2642)</td></tr>
+            <tr class="hi"><td>AUROC</td><td class="num">1</td><td>L2</td><td class="num">0.7804 (0.7539, 0.8192)</td></tr>
+            <tr><td>Average Precision</td><td class="num">1</td><td>L2</td><td class="num">0.3923 (0.2893, 0.4965)</td></tr>
+            <tr><td>Sensitivity</td><td class="num">10</td><td>L1</td><td class="num">0.1474 (0.1111, 0.1778)</td></tr>
+            <tr><td>Specificity</td><td class="num">0.001</td><td>L1</td><td class="num">1.0000 (1.0000, 1.0000)</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="table-caption reveal delay-2">5-fold cross-validation performance on the training set. I optimized for AUROC when training the final model, since it stays informative under class imbalance without depending on a fixed decision threshold.</p>
 
       <div class="image-single reveal delay-2">
         <img src="L0_Norm.png" alt="Line chart showing the L0 norm of the model weight vector against regularization strength C, for L1 and L2 penalties" />
@@ -446,7 +533,7 @@
             </svg>
           </div>
           <h3 class="insight-card-title">Kernel ridge, for non-linear structure</h3>
-          <p class="insight-card-body">Alongside logistic regression, I trained kernel ridge regression with a linear kernel, which behaves almost identically to plain regularized regression, and with an RBF kernel, which implicitly maps features into a higher-dimensional space to capture relationships a straight line can't.</p>
+          <p class="insight-card-body">Alongside logistic regression, I trained kernel ridge regression with a linear kernel, which behaves almost identically to plain regularized regression, and with an RBF kernel <code>K(u, v) = exp(-γ‖u-v‖²)</code>, which implicitly maps features into a higher-dimensional space to capture relationships a straight line can't.</p>
         </div>
         <div class="insight-card reveal delay-2">
           <div class="insight-card-icon">
@@ -455,9 +542,39 @@
             </svg>
           </div>
           <h3 class="insight-card-title">Reading the coefficients</h3>
-          <p class="insight-card-body">In the L1 model, the most positive coefficients belonged to features like max Bilirubin, max BUN, and max heart rate, all of which push predicted mortality risk up as they increase. The most negative belonged to features like max GCS (consciousness score) and max urine output, which are protective. Features with a coefficient of exactly zero simply don't factor into the model's decision at all.</p>
+          <p class="insight-card-body">Training an ℓ1-regularized model at C = 1.0 and reading off its largest weights turns the abstract idea of "feature importance" into something concrete. A more positive coefficient pushes predicted mortality risk up as that feature increases. A more negative one is protective. A coefficient of exactly zero means L1 decided that feature didn't earn a place in the model at all.</p>
         </div>
       </div>
+
+      <div class="data-table-wrap reveal delay-2">
+        <table class="data-table">
+          <thead><tr><th>Positive Coefficient</th><th class="num">Weight</th><th>Negative Coefficient</th><th class="num">Weight</th></tr></thead>
+          <tbody>
+            <tr><td>max_Bilirubin</td><td class="num">4.1050</td><td>max_GCS</td><td class="num">&minus;2.7038</td></tr>
+            <tr><td>max_BUN</td><td class="num">2.5935</td><td>max_Urine</td><td class="num">&minus;2.0178</td></tr>
+            <tr><td>max_HR</td><td class="num">1.6194</td><td>max_SaO2</td><td class="num">&minus;0.9228</td></tr>
+            <tr><td>Age</td><td class="num">1.5562</td><td>max_HCO3</td><td class="num">&minus;0.8587</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="table-caption reveal delay-2">Highest-magnitude coefficients from the ℓ1-regularized logistic regression at C = 1.0. Elevated bilirubin, BUN, and heart rate push risk up; a higher Glasgow Coma Scale score and stronger urine output are protective, exactly matching clinical intuition.</p>
+
+      <h3 class="section-heading reveal delay-2" style="font-size:1.4rem; margin-top:48px;">How much does γ actually matter?</h3>
+      <p class="body-text reveal delay-2">For the RBF kernel, γ controls how local the similarity function is. I fixed C = 1.0 and swept γ across six orders of magnitude, watching cross-validated AUROC rise, peak, then fall as the kernel went from too smooth to too sharp.</p>
+
+      <div class="data-table-wrap reveal delay-2">
+        <table class="data-table">
+          <thead><tr><th>γ</th><th class="num">Mean (Min, Max) CV AUROC</th></tr></thead>
+          <tbody>
+            <tr><td>0.001</td><td class="num">0.7467 (0.6949, 0.8029)</td></tr>
+            <tr class="hi"><td>0.1</td><td class="num">0.7915 (0.7589, 0.8248)</td></tr>
+            <tr><td>1.0</td><td class="num">0.7675 (0.7253, 0.7854)</td></tr>
+            <tr><td>10</td><td class="num">0.7485 (0.7194, 0.7840)</td></tr>
+            <tr><td>100</td><td class="num">0.7164 (0.6744, 0.7605)</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="table-caption reveal delay-2">A γ that is too small behaves like a linear model and underfits. Too large, and the kernel memorizes individual training points and stops generalizing. The best test performance, at C = 1 and γ = 0.1, reached 0.8700 accuracy and 0.7842 AUROC, edging out the linear logistic model on accuracy and specificity while landing at a comparable AUROC. Unlike a linear model, though, there's no single weight vector to read back out. An RBF kernel operates entirely through pairwise similarities to the training points, so there's no per-feature coefficient left to interpret.</p>
     </div>
   </section>
 
@@ -531,6 +648,22 @@
           <p class="insight-card-body">Threshold-independent, ranking-based metrics like AUROC and average precision stayed nearly flat across class weights, while threshold-dependent metrics like accuracy, sensitivity, and specificity swung wildly. Class weighting mostly reshuffles where the decision threshold falls, not how well the model ranks patients by risk overall.</p>
         </div>
       </div>
+
+      <div class="data-table-wrap reveal delay-2">
+        <table class="data-table">
+          <thead><tr><th>Metric</th><th class="num">Wn=1, Wp=1</th><th class="num">Wn=1, Wp=50</th></tr></thead>
+          <tbody>
+            <tr><td>Accuracy</td><td class="num">0.8575</td><td class="num">0.2375</td></tr>
+            <tr><td>Precision</td><td class="num">0.4167</td><td class="num">0.1538</td></tr>
+            <tr><td>F1-score</td><td class="num">0.1449</td><td class="num">0.2667</td></tr>
+            <tr><td>AUROC</td><td class="num">0.7832</td><td class="num">0.7412</td></tr>
+            <tr><td>Average Precision</td><td class="num">0.3586</td><td class="num">0.3490</td></tr>
+            <tr class="hi"><td>Sensitivity</td><td class="num">0.0877</td><td class="num">1.0000</td></tr>
+            <tr class="hi"><td>Specificity</td><td class="num">0.9798</td><td class="num">0.1158</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="table-caption reveal delay-2">Weighting the positive class 50 times as heavily flips the classifier's behavior entirely: sensitivity jumps from 0.0877 to a perfect 1.0000, while specificity collapses from 0.9798 to 0.1158. Threshold-independent AUROC barely moves, from 0.7832 to 0.7412, confirming the model's underlying ranking of patients is largely unchanged.</p>
 
       <div class="pull-quote reveal delay-2">
         <p>An already-trained classifier with reasonable AUROC but poor sensitivity doesn't need retraining. Sweeping the decision threshold on its existing scores can often recover the sensitivity a class-weighted model would have given, without touching the model itself.</p>
@@ -628,20 +761,35 @@
         oof_scores = cross_val_predict(pipe, X, y, cv=cv, method="decision_function")
       </div>
 
+      <div class="code-label reveal delay-2">threshold sweep, maximizing F1 on out-of-fold scores</div>
+      <div class="code-block reveal delay-2">
+ts = np.linspace(oof_scores.min(), oof_scores.max(), 400)<br>
+best_f1, best_t = -1.0, 0.0<br>
+<span class="kw">for</span> t <span class="kw">in</span> ts:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;f = f1_score(y_bin, (oof_scores >= t).astype(int))<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">if</span> f > best_f1:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;best_f1, best_t = f, t
+      </div>
+
       <div class="stat-strip reveal delay-2">
         <div class="stat-card">
-          <span class="stat-val">0.81</span>
+          <span class="stat-val">0.8136</span>
           <span class="stat-desc">out-of-fold AUROC, estimated honestly on unseen folds</span>
         </div>
         <div class="stat-card">
-          <span class="stat-val">0.48</span>
-          <span class="stat-desc">out-of-fold F1 at the selected decision threshold</span>
+          <span class="stat-val">0.4794</span>
+          <span class="stat-desc">out-of-fold F1 at the selected decision threshold, t = 0.336</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-val">0.8232</span>
+          <span class="stat-desc">refit AUROC after retraining on the full 10K-patient set</span>
         </div>
         <div class="stat-card">
           <span class="stat-val">10K</span>
           <span class="stat-desc">patients used to train the final challenge model</span>
         </div>
       </div>
+      <p class="table-caption reveal delay-2">Confusion matrix after refitting on the full training set at the out-of-fold threshold: 6,956 true negatives, 1,511 false positives, 547 false negatives, 986 true positives. The F1 held up after refitting, which is what confirmed the threshold actually generalized rather than overfitting to one split.</p>
     </div>
   </section>
 
