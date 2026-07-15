@@ -1,0 +1,913 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dog Breed Classification — Mahima Shah</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; font-size: 16px; }
+
+    :root {
+      --bg:          #f5f5f7;
+      --bg-card:     rgba(255,255,255,0.68);
+      --bg-nav:      rgba(245,245,247,0.75);
+      --bg-tint:     rgba(123,45,62,0.04);
+      --border:      rgba(0,0,0,0.08);
+      --text:        #1d1d1f;
+      --text-2:      #515154;
+      --text-3:      #86868b;
+      --accent:      #7B2D3E;
+      --accent-hi:   #93394C;
+      --accent-dim:  rgba(123,45,62,0.09);
+      --accent-tag:  rgba(123,45,62,0.16);
+      --good:        #4caf7d;
+      --shadow-sm:   0 2px 16px rgba(0,0,0,0.06);
+      --shadow-md:   0 4px 32px rgba(0,0,0,0.09);
+      --shadow-lg:   0 20px 60px rgba(0,0,0,0.11);
+      --blur:        blur(24px);
+      --radius:      18px;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg:          #000000;
+        --bg-card:     rgba(28,28,30,0.82);
+        --bg-nav:      rgba(0,0,0,0.75);
+        --bg-tint:     rgba(184,83,104,0.07);
+        --border:      rgba(255,255,255,0.1);
+        --text:        #f5f5f7;
+        --text-2:      #a1a1a6;
+        --text-3:      #636366;
+        --accent:      #B85368;
+        --accent-hi:   #C96479;
+        --accent-dim:  rgba(184,83,104,0.12);
+        --accent-tag:  rgba(184,83,104,0.2);
+        --good:        #5fcf95;
+        --shadow-sm:   0 2px 16px rgba(0,0,0,0.35);
+        --shadow-md:   0 4px 32px rgba(0,0,0,0.45);
+        --shadow-lg:   0 20px 60px rgba(0,0,0,0.65);
+      }
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', -apple-system, sans-serif;
+      font-weight: 300;
+      line-height: 1.6;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* NAV */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 800;
+      height: 52px;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 52px;
+      background: var(--bg-nav);
+      backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur);
+      border-bottom: 1px solid var(--border);
+    }
+    @media (max-width:600px) { nav { padding: 0 22px; } }
+    .nav-links { display: flex; gap: 36px; list-style: none; align-items: center; }
+    .nav-links a { font-size: 0.78rem; font-weight: 400; letter-spacing: 0.04em; color: var(--text-3); text-decoration: none; position: relative; transition: color 0.2s; }
+    .nav-links a::after { content: ''; position: absolute; bottom: -2px; left: 0; width: 0; height: 1px; background: var(--accent); transition: width 0.25s cubic-bezier(0.16,1,0.3,1); }
+    .nav-links a:hover { color: var(--text); }
+    .nav-links a:hover::after { width: 100%; }
+    .nav-back { display: inline-flex; align-items: center; gap: 6px; font-size: 0.78rem; font-weight: 400; letter-spacing: 0.04em; color: var(--text-3); text-decoration: none; transition: color 0.2s; }
+    .nav-back:hover { color: var(--accent); }
+    .nav-back svg { transition: transform 0.2s; }
+    .nav-back:hover svg { transform: translateX(-3px); }
+
+    /* LAYOUT */
+    .page { padding-top: 52px; }
+    .container { max-width: 1100px; margin: 0 auto; padding: 0 40px; }
+    @media (max-width:600px) { .container { padding: 0 22px; } }
+
+    /* HERO */
+    .cs-hero { padding: 80px 40px 72px; border-bottom: 1px solid var(--border); position: relative; overflow: hidden; }
+    @media (max-width:600px) { .cs-hero { padding: 60px 22px 52px; } }
+    .cs-hero::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 70% 50%, var(--accent-dim), transparent 65%); pointer-events: none; }
+    .cs-hero-inner { max-width: 1100px; margin: 0 auto; position: relative; z-index: 1; }
+    .cs-tag { display: inline-block; font-size: 0.64rem; font-weight: 500; letter-spacing: 0.16em; text-transform: uppercase; color: var(--accent); background: var(--accent-dim); border: 1px solid var(--accent-tag); padding: 4px 12px; border-radius: 100px; margin-bottom: 20px; }
+    .cs-title { font-family: 'DM Serif Display', Georgia, serif; font-size: clamp(2.6rem, 6.6vw, 5.2rem); font-weight: 600; line-height: 1.0; letter-spacing: -0.02em; color: var(--text); margin-bottom: 20px; }
+    .cs-title .tw-cursor { display:inline-block; width:3px; height:0.72em; margin-left:4px; background:var(--accent); vertical-align:-0.05em; animation:tw-blink 0.9s step-end infinite; }
+    .cs-title .tw-cursor.tw-cursor-fade { animation:none; opacity:0; transition:opacity 0.6s ease; }
+    @keyframes tw-blink { 50% { opacity:0; } }
+    .cs-subtitle { font-size: clamp(1rem, 2vw, 1.15rem); color: var(--text-2); line-height: 1.7; max-width: 640px; }
+    .cs-working-title { font-family:'DM Serif Display',Georgia,serif; font-style:italic; font-size:0.95rem; color:var(--text-3); margin-top:14px; }
+    .cs-meta { display: flex; flex-wrap: wrap; gap: 32px; padding-top: 36px; border-top: 1px solid var(--border); margin-top: 36px; }
+    .cs-meta-item { display: flex; flex-direction: column; gap: 4px; }
+    .cs-meta-label { font-size: 0.62rem; font-weight: 500; letter-spacing: 0.16em; text-transform: uppercase; color: var(--text-3); }
+    .cs-meta-value { font-size: 0.88rem; font-weight: 400; color: var(--text); }
+
+    /* SECTIONS */
+    .cs-section { padding: 80px 40px; border-bottom: 1px solid var(--border); }
+    .cs-section:last-of-type { border-bottom: none; }
+    @media (max-width:600px) { .cs-section { padding: 56px 22px; } }
+    .container-inner { max-width: 1100px; margin: 0 auto; }
+    .section-label { display: inline-flex; align-items:center; gap:10px; font-size: 0.62rem; font-weight: 500; letter-spacing: 0.18em; text-transform: uppercase; color: var(--accent); margin-bottom: 12px; }
+    .section-num { font-size: 0.62rem; font-weight: 400; letter-spacing: 0.1em; color: var(--text-3); }
+    .section-heading { font-family: 'DM Serif Display', Georgia, serif; font-size: clamp(1.7rem, 3.6vw, 2.6rem); font-weight: 500; line-height: 1.14; letter-spacing: -0.015em; color: var(--text); margin-bottom: 22px; }
+    .section-heading em { font-style: italic; color: var(--accent); }
+    .body-text { font-size: 1rem; color: var(--text-2); line-height: 1.82; max-width: 680px; }
+    .body-text + .body-text { margin-top: 14px; }
+
+    /* STAT STRIP */
+    .stat-strip { display: flex; flex-wrap: wrap; gap: 2px; margin: 40px 0; }
+    .stat-card { flex: 1; min-width: 130px; background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 22px 20px; backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur); }
+    .stat-val { font-family: 'DM Serif Display', Georgia, serif; font-size: 2rem; font-weight: 500; color: var(--accent); line-height: 1; display: block; margin-bottom: 6px; }
+    .stat-desc { font-size: 0.78rem; font-weight: 400; color: var(--text-3); line-height: 1.4; }
+
+    /* CARDS */
+    .cards-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 36px; }
+    @media (max-width:640px) { .cards-2col { grid-template-columns: 1fr; } }
+    .cards-3col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-top: 36px; }
+    @media (max-width:720px) { .cards-3col { grid-template-columns: 1fr; } }
+    .insight-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 26px 24px; backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur); }
+    .insight-card-icon { width: 34px; height: 34px; border-radius: 10px; background: var(--accent-dim); border: 1px solid var(--accent-tag); display: flex; align-items: center; justify-content: center; margin-bottom: 14px; }
+    .insight-card-title { font-family: 'DM Serif Display', Georgia, serif; font-size: 1.05rem; font-weight: 500; color: var(--text); margin-bottom: 8px; line-height: 1.2; }
+    .insight-card-body { font-size: 0.87rem; color: var(--text-2); line-height: 1.7; }
+    .insight-card-body code, .body-text code { font-family:'SF Mono','Fira Code',monospace; font-size:0.82em; background:var(--accent-dim); padding:1px 5px; border-radius:4px; color:var(--accent); }
+
+    /* CODE BLOCK */
+    .code-block { margin: 26px 0; background: rgba(0,0,0,0.04); border: 1px solid var(--border); border-radius: 12px; padding: 20px 24px; overflow-x: auto; font-family: 'SF Mono','Fira Code',monospace; font-size: 0.78rem; color: var(--text-2); line-height: 1.75; }
+    @media (prefers-color-scheme:dark) { .code-block { background: rgba(255,255,255,0.04); } }
+    .code-block .kw { color: var(--accent); }
+    .code-block .cm { color: var(--text-3); font-style: italic; }
+    .code-label { font-size: 0.64rem; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-3); margin: 26px 0 -12px; display:block; }
+
+    /* ARCH DIAGRAM */
+    .arch-diagram { margin: 32px 0; background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 36px 32px; backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur); overflow-x: auto; }
+    .arch-row { display: flex; align-items: center; justify-content: flex-start; gap: 0; flex-wrap: nowrap; min-width: max-content; }
+    .arch-row.center { justify-content: center; }
+    .arch-box { background: var(--accent-dim); border: 1px solid var(--accent-tag); border-radius: 12px; padding: 14px 16px; text-align: center; min-width: 118px; flex-shrink: 0; }
+    .arch-box.highlight { background: var(--accent); border-color: var(--accent); }
+    .arch-box.highlight .arch-label { color: #fff; }
+    .arch-box.highlight .arch-sub { color: rgba(255,255,255,0.7); }
+    .arch-box.dim { opacity: 0.35; }
+    .arch-label { font-family: 'DM Serif Display', Georgia, serif; font-size: 0.86rem; font-weight: 500; color: var(--text); display: block; margin-bottom: 4px; }
+    .arch-sub { font-size: 0.66rem; color: var(--text-3); letter-spacing: 0.03em; display: block; }
+    .arch-arrow { color: var(--accent); font-size: 1.1rem; padding: 0 10px; flex-shrink: 0; opacity: 0.6; }
+    @media (max-width:640px) { .arch-diagram { padding: 28px 18px; } }
+
+    /* PULL QUOTE */
+    .pull-quote { margin: 32px 0; padding: 26px 30px; border-left: 3px solid var(--accent); background: var(--bg-tint); border-radius: 0 var(--radius) var(--radius) 0; max-width: 680px; }
+    .pull-quote p { font-family: 'DM Serif Display', Georgia, serif; font-style: italic; font-size: 1.08rem; color: var(--text); line-height: 1.58; }
+
+    /* IMAGE SHOWCASE */
+    .image-single { margin: 32px 0; border-radius: var(--radius); overflow: hidden; border: 1px solid var(--border); box-shadow: var(--shadow-md); background: #fff; }
+    .image-single img { width: 100%; height: auto; display: block; }
+    .showcase-label { font-size: 0.72rem; font-weight: 400; letter-spacing: 0.04em; color: var(--text-3); margin-top: 10px; text-align: center; }
+    .image-showcase { margin: 32px 0; display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    @media (max-width:640px) { .image-showcase { grid-template-columns: 1fr; } }
+    .showcase-img { border-radius: var(--radius); overflow: hidden; border: 1px solid var(--border); box-shadow: var(--shadow-md); background: var(--bg-card); }
+    .showcase-img img { width: 100%; height: 100%; object-fit: contain; display: block; background:#fff; }
+
+    /* TABLE */
+    .data-table { width: 100%; border-collapse: collapse; margin: 28px 0; font-size: 0.85rem; background: var(--bg-card); border-radius: var(--radius); overflow: hidden; border: 1px solid var(--border); }
+    .data-table th, .data-table td { padding: 12px 16px; text-align: left; border-bottom: 1px solid var(--border); }
+    .data-table th { font-size: 0.64rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-3); background: rgba(0,0,0,0.02); }
+    .data-table td { color: var(--text-2); }
+    .data-table tr:last-child td { border-bottom: none; }
+    .data-table td.num, .data-table th.num { text-align: right; font-family: 'SF Mono','Fira Code',monospace; }
+    .data-table tr.hi td { color: var(--text); font-weight: 500; }
+    .data-table tr.hi { background: var(--accent-dim); }
+    .data-table-wrap { overflow-x: auto; }
+
+    /* TABS / EXPERIMENT SELECTOR */
+    .exp-block { margin: 32px 0; background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 28px; backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur); }
+    @media (max-width:600px) { .exp-block { padding: 20px; } }
+    .exp-tabs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 22px; }
+    .exp-tab { font-size: 0.78rem; font-weight: 500; color: var(--text-2); background: transparent; border: 1px solid var(--border); padding: 8px 16px; border-radius: 100px; cursor: pointer; transition: all 0.2s; font-family: 'DM Sans', sans-serif; }
+    .exp-tab:hover { border-color: var(--accent-tag); color: var(--text); }
+    .exp-tab.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+    .exp-img-wrap { border-radius: 14px; overflow: hidden; border: 1px solid var(--border); background: #fff; box-shadow: var(--shadow-sm); }
+    .exp-img-wrap img { width: 100%; height: auto; display: block; }
+    .exp-meta-row { display: flex; flex-wrap: wrap; gap: 24px; margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border); }
+    .exp-meta-item { display: flex; flex-direction: column; gap: 4px; }
+    .exp-meta-label { font-size: 0.6rem; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-3); }
+    .exp-meta-val { font-family: 'DM Serif Display', Georgia, serif; font-size: 1.3rem; color: var(--accent); }
+    .exp-caption { font-size: 0.85rem; color: var(--text-2); line-height: 1.7; margin-top: 18px; }
+
+    /* FREEZE DIAGRAM */
+    .freeze-diagram { display: flex; align-items: center; gap: 0; margin-bottom: 22px; flex-wrap: wrap; }
+    .freeze-box { padding: 10px 14px; border-radius: 10px; font-size: 0.72rem; font-weight: 500; text-align: center; border: 1px solid var(--accent-tag); background: var(--accent-dim); color: var(--text); margin-right: 6px; transition: all 0.25s; }
+    .freeze-box.frozen { background: rgba(134,134,139,0.14); border-color: rgba(134,134,139,0.25); color: var(--text-3); }
+    .freeze-box.frozen::after { content: ' \2744'; }
+    .freeze-arrow-sm { color: var(--text-3); font-size: 0.9rem; margin-right: 6px; }
+
+    /* REFLECT */
+    .reflect-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px 22px; backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur); }
+    .reflect-icon { font-size: 1.15rem; margin-bottom: 12px; display: block; }
+    .reflect-title { font-family: 'DM Serif Display', Georgia, serif; font-size: 1rem; font-weight: 500; color: var(--text); margin-bottom: 8px; }
+    .reflect-body { font-size: 0.83rem; color: var(--text-2); line-height: 1.7; }
+
+    /* STACK PILLS */
+    .stack-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 28px; }
+    .stack-pill { font-size: 0.75rem; font-weight: 400; color: var(--text-2); background: var(--bg-card); border: 1px solid var(--border); padding: 5px 14px; border-radius: 100px; backdrop-filter: var(--blur); }
+
+    /* NEXT PROJECT */
+    .next-project { padding: 72px 40px; text-align: center; border-top: 1px solid var(--border); }
+    .next-label { font-size: 0.64rem; font-weight: 500; letter-spacing: 0.18em; text-transform: uppercase; color: var(--text-3); margin-bottom: 12px; }
+    .next-title { font-family: 'DM Serif Display', Georgia, serif; font-size: clamp(1.8rem, 4vw, 2.8rem); font-weight: 500; color: var(--text); margin-bottom: 24px; }
+    .next-link { display: inline-flex; align-items: center; gap: 8px; font-size: 0.82rem; font-weight: 400; color: var(--text); text-decoration: none; transition: gap 0.25s; }
+    .next-link:hover { gap: 14px; }
+    .next-link-arrow { width: 30px; height: 30px; border-radius: 50%; background: var(--accent); display: flex; align-items: center; justify-content: center; transition: transform 0.25s; }
+    .next-link:hover .next-link-arrow { transform: scale(1.1); }
+
+    /* FOOTER */
+    footer { border-top: 1px solid var(--border); padding: 48px 40px 36px; text-align: center; }
+    .foot-inner { max-width: 1100px; margin: 0 auto; }
+    .foot-name { font-family:'DM Serif Display',Georgia,serif; font-size:1.5rem; font-weight:500; color:var(--text); margin-bottom:4px; }
+    .foot-sub { font-family:'DM Serif Display',Georgia,serif; font-style:italic; font-weight:300; font-size:0.9rem; color:var(--text-3); margin-bottom:24px; }
+    .foot-links { display:flex; gap:28px; justify-content:center; list-style:none; flex-wrap:wrap; margin-bottom:20px; }
+    .foot-links a { font-size:0.78rem; font-weight:400; letter-spacing:0.04em; color:var(--text-2); text-decoration:none; transition:color 0.2s; }
+    .foot-links a:hover { color:var(--accent); }
+    .foot-copy { font-size:0.64rem; color:var(--text-3); letter-spacing:0.06em; }
+
+    .reveal { opacity: 1; transform: none; }
+    .delay-1 { transition-delay: 0.08s; }
+    .delay-2 { transition-delay: 0.18s; }
+    .delay-3 { transition-delay: 0.28s; }
+
+    /* cursor dot */
+    #cdot { display: none; position: fixed; width: 9px; height: 9px; border-radius: 50%; background: var(--accent); pointer-events: none; z-index: 9999; opacity: 0; transform: translate(-50%, -50%); transition: width 0.18s ease, height 0.18s ease, opacity 0.15s ease; will-change: left, top; }
+    @media (pointer: fine) { #cdot { display: block; } }
+    body.has-cursor { cursor: none; }
+    body.has-cursor a, body.has-cursor button, body.has-cursor .card, body.has-cursor .pill, body.has-cursor .exp-tab { cursor: none; }
+    #cdot.expand { width: 26px; height: 26px; opacity: 0.15; }
+  </style>
+</head>
+<body>
+<div id="cdot"></div>
+<div class="page">
+
+  <!-- NAV -->
+  <nav>
+    <a href="index.html" class="nav-back">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+        <path d="M9 2L4 7l5 5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      Back
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html#about">About</a></li>
+      <li><a href="index.html#work">Work</a></li>
+      <li><a href="index.html#contact">Contact</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <header class="cs-hero">
+    <div class="cs-hero-inner">
+      <span class="cs-tag reveal">Machine Learning</span>
+      <h1 class="cs-title reveal delay-1">Dog Breed Classification</h1>
+      <p class="cs-subtitle reveal delay-2">An end-to-end computer vision pipeline in PyTorch built to tell Collies apart from Golden Retrievers. I implemented a CNN, a transfer learning system, and a Vision Transformer from first principles, then used what those experiments taught me to design a custom architecture of my own.</p>
+      <p class="cs-working-title reveal delay-2">Working title: "Paco's Puppy Problem"</p>
+      <div class="cs-meta reveal delay-3">
+        <div class="cs-meta-item">
+          <span class="cs-meta-label">Role</span>
+          <span class="cs-meta-value">Solo, Model Design &amp; Experimentation</span>
+        </div>
+        <div class="cs-meta-item">
+          <span class="cs-meta-label">Dataset</span>
+          <span class="cs-meta-value">8,867 images, 10 dog breeds</span>
+        </div>
+        <div class="cs-meta-item">
+          <span class="cs-meta-label">Stack</span>
+          <span class="cs-meta-value">Python · PyTorch · NumPy · torchvision</span>
+        </div>
+        <div class="cs-meta-item">
+          <span class="cs-meta-label">Focus</span>
+          <span class="cs-meta-value">CNNs, transfer learning, attention, architecture design</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- 01 OVERVIEW -->
+  <section class="cs-section">
+    <div class="container-inner container">
+      <span class="section-label reveal"><span class="section-num">01</span>Overview</span>
+      <h2 class="section-heading reveal delay-1">Four ways to teach a model <em>to see a dog.</em></h2>
+      <p class="body-text reveal delay-2">Every image in this dataset is a 64x64 RGB photo of a dog, one of ten breeds, split into training, validation, testing, and a held-out challenge partition. The target task is binary: tell Collies apart from Golden Retrievers. A related source task uses the other eight breeds, Samoyed, Miniature Poodle, Saint Bernard, Great Dane, Dalmatian, Chihuahua, Siberian Husky, and Yorkshire Terrier, to test whether visual features learned on one classification problem transfer to another.</p>
+      <p class="body-text reveal delay-3">Rather than building one classifier, this project moved through four stages: a convolutional network built from scratch, a transfer learning system that reused those learned features, a Vision Transformer implemented layer by layer, and finally a custom CNN designed from what the earlier experiments revealed. Each stage is its own small investigation into how these architectures learn, overfit, and generalize.</p>
+
+      <div class="stat-strip reveal delay-1">
+        <div class="stat-card">
+          <span class="stat-val">8,867</span>
+          <span class="stat-desc">images across 10 dog breeds, standardized and split into 4 partitions</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-val">4</span>
+          <span class="stat-desc">model families built: baseline CNN, transfer learning, Vision Transformer, custom CNN</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-val">39,754</span>
+          <span class="stat-desc">learnable parameters in the baseline CNN, hand-derived and verified</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-val">7,394</span>
+          <span class="stat-desc">learnable parameters in the Vision Transformer, over 5x smaller</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 02 LEARNING TO SEE -->
+  <section class="cs-section">
+    <div class="container-inner container">
+      <span class="section-label reveal"><span class="section-num">02</span>Preprocessing</span>
+      <h2 class="section-heading reveal delay-1">Learning to see, <em>before learning to classify.</em></h2>
+      <p class="body-text reveal delay-2">Before any model sees an image, every channel gets standardized. I implemented an <code>ImageStandardizer</code> that fits a per-channel mean and standard deviation using only the training partition, then applies that same transform to validation, test, and challenge data. Fitting on training data alone matters: if validation or test statistics leaked into the transform, the model would be indirectly evaluated on information it was never supposed to see.</p>
+
+      <div class="code-block reveal delay-2">
+<span class="cm"># dataset.py, ImageStandardizer</span><br>
+<span class="kw">def</span> fit(self, X: npt.NDArray) -> None:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;X = X.astype(np.float64)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;self.image_mean = np.mean(X, axis=(0, 1, 2))<br>
+&nbsp;&nbsp;&nbsp;&nbsp;self.image_std = np.std(X, axis=(0, 1, 2))<br>
+<br>
+<span class="kw">def</span> transform(self, X: npt.NDArray) -> npt.NDArray:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;eps = 1e-8<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">return</span> (X - self.image_mean) / (self.image_std + eps)
+      </div>
+
+      <div class="cards-2col reveal delay-2">
+        <div class="insight-card">
+          <div class="insight-card-icon">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="5.5" stroke="var(--accent)" stroke-width="1.2"/><path d="M8 5v3l2 2" stroke="var(--accent)" stroke-width="1.2" stroke-linecap="round"/></svg>
+          </div>
+          <h3 class="insight-card-title">Learned statistics</h3>
+          <p class="insight-card-body">The training partition's per-channel mean came out to <code>[125.55, 118.79, 94.77]</code> and standard deviation to <code>[64.41, 61.38, 64.25]</code> for red, green, and blue. Those six numbers are the only thing every downstream model ever learns about the raw pixel distribution.</p>
+        </div>
+        <div class="insight-card">
+          <div class="insight-card-icon">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="3" y="5" width="10" height="7" rx="1.5" stroke="var(--accent)" stroke-width="1.2"/><path d="M6 5V4a2 2 0 014 0v1" stroke="var(--accent)" stroke-width="1.2"/></svg>
+          </div>
+          <h3 class="insight-card-title">Why this preserves signal</h3>
+          <p class="insight-card-body">Standardized images look slightly softer and less saturated, but every shape, edge, and texture a classifier needs is still fully intact. Normalization changes the input scale, not the content.</p>
+        </div>
+      </div>
+
+      <div class="image-single reveal delay-2">
+        <img src="visualize_data.png" alt="Grid comparing four original dog images to their standardized versions" />
+      </div>
+      <p class="showcase-label reveal delay-2">Original images (top) versus their standardized versions (bottom). The transform changes pixel scale without losing visual structure.</p>
+    </div>
+  </section>
+
+  <!-- 03 BASELINE CNN -->
+  <section class="cs-section">
+    <div class="container-inner container">
+      <span class="section-label reveal"><span class="section-num">03</span>Building a CNN</span>
+      <h2 class="section-heading reveal delay-1">A convolutional network, <em>built from scratch.</em></h2>
+      <p class="body-text reveal delay-2">The baseline model, which I'll call the Target CNN, is three convolutional blocks feeding a single fully connected layer. Each convolution uses a 5x5 kernel with stride 2 and same padding, followed by ReLU, with max pooling after the first two. I implemented the layer definitions, Kaiming-style weight initialization, and the forward pass directly in PyTorch, along with the full training loop: zero gradients, forward pass, cross-entropy loss, backward pass, optimizer step.</p>
+
+      <div class="arch-diagram reveal delay-2">
+        <div class="arch-row">
+          <div class="arch-box"><span class="arch-label">Input</span><span class="arch-sub">3 x 64 x 64</span></div>
+          <span class="arch-arrow">&#8594;</span>
+          <div class="arch-box"><span class="arch-label">Conv 1</span><span class="arch-sub">16 filters, 5x5, /2</span></div>
+          <span class="arch-arrow">&#8594;</span>
+          <div class="arch-box"><span class="arch-label">Pool</span><span class="arch-sub">2x2, stride 2</span></div>
+          <span class="arch-arrow">&#8594;</span>
+          <div class="arch-box"><span class="arch-label">Conv 2</span><span class="arch-sub">64 filters, 5x5, /2</span></div>
+          <span class="arch-arrow">&#8594;</span>
+          <div class="arch-box"><span class="arch-label">Pool</span><span class="arch-sub">2x2, stride 2</span></div>
+          <span class="arch-arrow">&#8594;</span>
+          <div class="arch-box"><span class="arch-label">Conv 3</span><span class="arch-sub">8 filters, 5x5, /2</span></div>
+          <span class="arch-arrow">&#8594;</span>
+          <div class="arch-box highlight"><span class="arch-label">FC</span><span class="arch-sub">32 &#8594; 2 classes</span></div>
+        </div>
+      </div>
+
+      <div class="code-label reveal delay-2">model/target.py &mdash; forward pass</div>
+      <div class="code-block reveal delay-2">
+<span class="kw">def</span> forward(self, x: torch.Tensor) -> torch.Tensor:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;x = F.relu(self.conv1(x))<br>
+&nbsp;&nbsp;&nbsp;&nbsp;x = self.pool(x)<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;x = F.relu(self.conv2(x))<br>
+&nbsp;&nbsp;&nbsp;&nbsp;x = self.pool(x)<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;x = F.relu(self.conv3(x))<br>
+&nbsp;&nbsp;&nbsp;&nbsp;x = x.view(x.size(0), -1)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">return</span> self.fc_1(x)
+      </div>
+
+      <p class="body-text reveal delay-3">Working through the parameter count by hand before writing any code, 1,216 for the first convolution, 25,664 for the second, 12,808 for the third, and 66 for the fully connected layer, gave a total of 39,754 learnable parameters, which matched the program's output exactly once the model was implemented.</p>
+    </div>
+  </section>
+
+  <!-- 04 TRAINING IS AN EXPERIMENT -->
+  <section class="cs-section">
+    <div class="container-inner container">
+      <span class="section-label reveal"><span class="section-num">04</span>Training Is an Experiment</span>
+      <h2 class="section-heading reveal delay-1">More patience, more capacity, <em>not automatically better.</em></h2>
+      <p class="body-text reveal delay-2">Two early experiments shaped how I thought about the rest of the project. The first compared early-stopping patience values of 5 and 10. The second widened the final convolutional layer from 8 filters to 64. Neither change was free, and both taught the same lesson from a different angle: more of something is not the same as better.</p>
+
+      <div class="exp-block reveal delay-2">
+        <div class="exp-tabs" id="patience-tabs">
+          <button class="exp-tab active" data-patience="5">Patience = 5</button>
+          <button class="exp-tab" data-patience="10">Patience = 10</button>
+        </div>
+        <div class="exp-img-wrap">
+          <img id="patience-img" src="cnn_training_plot_patience_5.png" alt="CNN training and validation curves with patience 5" />
+        </div>
+        <div class="exp-meta-row" id="patience-meta">
+          <div class="exp-meta-item"><span class="exp-meta-label">Stopped at epoch</span><span class="exp-meta-val" id="p-epoch">17</span></div>
+          <div class="exp-meta-item"><span class="exp-meta-label">Best val loss (epoch 12)</span><span class="exp-meta-val" id="p-loss">0.0740</span></div>
+          <div class="exp-meta-item"><span class="exp-meta-label">Validation AUROC</span><span class="exp-meta-val" id="p-auroc">0.9977</span></div>
+        </div>
+        <p class="exp-caption" id="patience-caption">With patience 5, training stopped at epoch 17. The lowest validation loss had already occurred back at epoch 12, meaning the last five epochs were mostly polishing training loss toward zero rather than improving generalization.</p>
+      </div>
+
+      <p class="body-text reveal delay-1">Patience 5 worked slightly better. Patience 10 trained longer but the validation loss plateaued in the same place, around epoch 12, while training loss kept dropping, a sign the extra epochs were feeding overfitting rather than real improvement. Increased patience would matter more on a noisier or slower-converging training curve; here it just meant more time spent memorizing.</p>
+
+      <div class="data-table-wrap reveal delay-2">
+        <table class="data-table">
+          <thead><tr><th>Final conv layer</th><th class="num">Best epoch</th><th class="num">Training AUROC</th><th class="num">Validation AUROC</th></tr></thead>
+          <tbody>
+            <tr><td>8 filters</td><td class="num">12</td><td class="num">1.0000</td><td class="num">0.9980</td></tr>
+            <tr><td>64 filters</td><td class="num">6</td><td class="num">0.9999</td><td class="num">0.9952</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="body-text reveal delay-2">Widening the last convolutional layer from 8 to 64 filters raised the fully connected input from 32 to 256 features. The wider model converged faster, reaching its best checkpoint at epoch 6 instead of 12, but its validation AUROC came in slightly lower. With a dataset this size, the extra capacity had more room to fit training-specific noise than to learn anything generalizable.</p>
+    </div>
+  </section>
+
+  <!-- 05 WHEN VALIDATION MISLEADS -->
+  <section class="cs-section">
+    <div class="container-inner container">
+      <span class="section-label reveal"><span class="section-num">05</span>When Validation Misleads</span>
+      <h2 class="section-heading reveal delay-1">A validation AUROC of 0.998, <em>and a test AUROC of 0.763.</em></h2>
+      <p class="body-text reveal delay-2">Trained with a patience of 5 and 8 filters in the last convolutional layer, the baseline CNN's full scorecard told two different stories depending on which number you looked at.</p>
+
+      <div class="data-table-wrap reveal delay-2">
+        <table class="data-table">
+          <thead><tr><th></th><th class="num">Training</th><th class="num">Validation</th><th class="num">Testing</th></tr></thead>
+          <tbody>
+            <tr><td>Accuracy</td><td class="num">1.0000</td><td class="num">0.9600</td><td class="num">0.6000</td></tr>
+            <tr class="hi"><td>AUROC</td><td class="num">1.0000</td><td class="num">0.9980</td><td class="num">0.7632</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p class="body-text reveal delay-2">The train-validation gap alone is small and unremarkable. It's the validation-test gap that's the real story: a model that looks nearly perfect on validation dropped to 0.763 AUROC on genuinely unseen data. Inspecting the images themselves offered a hypothesis for why.</p>
+
+      <div class="image-single reveal delay-2">
+        <img src="visualize_labels.png" alt="Sample images from the positive class (Collies) and negative class (Golden Retrievers)" />
+      </div>
+      <p class="showcase-label reveal delay-2">Positive-labeled Collies (top) versus negative-labeled Golden Retrievers (bottom)</p>
+
+      <p class="body-text reveal delay-2">Beyond the obvious breed traits, coat texture, ear shape, muzzle length, the two sets of images also differ in background and lighting. It's plausible the model picked up on some of that context alongside genuine breed features. That would explain the pattern exactly: strong performance wherever validation images resemble training images in ways that have nothing to do with the dog, and a real drop wherever the test set's conditions differ.</p>
+
+      <div class="pull-quote reveal delay-2">
+        <p>Strong validation performance can still be misleading when the validation data resembles the training data more closely than the true deployment distribution does.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 06 TRANSFER LEARNING -->
+  <section class="cs-section">
+    <div class="container-inner container">
+      <span class="section-label reveal"><span class="section-num">06</span>Transfer Learning</span>
+      <h2 class="section-heading reveal delay-1">Reusing what a network <em>already learned to see.</em></h2>
+      <p class="body-text reveal delay-2">If the target CNN was struggling with limited, possibly context-biased data, one fix was to give it a better starting point. I trained a second CNN, the Source model, on the other eight breeds, then transferred its learned convolutional weights to the Collie-versus-Golden-Retriever task, freezing anywhere from zero to all three convolutional layers before fine-tuning.</p>
+
+      <div class="arch-diagram reveal delay-2">
+        <div class="arch-row center">
+          <div class="arch-box"><span class="arch-label">8-Breed Source Task</span><span class="arch-sub">Samoyed, Poodle, Husky...</span></div>
+          <span class="arch-arrow">&#8594;</span>
+          <div class="arch-box highlight"><span class="arch-label">Source CNN</span><span class="arch-sub">learns general dog features</span></div>
+          <span class="arch-arrow">&#8594;</span>
+          <div class="arch-box"><span class="arch-label">Freeze 0&ndash;3 layers</span><span class="arch-sub">transfer + fine-tune</span></div>
+          <span class="arch-arrow">&#8594;</span>
+          <div class="arch-box"><span class="arch-label">Collie vs. Golden</span><span class="arch-sub">target task</span></div>
+        </div>
+      </div>
+
+      <p class="body-text reveal delay-2">The Source model reached its lowest validation loss, 1.7792, at epoch 8. After that, training accuracy kept climbing while validation performance flattened, which is exactly why checkpointing on validation loss rather than the final epoch matters.</p>
+
+      <div class="image-single reveal delay-2">
+        <img src="source_training_plot_patience_10.png" alt="Source CNN training and validation curves across 8 breeds" />
+      </div>
+      <p class="showcase-label reveal delay-2">Source model training on the 8-breed classification task, patience 10</p>
+
+      <div class="image-single reveal delay-2">
+        <img src="confusion_matrix.png" alt="Confusion matrix for the 8-breed source classifier" />
+      </div>
+      <p class="showcase-label reveal delay-2">Confusion matrix on the validation set. Yorkshire Terrier and Samoyed were classified most reliably; Chihuahua and Saint Bernard were confused most often, likely due to visual overlap with other breeds in the set.</p>
+
+      <h3 class="section-heading reveal delay-2" style="font-size:1.4rem; margin-top:48px;">Freezing layers, one at a time</h3>
+      <p class="body-text reveal delay-2">This is the most counterintuitive result in the project. Select a freezing configuration below to see its training curve.</p>
+
+      <div class="exp-block reveal delay-2">
+        <div class="exp-tabs" id="freeze-tabs">
+          <button class="exp-tab" data-freeze="3">Freeze all 3 (FC only)</button>
+          <button class="exp-tab" data-freeze="2">Freeze first 2</button>
+          <button class="exp-tab" data-freeze="1">Freeze first 1</button>
+          <button class="exp-tab active" data-freeze="0">Freeze none</button>
+        </div>
+        <div class="freeze-diagram" id="freeze-diagram">
+          <span class="freeze-box" id="fb-conv1">Conv 1</span>
+          <span class="freeze-arrow-sm">&#8594;</span>
+          <span class="freeze-box" id="fb-conv2">Conv 2</span>
+          <span class="freeze-arrow-sm">&#8594;</span>
+          <span class="freeze-box" id="fb-conv3">Conv 3</span>
+          <span class="freeze-arrow-sm">&#8594;</span>
+          <span class="freeze-box" id="fb-fc" style="background:var(--accent); border-color:var(--accent); color:#fff;">FC (always trains)</span>
+        </div>
+        <div class="exp-img-wrap">
+          <img id="freeze-img" src="target_training_plot_frozen_layers_0.png" alt="Target model training curve with 0 layers frozen" />
+        </div>
+        <div class="exp-meta-row" id="freeze-meta">
+          <div class="exp-meta-item"><span class="exp-meta-label">Train AUROC</span><span class="exp-meta-val" id="f-train">0.9999</span></div>
+          <div class="exp-meta-item"><span class="exp-meta-label">Validation AUROC</span><span class="exp-meta-val" id="f-val">0.9973</span></div>
+          <div class="exp-meta-item"><span class="exp-meta-label">Test AUROC</span><span class="exp-meta-val" id="f-test">0.7628</span></div>
+        </div>
+      </div>
+
+      <div class="data-table-wrap reveal delay-2">
+        <table class="data-table">
+          <thead><tr><th>Strategy</th><th class="num">Train</th><th class="num">Validation</th><th class="num">Test</th></tr></thead>
+          <tbody>
+            <tr class="hi"><td>Freeze all conv layers (fine-tune FC only)</td><td class="num">0.9018</td><td class="num">0.9332</td><td class="num">0.8264</td></tr>
+            <tr><td>Freeze first 2 conv layers</td><td class="num">1.0000</td><td class="num">0.9918</td><td class="num">0.7512</td></tr>
+            <tr><td>Freeze first conv layer</td><td class="num">1.0000</td><td class="num">0.9979</td><td class="num">0.7680</td></tr>
+            <tr><td>Freeze no layers</td><td class="num">0.9999</td><td class="num">0.9973</td><td class="num">0.7628</td></tr>
+            <tr><td>No pretraining or transfer learning</td><td class="num">1.0000</td><td class="num">0.9980</td><td class="num">0.7632</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p class="body-text reveal delay-2">Freezing all three convolutional layers produced the <em>lowest</em> validation AUROC of any transfer configuration, 0.9332, yet the <em>highest</em> test AUROC by a wide margin, 0.8264. Every other configuration, including full fine-tuning, scored better on validation and worse on the held-out test set. Frozen, pretrained features acted like a strong regularizer: with every convolutional weight fixed, the model could only learn a linear combination of general dog features in its final layer, which left it with nowhere to overfit to validation-specific shortcuts. Letting every layer adapt gave the model the freedom to re-learn those same shortcuts, right back to where the original CNN started.</p>
+
+      <div class="pull-quote reveal delay-2">
+        <p>Reusing fixed visual features generalized better than fully fine-tuning the network, even though full fine-tuning looked stronger on the validation set.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 07 CNN VS VIT -->
+  <section class="cs-section">
+    <div class="container-inner container">
+      <span class="section-label reveal"><span class="section-num">07</span>CNN vs. Vision Transformer</span>
+      <h2 class="section-heading reveal delay-1">A newer architecture, <em>not a better one here.</em></h2>
+      <p class="body-text reveal delay-2">Vision Transformers apply the attention mechanism from language models directly to images, splitting a picture into patches and treating each one as a token. I implemented the core pieces myself: patch-to-token projection, a learnable classification token, scaled dot-product attention, multi-head attention, and the transformer encoder blocks that stack on top.</p>
+
+      <div class="arch-diagram reveal delay-2">
+        <div class="arch-row">
+          <div class="arch-box"><span class="arch-label">64x64 Image</span><span class="arch-sub">3 channels</span></div>
+          <span class="arch-arrow">&#8594;</span>
+          <div class="arch-box"><span class="arch-label">16 Patches</span><span class="arch-sub">flattened + projected</span></div>
+          <span class="arch-arrow">&#8594;</span>
+          <div class="arch-box"><span class="arch-label">Tokens + [CLS]</span><span class="arch-sub">+ position embedding</span></div>
+          <span class="arch-arrow">&#8594;</span>
+          <div class="arch-box highlight"><span class="arch-label">2x Transformer Block</span><span class="arch-sub">MHA + LayerNorm + MLP</span></div>
+          <span class="arch-arrow">&#8594;</span>
+          <div class="arch-box"><span class="arch-label">MLP Head</span><span class="arch-sub">16 &#8594; 2 classes</span></div>
+        </div>
+      </div>
+
+      <div class="code-label reveal delay-2">Scaled dot-product attention</div>
+      <div class="code-block reveal delay-2">
+<span class="cm"># models/vit.py, MultiHeadAttention.forward()</span><br>
+scores = (q @ k.T) / self.scale_factor<br>
+weights = self.softmax(scores)<br>
+attention = weights @ v
+      </div>
+
+      <p class="body-text reveal delay-2">Trained with 2 attention heads and 2 transformer blocks at an embedding dimension of 16, the model came out to roughly 7,394 learnable parameters, about a fifth the size of the baseline CNN.</p>
+
+      <div class="image-single reveal delay-2">
+        <img src="vit_training_plot_patience_5.png" alt="Vision Transformer training and validation curves" />
+      </div>
+      <p class="showcase-label reveal delay-2">ViT training on the target task, patience 5. Lowest validation loss of 0.1431 at epoch 14.</p>
+
+      <div class="data-table-wrap reveal delay-2">
+        <table class="data-table">
+          <thead><tr><th>Model</th><th class="num">Parameters</th><th class="num">Validation AUROC</th><th class="num">Test AUROC</th></tr></thead>
+          <tbody>
+            <tr><td>Baseline CNN</td><td class="num">39,754</td><td class="num">0.9980</td><td class="num">0.7632</td></tr>
+            <tr><td>Vision Transformer</td><td class="num">7,394</td><td class="num">0.9826</td><td class="num">0.6888</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p class="body-text reveal delay-2">Despite being far smaller, the ViT didn't outperform the CNN, and actually generalized worse to the test set. CNNs carry useful spatial assumptions baked directly into their architecture: local receptive fields, shared filters, translation-aware feature extraction. Transformers have to learn spatial structure from data instead of assuming it, which usually takes a lot more data than 8,867 images to pay off. Architectural novelty didn't guarantee a better result here; the CNN's built-in assumptions were simply a better fit for a small image dataset.</p>
+    </div>
+  </section>
+
+  <!-- 08 CHALLENGE CNN -->
+  <section class="cs-section">
+    <div class="container-inner container">
+      <span class="section-label reveal"><span class="section-num">08</span>Designing My Own Model</span>
+      <h2 class="section-heading reveal delay-1">Turning three experiments <em>into one architecture.</em></h2>
+      <p class="body-text reveal delay-2">For the final challenge, I had full control: architecture, initialization, activations, regularization, augmentation, optimizer, and scheduler, trained from scratch with no pretrained weights allowed. I used everything the earlier sections uncovered, that unregularized capacity overfits, that frozen features can generalize better than full fine-tuning, that CNN spatial assumptions matter on small datasets, to design a deeper four-block CNN with real regularization built in from the start.</p>
+
+      <div class="arch-diagram reveal delay-2">
+        <div class="arch-row">
+          <div class="arch-box"><span class="arch-label">Input</span><span class="arch-sub">3 x 64 x 64</span></div>
+          <span class="arch-arrow">&#8594;</span>
+          <div class="arch-box"><span class="arch-label">Conv 32</span><span class="arch-sub">3x3, LeakyReLU, pool</span></div>
+          <span class="arch-arrow">&#8594;</span>
+          <div class="arch-box"><span class="arch-label">Conv 64</span><span class="arch-sub">+ Dropout2d 0.25</span></div>
+          <span class="arch-arrow">&#8594;</span>
+          <div class="arch-box"><span class="arch-label">Conv 128</span><span class="arch-sub">+ Dropout2d 0.25</span></div>
+          <span class="arch-arrow">&#8594;</span>
+          <div class="arch-box"><span class="arch-label">Conv 256</span><span class="arch-sub">3x3, LeakyReLU, pool</span></div>
+          <span class="arch-arrow">&#8594;</span>
+          <div class="arch-box highlight"><span class="arch-label">FC 4096&#8594;512&#8594;2</span><span class="arch-sub">Dropout 0.5</span></div>
+        </div>
+      </div>
+
+      <div class="code-label reveal delay-2">model/challenge.py</div>
+      <div class="code-block reveal delay-2">
+self.conv1 = nn.Conv2d(3, 32, kernel_size=3, padding=1)<br>
+self.conv2 = nn.Conv2d(32, 64, kernel_size=3, padding=1)<br>
+self.conv3 = nn.Conv2d(64, 128, kernel_size=3, padding=1)<br>
+self.conv4 = nn.Conv2d(128, 256, kernel_size=3, padding=1)<br>
+self.pool = nn.MaxPool2d(2, 2)<br>
+self.dropout_conv = nn.Dropout2d(0.25)<br>
+self.dropout_fc = nn.Dropout(0.5)<br>
+self.fc1 = nn.Linear(256 * 4 * 4, 512)<br>
+self.fc2 = nn.Linear(512, 2)<br>
+<br>
+<span class="cm"># forward: 4x (conv -> LeakyReLU(0.1) -> pool), dropout after blocks 2 and 3</span><br>
+x = F.leaky_relu(self.conv1(x), negative_slope=0.1)<br>
+x = self.pool(x)<br>
+x = F.leaky_relu(self.conv2(x), negative_slope=0.1)<br>
+x = self.pool(x); x = self.dropout_conv(x)<br>
+<span class="cm">&nbsp;&nbsp;# ...conv3, conv4 follow the same pattern</span>
+      </div>
+
+      <div class="cards-2col reveal delay-2">
+        <div class="insight-card">
+          <div class="insight-card-icon"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 8h8M8 4l4 4-4 4" stroke="var(--accent)" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <h3 class="insight-card-title">BatchNorm, tested and removed</h3>
+          <p class="insight-card-body">I tried BatchNorm after every convolution first. Validation AUROC fluctuated more and test performance got less consistent, likely because the running statistics were unstable at my batch size. It stayed in the code, commented out, but the final forward pass doesn't use it.</p>
+        </div>
+        <div class="insight-card">
+          <div class="insight-card-icon"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="5.5" stroke="var(--accent)" stroke-width="1.2"/><path d="M8 5v3l2 1.5" stroke="var(--accent)" stroke-width="1.2" stroke-linecap="round"/></svg></div>
+          <h3 class="insight-card-title">LeakyReLU + Kaiming init</h3>
+          <p class="insight-card-body">Standard ReLU produced dead neurons once I added a fourth block. Switching to LeakyReLU (slope 0.1) with Kaiming initialization tuned for it kept gradients alive and let the deeper network actually learn.</p>
+        </div>
+        <div class="insight-card">
+          <div class="insight-card-icon"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="3" y="3" width="4" height="4" rx="1" stroke="var(--accent)" stroke-width="1.2"/><rect x="9" y="9" width="4" height="4" rx="1" stroke="var(--accent)" stroke-width="1.2" opacity="0.4"/></svg></div>
+          <h3 class="insight-card-title">Subtle augmentation only</h3>
+          <p class="insight-card-body">Horizontal flips, a light random crop and resize, small brightness and contrast jitter, and 15% chance of light random erasing, applied only to training data. Stronger augmentation actually hurt learning, so I dialed it back.</p>
+        </div>
+        <div class="insight-card">
+          <div class="insight-card-icon"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8l3 3 7-7" stroke="var(--accent)" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <h3 class="insight-card-title">Label smoothing + AdamW</h3>
+          <p class="insight-card-body">Label smoothing (&epsilon;=0.1) kept the model from becoming overconfident. AdamW with decoupled weight decay (5x10&#8315;&#8308;) and a cosine annealing schedule with warm restarts kept training stable through 60 possible epochs.</p>
+        </div>
+      </div>
+
+      <div class="image-single reveal delay-2">
+        <img src="challenge_training_plot.png" alt="Final custom CNN training and validation curves" />
+      </div>
+      <p class="showcase-label reveal delay-2">Custom challenge CNN training curve. Validation loss bottomed out at 0.3315, validation AUROC peaked at 0.9893, both at epoch 36, the checkpoint used for final predictions.</p>
+
+      <p class="body-text reveal delay-2">The model learned quickly through the first 10 to 20 epochs, AUROC climbing from around 0.5 toward 0.9, with training and validation curves staying close together. After epoch 20, training accuracy kept inching up while validation flattened, a normal convergence pattern rather than a sharp overfit. I selected the epoch 36 checkpoint using validation loss alone, without looking at test performance, which is the model-selection discipline that made the earlier baseline's validation-test gap so misleading in the first place.</p>
+
+      <div class="stat-strip reveal delay-2">
+        <div class="stat-card">
+          <span class="stat-val">0.9893</span>
+          <span class="stat-desc">validation AUROC at the selected checkpoint, epoch 36</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-val">0.3315</span>
+          <span class="stat-desc">validation loss at that same checkpoint, the lowest observed</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-val">4</span>
+          <span class="stat-desc">convolutional blocks, expanding 3 to 32 to 64 to 128 to 256 channels</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 09 STACK -->
+  <section class="cs-section">
+    <div class="container-inner container">
+      <span class="section-label reveal"><span class="section-num">09</span>Stack</span>
+      <h2 class="section-heading reveal delay-1">What it's <em>built with.</em></h2>
+      <p class="body-text reveal delay-2">Every model, the baseline CNN, the source classifier, the transfer learning variants, the Vision Transformer, and the final custom CNN, was implemented directly in PyTorch, including the training loops, checkpointing, and early stopping logic.</p>
+      <div class="stack-row reveal delay-2">
+        <span class="stack-pill">Python</span>
+        <span class="stack-pill">PyTorch</span>
+        <span class="stack-pill">NumPy</span>
+        <span class="stack-pill">torchvision</span>
+        <span class="stack-pill">Pandas</span>
+        <span class="stack-pill">Matplotlib</span>
+        <span class="stack-pill">Convolutional Neural Networks</span>
+        <span class="stack-pill">Transfer Learning</span>
+        <span class="stack-pill">Vision Transformers</span>
+        <span class="stack-pill">Attention Mechanisms</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 10 REFLECTION -->
+  <section class="cs-section">
+    <div class="container-inner container">
+      <span class="section-label reveal"><span class="section-num">10</span>Reflection</span>
+      <h2 class="section-heading reveal delay-1">What I <em>took away.</em></h2>
+
+      <div class="cards-3col">
+        <div class="reflect-card reveal delay-1">
+          <span class="reflect-icon">&#128065;</span>
+          <h4 class="reflect-title">Validation metrics can lie</h4>
+          <p class="reflect-body">The baseline CNN's 0.998 validation AUROC and 0.763 test AUROC taught me to never trust a single number. Now I always ask what the validation set actually resembles before believing what it tells me.</p>
+        </div>
+        <div class="reflect-card reveal delay-2">
+          <span class="reflect-icon">&#10052;&#65039;</span>
+          <h4 class="reflect-title">Freezing can be regularization</h4>
+          <p class="reflect-body">The frozen-features result was the most surprising outcome of the whole project. Less flexibility, not more, produced the best test generalization, a reminder that the model with the best validation score isn't always the model you should ship.</p>
+        </div>
+        <div class="reflect-card reveal delay-3">
+          <span class="reflect-icon">&#128296;</span>
+          <h4 class="reflect-title">Architecture is only part of it</h4>
+          <p class="reflect-body">The custom CNN's biggest gains didn't come from a cleverer architecture. They came from augmentation, dropout placement, label smoothing, and honest checkpoint selection, all the unglamorous engineering around the model.</p>
+        </div>
+      </div>
+
+      <div class="pull-quote reveal delay-2" style="margin-top: 40px;">
+        <p>The best model didn't come from making the network as large or complex as possible. It came from understanding where the earlier models failed, controlling overfitting, and combining small architectural and training decisions into a more reliable system.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- NEXT PROJECT -->
+  <div class="next-project">
+    <p class="next-label reveal">Next project</p>
+    <h2 class="next-title reveal delay-1">Search Engine</h2>
+    <a href="search-engine.html" class="next-link reveal delay-2">
+      View case study
+      <span class="next-link-arrow">
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+          <path d="M2 6h8M6 2l4 4-4 4" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </span>
+    </a>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="foot-inner">
+      <p class="foot-name">Mahima Shah</p>
+      <p class="foot-sub">always learning</p>
+      <ul class="foot-links">
+        <li><a href="mailto:mahimashahxyz@gmail.com">Email</a></li>
+        <li><a href="https://www.linkedin.com/in/shahmahima/" target="_blank" rel="noopener">LinkedIn</a></li>
+        <li><a href="https://github.com/mahima-shah" target="_blank" rel="noopener">GitHub</a></li>
+        <li><a href="https://www.youtube.com/@mahimashah" target="_blank" rel="noopener">YouTube</a></li>
+      </ul>
+      <p class="foot-copy">2025 Mahima Shah &nbsp;&middot;&nbsp; Designed with intention</p>
+    </div>
+  </footer>
+
+</div>
+
+<script>
+  // Scroll reveal
+  var revEls = document.querySelectorAll('.reveal');
+  revEls.forEach(function(el) {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(20px)';
+  });
+  requestAnimationFrame(function() {
+    requestAnimationFrame(function() {
+      revEls.forEach(function(el) {
+        el.style.transition = 'opacity 0.7s cubic-bezier(0.16,1,0.3,1), transform 0.7s cubic-bezier(0.16,1,0.3,1)';
+      });
+      if (!('IntersectionObserver' in window)) {
+        revEls.forEach(function(el) { el.style.opacity='1'; el.style.transform='none'; });
+        return;
+      }
+      var io = new IntersectionObserver(function(entries) {
+        entries.forEach(function(e) {
+          if (e.isIntersecting) {
+            e.target.style.opacity = '1';
+            e.target.style.transform = 'none';
+            io.unobserve(e.target);
+          }
+        });
+      }, { threshold: 0.06, rootMargin: '0px 0px -40px 0px' });
+      revEls.forEach(function(el) { io.observe(el); });
+    });
+  });
+
+  // Orange dot cursor
+  var dot = document.getElementById('cdot');
+  if (dot && window.matchMedia('(pointer: fine)').matches) {
+    var active = false;
+    document.addEventListener('mousemove', function(e) {
+      dot.style.left = e.clientX + 'px';
+      dot.style.top  = e.clientY + 'px';
+      if (!active) {
+        active = true;
+        dot.style.opacity = '1';
+        document.body.classList.add('has-cursor');
+      }
+    }, {passive:true});
+    document.querySelectorAll('a, button, .card, .pill, .exp-tab').forEach(function(el) {
+      el.addEventListener('mouseenter', function() { dot.classList.add('expand'); });
+      el.addEventListener('mouseleave', function() { dot.classList.remove('expand'); });
+    });
+  }
+
+  // Typewriter heading reveal
+  (function(){
+    var el = document.querySelector('.cs-title');
+    if (!el) return;
+    var text = el.textContent;
+    el.setAttribute('aria-label', text);
+    el.innerHTML = '<span class="tw-text" aria-hidden="true"></span><span class="tw-cursor" aria-hidden="true"></span>';
+    var textSpan = el.querySelector('.tw-text');
+    var cursor = el.querySelector('.tw-cursor');
+    var started = false;
+    function type(){
+      if (started) return;
+      started = true;
+      var i = 0, speed = 46;
+      (function step(){
+        textSpan.textContent = text.slice(0, i);
+        i++;
+        if (i <= text.length) {
+          setTimeout(step, speed);
+        } else {
+          setTimeout(function(){ cursor.classList.add('tw-cursor-fade'); }, 850);
+        }
+      })();
+    }
+    if ('IntersectionObserver' in window) {
+      var io = new IntersectionObserver(function(entries){
+        entries.forEach(function(e){ if (e.isIntersecting) { type(); io.unobserve(el); } });
+      }, {threshold:0.3});
+      io.observe(el);
+    } else {
+      textSpan.textContent = text;
+    }
+  })();
+
+  // Patience tab selector
+  (function(){
+    var data = {
+      '5':  { img: 'cnn_training_plot_patience_5.png',  epoch: '17', loss: '0.0740', auroc: '0.9977',
+              caption: "With patience 5, training stopped at epoch 17. The lowest validation loss had already occurred back at epoch 12, meaning the last five epochs were mostly polishing training loss toward zero rather than improving generalization." },
+      '10': { img: 'cnn_training_plot_patience_10.png', epoch: '22', loss: '0.0740', auroc: '0.9979',
+              caption: "With patience 10, training ran to epoch 22, ten epochs past the actual best checkpoint. Validation accuracy and AUROC barely moved from the patience-5 run; the extra training mostly drove training loss further toward zero." }
+    };
+    var tabs = document.querySelectorAll('#patience-tabs .exp-tab');
+    tabs.forEach(function(tab){
+      tab.addEventListener('click', function(){
+        tabs.forEach(function(t){ t.classList.remove('active'); });
+        tab.classList.add('active');
+        var d = data[tab.getAttribute('data-patience')];
+        document.getElementById('patience-img').src = d.img;
+        document.getElementById('p-epoch').textContent = d.epoch;
+        document.getElementById('p-loss').textContent = d.loss;
+        document.getElementById('p-auroc').textContent = d.auroc;
+        document.getElementById('patience-caption').textContent = d.caption;
+      });
+    });
+  })();
+
+  // Frozen-layers tab selector
+  (function(){
+    var data = {
+      '3': { img: 'target_training_plot_frozen_layers_3.png', train:'0.9018', val:'0.9332', test:'0.8264', frozen:[1,2,3] },
+      '2': { img: 'target_training_plot_frozen_layers_2.png', train:'1.0000', val:'0.9918', test:'0.7512', frozen:[1,2] },
+      '1': { img: 'target_training_plot_frozen_layers_1.png', train:'1.0000', val:'0.9979', test:'0.7680', frozen:[1] },
+      '0': { img: 'target_training_plot_frozen_layers_0.png', train:'0.9999', val:'0.9973', test:'0.7628', frozen:[] }
+    };
+    var tabs = document.querySelectorAll('#freeze-tabs .exp-tab');
+    tabs.forEach(function(tab){
+      tab.addEventListener('click', function(){
+        tabs.forEach(function(t){ t.classList.remove('active'); });
+        tab.classList.add('active');
+        var d = data[tab.getAttribute('data-freeze')];
+        document.getElementById('freeze-img').src = d.img;
+        document.getElementById('f-train').textContent = d.train;
+        document.getElementById('f-val').textContent = d.val;
+        document.getElementById('f-test').textContent = d.test;
+        [1,2,3].forEach(function(n){
+          var box = document.getElementById('fb-conv'+n);
+          box.classList.toggle('frozen', d.frozen.indexOf(n) >= 0);
+        });
+      });
+    });
+  })();
+</script>
+</body>
+</html>
