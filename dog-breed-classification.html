@@ -418,7 +418,7 @@
           <button class="exp-tab" data-patience="10">Patience = 10</button>
         </div>
         <div class="exp-img-wrap">
-          <img id="patience-img" src="cnn_training_plot_patience_5.png" alt="CNN training and validation curves with patience 5" />
+          <img id="patience-img" src="cnn_training_plot_patience=5.png" alt="CNN training and validation curves with patience 5" />
         </div>
         <div class="exp-meta-row" id="patience-meta">
           <div class="exp-meta-item"><span class="exp-meta-label">Stopped at epoch</span><span class="exp-meta-val" id="p-epoch">17</span></div>
@@ -497,7 +497,7 @@
       <p class="body-text reveal delay-2">The Source model reached its lowest validation loss, 1.7792, at epoch 8. After that, training accuracy kept climbing while validation performance flattened, which is exactly why checkpointing on validation loss rather than the final epoch matters.</p>
 
       <div class="image-single reveal delay-2">
-        <img src="source_training_plot_patience_10.png" alt="Source CNN training and validation curves across 8 breeds" />
+        <img src="source_training_plot_patience=10.png" alt="Source CNN training and validation curves across 8 breeds" />
       </div>
       <p class="showcase-label reveal delay-2">Source model training on the 8-breed classification task, patience 10</p>
 
@@ -588,7 +588,7 @@ attention = weights @ v
       <p class="body-text reveal delay-2">Trained with 2 attention heads and 2 transformer blocks at an embedding dimension of 16, the model came out to roughly 7,394 learnable parameters, about a fifth the size of the baseline CNN.</p>
 
       <div class="image-single reveal delay-2">
-        <img src="vit_training_plot_patience_5.png" alt="Vision Transformer training and validation curves" />
+        <img src="vit_training_plot_patience=5.png" alt="Vision Transformer training and validation curves" />
       </div>
       <p class="showcase-label reveal delay-2">ViT training on the target task, patience 5. Lowest validation loss of 0.1431 at epoch 14.</p>
 
@@ -863,9 +863,9 @@ x = self.pool(x); x = self.dropout_conv(x)<br>
   // Patience tab selector
   (function(){
     var data = {
-      '5':  { img: 'cnn_training_plot_patience_5.png',  epoch: '17', loss: '0.0740', auroc: '0.9977',
+      '5':  { img: 'cnn_training_plot_patience=5.png',  epoch: '17', loss: '0.0740', auroc: '0.9977',
               caption: "With patience 5, training stopped at epoch 17. The lowest validation loss had already occurred back at epoch 12, meaning the last five epochs were mostly polishing training loss toward zero rather than improving generalization." },
-      '10': { img: 'cnn_training_plot_patience_10.png', epoch: '22', loss: '0.0740', auroc: '0.9979',
+      '10': { img: 'cnn_training_plot_patience=10.png', epoch: '22', loss: '0.0740', auroc: '0.9979',
               caption: "With patience 10, training ran to epoch 22, ten epochs past the actual best checkpoint. Validation accuracy and AUROC barely moved from the patience-5 run; the extra training mostly drove training loss further toward zero." }
     };
     var tabs = document.querySelectorAll('#patience-tabs .exp-tab');
