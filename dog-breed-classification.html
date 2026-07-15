@@ -526,7 +526,7 @@
           <span class="freeze-box" id="fb-fc" style="background:var(--accent); border-color:var(--accent); color:#fff;">FC (always trains)</span>
         </div>
         <div class="exp-img-wrap">
-          <img id="freeze-img" src="target_training_plot_frozen_layers_0.png" alt="Target model training curve with 0 layers frozen" />
+          <img id="freeze-img" src="target_training_plot_frozen_layers=0.png" alt="Target model training curve with 0 layers frozen" />
         </div>
         <div class="exp-meta-row" id="freeze-meta">
           <div class="exp-meta-item"><span class="exp-meta-label">Train AUROC</span><span class="exp-meta-val" id="f-train">0.9999</span></div>
@@ -886,10 +886,10 @@ x = self.pool(x); x = self.dropout_conv(x)<br>
   // Frozen-layers tab selector
   (function(){
     var data = {
-      '3': { img: 'target_training_plot_frozen_layers_3.png', train:'0.9018', val:'0.9332', test:'0.8264', frozen:[1,2,3] },
-      '2': { img: 'target_training_plot_frozen_layers_2.png', train:'1.0000', val:'0.9918', test:'0.7512', frozen:[1,2] },
-      '1': { img: 'target_training_plot_frozen_layers_1.png', train:'1.0000', val:'0.9979', test:'0.7680', frozen:[1] },
-      '0': { img: 'target_training_plot_frozen_layers_0.png', train:'0.9999', val:'0.9973', test:'0.7628', frozen:[] }
+      '3': { img: 'target_training_plot_frozen_layers=3.png', train:'0.9018', val:'0.9332', test:'0.8264', frozen:[1,2,3] },
+      '2': { img: 'target_training_plot_frozen_layers=2.png', train:'1.0000', val:'0.9918', test:'0.7512', frozen:[1,2] },
+      '1': { img: 'target_training_plot_frozen_layers=1.png', train:'1.0000', val:'0.9979', test:'0.7680', frozen:[1] },
+      '0': { img: 'target_training_plot_frozen_layers=0.png', train:'0.9999', val:'0.9973', test:'0.7628', frozen:[] }
     };
     var tabs = document.querySelectorAll('#freeze-tabs .exp-tab');
     tabs.forEach(function(tab){
