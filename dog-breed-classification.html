@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Dog Breed Classification, Mahima Shah</title>
+  <title>Dog Breed Classification — Mahima Shah</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet" />
@@ -236,29 +236,11 @@
     .delay-3 { transition-delay: 0.28s; }
 
     /* cursor dot */
-    #cdot { display: none; position: fixed; width: 9px; height: 9px; border-radius: 50%; background: var(--accent); border: 1.5px solid transparent; pointer-events: none; z-index: 9999; opacity: 0; transform: translate(-50%, -50%); transition: width 0.18s ease, height 0.18s ease, opacity 0.15s ease, background 0.18s ease, border-color 0.18s ease; will-change: left, top; }
+    #cdot { display: none; position: fixed; width: 9px; height: 9px; border-radius: 50%; background: var(--accent); pointer-events: none; z-index: 9999; opacity: 0; transform: translate(-50%, -50%); transition: width 0.18s ease, height 0.18s ease, opacity 0.15s ease; will-change: left, top; }
     @media (pointer: fine) { #cdot { display: block; } }
     body.has-cursor { cursor: none; }
     body.has-cursor a, body.has-cursor button, body.has-cursor .card, body.has-cursor .pill, body.has-cursor .exp-tab { cursor: none; }
-    #cdot.expand { width: 34px; height: 34px; background: transparent; border-color: var(--accent); opacity: 0.9; }
-
-    /* ── Accessibility & motion polish ── */
-    a, button { -webkit-tap-highlight-color: transparent; }
-    a:focus-visible, button:focus-visible, .card:focus-visible,
-    .pill:focus-visible, .exp-tab:focus-visible, .flip-btn:focus-visible,
-    .flip-dot:focus-visible, .project-tile:focus-visible {
-      outline: 2px solid var(--accent);
-      outline-offset: 3px;
-      border-radius: 4px;
-    }
-    @media (prefers-reduced-motion: reduce) {
-      *, *::before, *::after {
-        animation-duration: 0.01ms !important;
-        animation-iteration-count: 1 !important;
-        transition-duration: 0.01ms !important;
-      }
-      html { scroll-behavior: auto !important; }
-    }
+    #cdot.expand { width: 26px; height: 26px; opacity: 0.15; }
   </style>
 </head>
 <body>
@@ -405,7 +387,7 @@
         </div>
       </div>
 
-      <div class="code-label reveal delay-2">model/target.py - forward pass</div>
+      <div class="code-label reveal delay-2">model/target.py &mdash; forward pass</div>
       <div class="code-block reveal delay-2">
 <span class="kw">def</span> forward(self, x: torch.Tensor) -> torch.Tensor:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;x = F.relu(self.conv1(x))<br>
@@ -768,8 +750,8 @@ x = self.pool(x); x = self.dropout_conv(x)<br>
   <!-- NEXT PROJECT -->
   <div class="next-project">
     <p class="next-label reveal">Next project</p>
-    <h2 class="next-title reveal delay-1">Search Engine</h2>
-    <a href="search-engine.html" class="next-link reveal delay-2">
+    <h2 class="next-title reveal delay-1">Instagram Clone</h2>
+    <a href="instagram-clone.html" class="next-link reveal delay-2">
       View case study
       <span class="next-link-arrow">
         <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
@@ -785,9 +767,8 @@ x = self.pool(x); x = self.dropout_conv(x)<br>
       <p class="foot-name">Mahima Shah</p>
       <p class="foot-sub">always learning</p>
       <ul class="foot-links">
-        <li><a href="mailto:mahima@mahimashah.xyz">Email</a></li>
+        <li><a href="mailto:mahimashahxyz@gmail.com">Email</a></li>
         <li><a href="https://www.linkedin.com/in/shahmahima/" target="_blank" rel="noopener">LinkedIn</a></li>
-        <li><a href="https://x.com/mahimashahh" target="_blank" rel="noopener">X</a></li>
         <li><a href="https://github.com/mahima-shah" target="_blank" rel="noopener">GitHub</a></li>
         <li><a href="https://www.youtube.com/@mahimashah" target="_blank" rel="noopener">YouTube</a></li>
       </ul>

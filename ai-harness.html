@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Harness — Mahima Shah</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; font-size: 16px; }
+
+    :root {
+      --bg:          #f5f5f7;
+      --bg-card:     rgba(255,255,255,0.68);
+      --bg-nav:      rgba(245,245,247,0.75);
+      --bg-tint:     rgba(123,45,62,0.04);
+      --border:      rgba(0,0,0,0.08);
+      --text:        #1d1d1f;
+      --text-2:      #515154;
+      --text-3:      #86868b;
+      --accent:      #7B2D3E;
+      --accent-hi:   #93394C;
+      --accent-dim:  rgba(123,45,62,0.09);
+      --accent-tag:  rgba(123,45,62,0.16);
+      --good:        #4caf7d;
+      --shadow-sm:   0 2px 16px rgba(0,0,0,0.06);
+      --shadow-md:   0 4px 32px rgba(0,0,0,0.09);
+      --shadow-lg:   0 20px 60px rgba(0,0,0,0.11);
+      --blur:        blur(24px);
+      --radius:      18px;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg:          #000000;
+        --bg-card:     rgba(28,28,30,0.82);
+        --bg-nav:      rgba(0,0,0,0.75);
+        --bg-tint:     rgba(184,83,104,0.07);
+        --border:      rgba(255,255,255,0.1);
+        --text:        #f5f5f7;
+        --text-2:      #a1a1a6;
+        --text-3:      #636366;
+        --accent:      #B85368;
+        --accent-hi:   #C96479;
+        --accent-dim:  rgba(184,83,104,0.12);
+        --accent-tag:  rgba(184,83,104,0.2);
+        --good:        #5fcf95;
+        --shadow-sm:   0 2px 16px rgba(0,0,0,0.35);
+        --shadow-md:   0 4px 32px rgba(0,0,0,0.45);
+        --shadow-lg:   0 20px 60px rgba(0,0,0,0.65);
+      }
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', -apple-system, sans-serif;
+      font-weight: 300;
+      line-height: 1.6;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* cursor dot */
+    #cdot { display:none; position:fixed; width:9px; height:9px; border-radius:50%; background:var(--accent); pointer-events:none; z-index:9999; opacity:0; transform:translate(-50%,-50%); transition:width .18s,height .18s,opacity .15s; left:-100px; top:-100px; }
+    @media (pointer:fine) { #cdot { display:block; } }
+    body.has-cursor { cursor:none; }
+    body.has-cursor a, body.has-cursor button { cursor:none; }
+    #cdot.expand { width:26px; height:26px; opacity:0.15; }
+
+    /* NAV */
+    nav { position:fixed; top:0; left:0; right:0; z-index:800; height:52px; display:flex; align-items:center; justify-content:space-between; padding:0 52px; background:var(--bg-nav); backdrop-filter:var(--blur); -webkit-backdrop-filter:var(--blur); border-bottom:1px solid var(--border); }
+    @media (max-width:600px) { nav { padding:0 22px; } }
+    .nav-links { display:flex; gap:36px; list-style:none; align-items:center; }
+    .nav-links a { font-size:0.78rem; font-weight:400; letter-spacing:0.04em; color:var(--text-3); text-decoration:none; position:relative; transition:color 0.2s; }
+    .nav-links a::after { content:''; position:absolute; bottom:-2px; left:0; width:0; height:1px; background:var(--accent); transition:width 0.25s cubic-bezier(0.16,1,0.3,1); }
+    .nav-links a:hover { color:var(--text); }
+    .nav-links a:hover::after { width:100%; }
+    .nav-back { display:inline-flex; align-items:center; gap:6px; font-size:0.78rem; font-weight:400; letter-spacing:0.04em; color:var(--text-3); text-decoration:none; transition:color 0.2s; }
+    .nav-back:hover { color:var(--accent); }
+    .nav-back svg { transition:transform 0.2s; }
+    .nav-back:hover svg { transform:translateX(-3px); }
+
+    /* LAYOUT */
+    .page { padding-top: 52px; }
+    .container { max-width: 1100px; margin: 0 auto; padding: 0 40px; }
+    @media (max-width:600px) { .container { padding: 0 22px; } }
+
+    /* HERO */
+    .cs-hero { padding: 80px 40px 72px; border-bottom: 1px solid var(--border); position: relative; overflow: hidden; }
+    @media (max-width:600px) { .cs-hero { padding: 60px 22px 52px; } }
+    .cs-hero::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 70% 50%, var(--accent-dim), transparent 65%); pointer-events: none; }
+    .cs-hero-inner { max-width: 1100px; margin: 0 auto; position: relative; z-index: 1; }
+    .cs-tag { display: inline-block; font-size: 0.64rem; font-weight: 500; letter-spacing: 0.16em; text-transform: uppercase; color: var(--accent); background: var(--accent-dim); border: 1px solid var(--accent-tag); padding: 4px 12px; border-radius: 100px; margin-bottom: 20px; }
+    .cs-title { font-family: 'DM Serif Display', Georgia, serif; font-size: clamp(2.6rem, 6.6vw, 5.2rem); font-weight: 600; line-height: 1.0; letter-spacing: -0.02em; color: var(--text); margin-bottom: 20px; }
+    .cs-title .tw-cursor { display:inline-block; width:3px; height:0.72em; margin-left:4px; background:var(--accent); vertical-align:-0.05em; animation:tw-blink 0.9s step-end infinite; }
+    .cs-title .tw-cursor.tw-cursor-fade { animation:none; opacity:0; transition:opacity 0.6s ease; }
+    @keyframes tw-blink { 50% { opacity:0; } }
+    .cs-subtitle { font-size: clamp(1rem, 2vw, 1.15rem); color: var(--text-2); line-height: 1.7; max-width: 660px; }
+    .cs-working-title { font-family:'DM Serif Display',Georgia,serif; font-style:italic; font-size:0.95rem; color:var(--text-3); margin-top:14px; }
+    .cs-meta { display: flex; flex-wrap: wrap; gap: 32px; padding-top: 36px; border-top: 1px solid var(--border); margin-top: 36px; }
+    .cs-meta-item { display: flex; flex-direction: column; gap: 4px; }
+    .cs-meta-label { font-size: 0.62rem; font-weight: 500; letter-spacing: 0.16em; text-transform: uppercase; color: var(--text-3); }
+    .cs-meta-value { font-size: 0.88rem; font-weight: 400; color: var(--text); }
+
+    /* SECTIONS */
+    .cs-section { padding: 80px 40px; border-bottom: 1px solid var(--border); }
+    .cs-section:last-of-type { border-bottom: none; }
+    @media (max-width:600px) { .cs-section { padding: 56px 22px; } }
+    .container-inner { max-width: 1100px; margin: 0 auto; }
+    .section-label { display: inline-flex; align-items:center; gap:10px; font-size: 0.62rem; font-weight: 500; letter-spacing: 0.18em; text-transform: uppercase; color: var(--accent); margin-bottom: 12px; }
+    .section-num { font-size: 0.62rem; font-weight: 400; letter-spacing: 0.1em; color: var(--text-3); }
+    .section-heading { font-family: 'DM Serif Display', Georgia, serif; font-size: clamp(1.7rem, 3.6vw, 2.6rem); font-weight: 500; line-height: 1.14; letter-spacing: -0.015em; color: var(--text); margin-bottom: 22px; }
+    .section-heading em { font-style: italic; color: var(--accent); }
+    .body-text { font-size: 1rem; color: var(--text-2); line-height: 1.82; max-width: 680px; }
+    .body-text + .body-text { margin-top: 14px; }
+
+    /* STAT STRIP */
+    .stat-strip { display: flex; flex-wrap: wrap; gap: 2px; margin: 40px 0; }
+    .stat-card { flex: 1; min-width: 150px; background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 22px 20px; backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur); }
+    .stat-val { font-family: 'DM Serif Display', Georgia, serif; font-size: 1.9rem; font-weight: 500; color: var(--accent); line-height: 1; display: block; margin-bottom: 6px; }
+    .stat-desc { font-size: 0.78rem; font-weight: 400; color: var(--text-3); line-height: 1.4; }
+
+    /* CARDS */
+    .cards-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 36px; }
+    @media (max-width:640px) { .cards-2col { grid-template-columns: 1fr; } }
+    .cards-3col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-top: 36px; }
+    @media (max-width:720px) { .cards-3col { grid-template-columns: 1fr; } }
+    .insight-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 26px 24px; backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur); }
+    .insight-card-icon { width: 34px; height: 34px; border-radius: 10px; background: var(--accent-dim); border: 1px solid var(--accent-tag); display: flex; align-items: center; justify-content: center; margin-bottom: 14px; }
+    .insight-card-title { font-family: 'DM Serif Display', Georgia, serif; font-size: 1.05rem; font-weight: 500; color: var(--text); margin-bottom: 8px; line-height: 1.2; }
+    .insight-card-body { font-size: 0.87rem; color: var(--text-2); line-height: 1.7; }
+    .insight-card-body code, .body-text code { font-family:'SF Mono','Fira Code',monospace; font-size:0.82em; background:var(--accent-dim); padding:1px 5px; border-radius:4px; color:var(--accent); }
+
+    /* CODE BLOCK */
+    .code-block { margin: 26px 0; background: rgba(0,0,0,0.04); border: 1px solid var(--border); border-radius: 12px; padding: 20px 24px; overflow-x: auto; font-family: 'SF Mono','Fira Code',monospace; font-size: 0.78rem; color: var(--text-2); line-height: 1.75; }
+    @media (prefers-color-scheme:dark) { .code-block { background: rgba(255,255,255,0.04); } }
+    .code-block .kw { color: var(--accent); }
+    .code-block .cm { color: var(--text-3); font-style: italic; }
+    .code-label { font-size: 0.64rem; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-3); margin: 26px 0 -12px; display:block; }
+
+    /* ARCH DIAGRAM (also used for the request-journey animation) */
+    .arch-diagram { margin: 32px 0; background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 36px 32px; backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur); overflow-x: auto; }
+    .arch-row { display: flex; align-items: center; justify-content: flex-start; gap: 0; flex-wrap: nowrap; min-width: max-content; }
+    .arch-row.center { justify-content: center; }
+    .arch-row.stacked { flex-direction: column; align-items: stretch; min-width: 0; }
+    .arch-box { position: relative; background: var(--accent-dim); border: 1px solid var(--accent-tag); border-radius: 12px; padding: 14px 18px; text-align: center; min-width: 130px; flex-shrink: 0; transition: background 0.4s, border-color 0.4s; }
+    .arch-box.highlight { background: var(--accent); border-color: var(--accent); }
+    .arch-box.highlight .arch-label { color: #fff; }
+    .arch-box.highlight .arch-sub { color: rgba(255,255,255,0.7); }
+    .arch-box.dim { opacity: 0.38; }
+    .arch-box.pulse { animation: archpulse 1.6s ease-in-out infinite; }
+    @keyframes archpulse { 0%,100% { box-shadow: 0 0 0 0 var(--accent-tag); } 50% { box-shadow: 0 0 0 8px rgba(123,45,62,0); } }
+    .arch-label { font-family: 'DM Serif Display', Georgia, serif; font-size: 0.88rem; font-weight: 500; color: var(--text); display: block; margin-bottom: 4px; }
+    .arch-sub { font-size: 0.66rem; color: var(--text-3); letter-spacing: 0.03em; display: block; }
+    .arch-arrow { color: var(--accent); font-size: 1.1rem; padding: 0 10px; flex-shrink: 0; opacity: 0.6; }
+    .arch-arrow.down { padding: 8px 0; text-align: center; transform: rotate(90deg); align-self: center; }
+    @media (max-width:700px) { .arch-diagram .arch-row:not(.stacked) { flex-direction:column; } .arch-diagram .arch-row:not(.stacked) .arch-arrow { transform:rotate(90deg); } }
+
+    /* REQUEST JOURNEY (interactive) */
+    .journey-block { margin: 32px 0; background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 30px; backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur); }
+    @media (max-width:600px) { .journey-block { padding: 20px; } }
+    .journey-steps { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 24px; }
+    .journey-step-btn { font-size: 0.74rem; font-weight: 500; color: var(--text-2); background: transparent; border: 1px solid var(--border); padding: 7px 14px; border-radius: 100px; cursor: pointer; transition: all 0.2s; font-family: 'DM Sans', sans-serif; }
+    .journey-step-btn:hover { border-color: var(--accent-tag); color: var(--text); }
+    .journey-step-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+    .journey-caption { font-size: 0.88rem; color: var(--text-2); line-height: 1.7; margin-top: 20px; max-width: 620px; min-height: 3.4em; }
+    .journey-caption strong { color: var(--text); font-weight: 500; }
+
+    /* PULL QUOTE */
+    .pull-quote { margin: 32px 0; padding: 26px 30px; border-left: 3px solid var(--accent); background: var(--bg-tint); border-radius: 0 var(--radius) var(--radius) 0; max-width: 680px; }
+    .pull-quote p { font-family: 'DM Serif Display', Georgia, serif; font-style: italic; font-size: 1.08rem; color: var(--text); line-height: 1.58; }
+
+    /* STACK PILLS */
+    .stack-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 28px; }
+    .stack-pill { font-size: 0.75rem; font-weight: 400; color: var(--text-2); background: var(--bg-card); border: 1px solid var(--border); padding: 5px 14px; border-radius: 100px; backdrop-filter: var(--blur); }
+
+    /* REFLECT */
+    .reflect-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px 22px; backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur); }
+    .reflect-icon-box { width: 34px; height: 34px; border-radius: 10px; background: var(--accent-dim); border: 1px solid var(--accent-tag); display: flex; align-items: center; justify-content: center; margin-bottom: 14px; }
+    .reflect-title { font-family: 'DM Serif Display', Georgia, serif; font-size: 1rem; font-weight: 500; color: var(--text); margin-bottom: 8px; }
+    .reflect-body { font-size: 0.83rem; color: var(--text-2); line-height: 1.7; }
+
+    /* SCOPE NOTE / ROADMAP */
+    .scope-note { background: var(--bg-tint); border: 1px solid var(--accent-tag); border-radius: var(--radius); padding: 22px 26px; margin-top: 28px; }
+    .scope-note-label { font-size: 0.62rem; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); margin-bottom: 8px; display: block; }
+    .scope-note p { font-size: 0.87rem; color: var(--text-2); line-height: 1.75; }
+
+    .roadmap-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 28px; }
+    .roadmap-chip { font-size: 0.78rem; font-weight: 400; color: var(--text-3); background: transparent; border: 1px dashed var(--border); padding: 7px 15px; border-radius: 100px; }
+
+    /* NEXT PROJECT */
+    .next-project { padding: 72px 40px; text-align: center; border-top: 1px solid var(--border); }
+    .next-label { font-size: 0.64rem; font-weight: 500; letter-spacing: 0.18em; text-transform: uppercase; color: var(--text-3); margin-bottom: 12px; }
+    .next-title { font-family: 'DM Serif Display', Georgia, serif; font-size: clamp(1.8rem, 4vw, 2.8rem); font-weight: 500; color: var(--text); margin-bottom: 24px; }
+    .next-link { display: inline-flex; align-items: center; gap: 8px; font-size: 0.82rem; font-weight: 400; color: var(--text); text-decoration: none; transition: gap 0.25s; }
+    .next-link:hover { gap: 14px; }
+    .next-link-arrow { width: 30px; height: 30px; border-radius: 50%; background: var(--accent); display: flex; align-items: center; justify-content: center; transition: transform 0.25s; }
+    .next-link:hover .next-link-arrow { transform: scale(1.1); }
+
+    /* FOOTER */
+    footer { border-top: 1px solid var(--border); padding: 48px 40px 36px; text-align: center; }
+    .foot-inner { max-width: 1100px; margin: 0 auto; }
+    .foot-name { font-family:'DM Serif Display',Georgia,serif; font-size:1.5rem; font-weight:500; color:var(--text); margin-bottom:4px; }
+    .foot-sub { font-family:'DM Serif Display',Georgia,serif; font-style:italic; font-weight:300; font-size:0.9rem; color:var(--text-3); margin-bottom:24px; }
+    .foot-links { display:flex; gap:28px; justify-content:center; list-style:none; flex-wrap:wrap; margin-bottom:20px; }
+    .foot-links a { font-size:0.78rem; font-weight:400; letter-spacing:0.04em; color:var(--text-2); text-decoration:none; transition:color 0.2s; }
+    .foot-links a:hover { color:var(--accent); }
+    .foot-copy { font-size:0.64rem; color:var(--text-3); letter-spacing:0.06em; }
+
+    .reveal { opacity: 1; transform: none; }
+    .delay-1 { transition-delay: 0.08s; }
+    .delay-2 { transition-delay: 0.18s; }
+    .delay-3 { transition-delay: 0.28s; }
+  </style>
+</head>
+<body>
+<div id="cdot"></div>
+<div class="page">
+
+  <!-- NAV -->
+  <nav>
+    <a href="index.html" class="nav-back">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+        <path d="M9 2L4 7l5 5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      Back
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html#about">About</a></li>
+      <li><a href="index.html#work">Work</a></li>
+      <li><a href="index.html#contact">Contact</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <header class="cs-hero">
+    <div class="cs-hero-inner">
+      <span class="cs-tag reveal">Systems & Infrastructure</span>
+      <h1 class="cs-title reveal delay-1">AI Harness</h1>
+      <p class="cs-subtitle reveal delay-2">A native iOS app that talks to a server I built and run myself, which then routes the conversation to a language model and streams the answer back word by word. The interesting part isn't the app, it's everything that happens in between.</p>
+      <p class="cs-working-title reveal delay-2">The foundation for a system I'm still actively building on, not a finished chatbot.</p>
+      <div class="cs-meta reveal delay-3">
+        <div class="cs-meta-item">
+          <span class="cs-meta-label">Role</span>
+          <span class="cs-meta-value">Solo, Client &amp; Backend</span>
+        </div>
+        <div class="cs-meta-item">
+          <span class="cs-meta-label">What it is</span>
+          <span class="cs-meta-value">Native app + self-hosted backend + AI routing layer</span>
+        </div>
+        <div class="cs-meta-item">
+          <span class="cs-meta-label">Stack</span>
+          <span class="cs-meta-value">Swift &middot; SwiftUI &middot; Python &middot; Starlette &middot; AWS</span>
+        </div>
+        <div class="cs-meta-item">
+          <span class="cs-meta-label">Status</span>
+          <span class="cs-meta-value">Live, evolving</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- 01 OVERVIEW -->
+  <section class="cs-section">
+    <div class="container-inner container">
+      <span class="section-label reveal"><span class="section-num">01</span>Overview</span>
+      <h2 class="section-heading reveal delay-1">Where the message actually goes</h2>
+      <p class="body-text reveal delay-2">On the surface this is simple: type a message on an iPhone, get a reply from an AI model. But I didn't want the app talking directly to an AI company's servers. Instead, the message travels to a server I own and run, which decides which model should answer, sends the request along, and streams the response back into the app as it's being written, not all at once at the end.</p>
+      <p class="body-text reveal delay-3">That middle piece, my own server sitting between the app and the AI, is the actual project. I'm calling it my AI Harness because it's infrastructure I plan to keep extending: more capable routing, tools, memory, and eventually more complex mobile AI workflows all get built on top of this same foundation.</p>
+
+      <div class="stat-strip">
+        <div class="stat-card reveal delay-1">
+          <span class="stat-val">3</span>
+          <span class="stat-desc">layers a message passes through: the app, my server, the AI model</span>
+        </div>
+        <div class="stat-card reveal delay-2">
+          <span class="stat-val">1</span>
+          <span class="stat-desc">backend, built to work with any number of AI providers behind it</span>
+        </div>
+        <div class="stat-card reveal delay-3">
+          <span class="stat-val">Live</span>
+          <span class="stat-desc">runs continuously on a real cloud server, not just my laptop</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 02 THE REQUEST JOURNEY -->
+  <section class="cs-section">
+    <div class="container-inner container">
+      <span class="section-label reveal"><span class="section-num">02</span>The Journey of a Message</span>
+      <h2 class="section-heading reveal delay-1">Following one message all the way through</h2>
+      <p class="body-text reveal delay-2">Click through each step below to see where the message is at that moment and why that step exists.</p>
+
+      <div class="journey-block reveal delay-2">
+        <div class="journey-steps" id="journey-steps">
+          <button class="journey-step-btn active" data-step="0">1. You type</button>
+          <button class="journey-step-btn" data-step="1">2. App packages it</button>
+          <button class="journey-step-btn" data-step="2">3. Sent to my server</button>
+          <button class="journey-step-btn" data-step="3">4. Server picks a model</button>
+          <button class="journey-step-btn" data-step="4">5. Model streams back</button>
+          <button class="journey-step-btn" data-step="5">6. Answer appears</button>
+        </div>
+
+        <div class="arch-diagram" style="margin:0;">
+          <div class="arch-row" id="journey-row">
+            <div class="arch-box" id="jb-0"><span class="arch-label">You</span><span class="arch-sub">iPhone, typing</span></div>
+            <span class="arch-arrow">&#8594;</span>
+            <div class="arch-box" id="jb-1"><span class="arch-label">iOS App</span><span class="arch-sub">Swift + SwiftUI</span></div>
+            <span class="arch-arrow">&#8594;</span>
+            <div class="arch-box" id="jb-2"><span class="arch-label">My Server</span><span class="arch-sub">running on AWS</span></div>
+            <span class="arch-arrow">&#8594;</span>
+            <div class="arch-box" id="jb-3"><span class="arch-label">AI Model</span><span class="arch-sub">picked by the server</span></div>
+            <span class="arch-arrow">&#8594;</span>
+            <div class="arch-box" id="jb-4"><span class="arch-label">Answer</span><span class="arch-sub">streamed back, word by word</span></div>
+          </div>
+        </div>
+
+        <p class="journey-caption" id="journey-caption"></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 03 WHY A BACKEND AT ALL -->
+  <section class="cs-section">
+    <div class="container-inner container">
+      <span class="section-label reveal"><span class="section-num">03</span>Why Have a Server At All</span>
+      <h2 class="section-heading reveal delay-1">Why not just talk to the AI <em>directly?</em></h2>
+      <p class="body-text reveal delay-2">The easy version of this project would have the iPhone app talk straight to an AI provider. I didn't build it that way, on purpose. A phone app is something anyone can pull apart, so it should never hold private keys or make permanent decisions about which AI model to use. Instead, all of that lives on my server, in one place I control.</p>
+
+      <div class="cards-2col">
+        <div class="insight-card reveal delay-1">
+          <div class="insight-card-icon"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="3" y="5" width="10" height="7" rx="1.5" stroke="var(--accent)" stroke-width="1.2"/><path d="M6 5V4a2 2 0 014 0v1" stroke="var(--accent)" stroke-width="1.2"/></svg></div>
+          <h3 class="insight-card-title">Keys stay off the phone</h3>
+          <p class="insight-card-body">The credentials needed to call an AI provider live only on my server. The app never sees them, so there's nothing sensitive to extract even if someone took the app apart.</p>
+        </div>
+        <div class="insight-card reveal delay-2">
+          <div class="insight-card-icon"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 8h8M8 4l4 4-4 4" stroke="var(--accent)" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <h3 class="insight-card-title">One place to change everything</h3>
+          <p class="insight-card-body">Which AI model answers, what happens if one fails, how a future feature like memory or tools would work, all of that can change on the server without touching or resubmitting the iPhone app.</p>
+        </div>
+      </div>
+
+      <div class="pull-quote reveal delay-2">
+        <p>The app is the interface. The server is the control layer underneath it.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 04 INSIDE THE BACKEND -->
+  <section class="cs-section">
+    <div class="container-inner container">
+      <span class="section-label reveal"><span class="section-num">04</span>Inside the Server</span>
+      <h2 class="section-heading reveal delay-1">What's running on the other end</h2>
+      <p class="body-text reveal delay-2">My server is a small Python program. I built it to be asynchronous, meaning it doesn't sit and wait around while an AI model is thinking. It can start one request, immediately move on to handle something else, and come back when the model has something to say. That matters because AI responses can take a few seconds, and a server that just freezes during that time would be a bad building block for anything more advanced later.</p>
+      <p class="body-text reveal delay-3">Three pieces work together here, each doing one job:</p>
+
+      <div class="arch-diagram reveal delay-2">
+        <div class="arch-row stacked">
+          <div class="arch-box"><span class="arch-label">My Code</span><span class="arch-sub">Python, written with a framework called Starlette &mdash; defines what each request should do</span></div>
+          <span class="arch-arrow down">&#8595;</span>
+          <div class="arch-box highlight"><span class="arch-label">Granian</span><span class="arch-sub">the actual web server &mdash; receives traffic from the internet and hands it to my code</span></div>
+          <span class="arch-arrow down">&#8595;</span>
+          <div class="arch-box"><span class="arch-label">The Internet</span><span class="arch-sub">HTTP/2, a faster, more efficient way of moving data than older web traffic</span></div>
+        </div>
+      </div>
+
+      <p class="body-text reveal delay-2">In plain terms: Starlette decides <em>what</em> my server does with a request. Granian is the part that's actually listening for that request in the first place. Splitting those two things apart is a standard pattern in real backend systems, and it's the first time I built something that way instead of running one script that did everything itself.</p>
+    </div>
+  </section>
+
+  <!-- 05 STREAMING -->
+  <section class="cs-section">
+    <div class="container-inner container">
+      <span class="section-label reveal"><span class="section-num">05</span>Streaming the Answer</span>
+      <h2 class="section-heading reveal delay-1">Why the reply types itself out</h2>
+      <p class="body-text reveal delay-2">An AI model doesn't produce its whole answer instantly, it generates it piece by piece. My server doesn't wait for the whole thing to finish before sending anything back. As soon as the model produces a small chunk of text, the server forwards that chunk straight to the app, which is why the reply appears to type itself onto the screen instead of showing up all at once.</p>
+
+      <div class="cards-2col">
+        <div class="insight-card reveal delay-1">
+          <div class="insight-card-icon"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="5.5" stroke="var(--accent)" stroke-width="1.2"/><path d="M8 5v3l2 2" stroke="var(--accent)" stroke-width="1.2" stroke-linecap="round"/></svg></div>
+          <h3 class="insight-card-title">Without streaming</h3>
+          <p class="insight-card-body">Send the message, then wait, with nothing on screen, until the entire answer has been generated somewhere else and finally arrives all at once.</p>
+        </div>
+        <div class="insight-card reveal delay-2">
+          <div class="insight-card-icon"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h3M8 8h3M13 8h1" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+          <h3 class="insight-card-title">With streaming</h3>
+          <p class="insight-card-body">Words start appearing within a second. The full answer takes the same amount of time to finish generating, but it never feels like the app is stuck doing nothing.</p>
+        </div>
+      </div>
+
+      <p class="body-text reveal delay-2" style="margin-top:8px;">Under the hood, this uses a technique called Server-Sent Events: my server keeps the connection to the app open and pushes small pieces of text down it one at a time, instead of closing the connection after a single reply the way a normal web request would.</p>
+    </div>
+  </section>
+
+  <!-- 06 MULTIPLE MODELS / ROUTING -->
+  <section class="cs-section">
+    <div class="container-inner container">
+      <span class="section-label reveal"><span class="section-num">06</span>Choosing a Model</span>
+      <h2 class="section-heading reveal delay-1">The app doesn't need to know <em>who answered</em></h2>
+      <p class="body-text reveal delay-2">My server isn't locked to one single AI provider. It keeps a list of models it's allowed to use and picks one for each request. If that provider is slow, unavailable, or returns an error, the server can try the next one on the list instead of just failing outright. The app never has to know or care which one actually generated the answer.</p>
+
+      <div class="arch-diagram reveal delay-2">
+        <div class="arch-row center">
+          <div class="arch-box"><span class="arch-label">iPhone Request</span><span class="arch-sub">just says "please answer this"</span></div>
+          <span class="arch-arrow">&#8594;</span>
+          <div class="arch-box highlight"><span class="arch-label">My Server</span><span class="arch-sub">picks the best available model</span></div>
+          <span class="arch-arrow">&#8594;</span>
+          <div class="arch-box"><span class="arch-label">Provider A, B, or C</span><span class="arch-sub">whichever actually responds</span></div>
+        </div>
+      </div>
+
+      <p class="body-text reveal delay-2">I actually watched this happen while testing: the app asked for one specific model, but by the time the server had picked a provider and something answered, the reply came back identifying itself as a completely different model. That's the whole point, the app's job is to have a conversation, not to babysit which AI is behind the curtain that day.</p>
+
+      <div class="cards-2col reveal delay-2">
+        <div class="insight-card">
+          <div class="insight-card-icon"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8l3 3 7-7" stroke="var(--accent)" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <h3 class="insight-card-title">Failure is part of the design</h3>
+          <p class="insight-card-body">If a provider is rate-limited or down, the server checks and moves to the next option rather than assuming the first attempt always works. Only if nothing is available does it tell the app so honestly, instead of pretending it succeeded.</p>
+        </div>
+        <div class="insight-card">
+          <div class="insight-card-icon"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 8h8M8 4l4 4-4 4" stroke="var(--accent)" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <h3 class="insight-card-title">Swappable by design</h3>
+          <p class="insight-card-body">Because the app only ever talks to my server, not to a specific AI company, I can add, remove, or replace models behind the scenes at any time without changing a single line of the iPhone app.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 07 HTTPS / TRUST -->
+  <section class="cs-section">
+    <div class="container-inner container">
+      <span class="section-label reveal"><span class="section-num">07</span>Keeping the Connection Private</span>
+      <h2 class="section-heading reveal delay-1">Setting up HTTPS taught me more than I expected</h2>
+      <p class="body-text reveal delay-2">My server has its own address on the internet and only accepts encrypted connections, so no one sitting in between can read what's being sent. While building and testing this, I had to set up that encryption myself, which meant the app and the server had to be introduced to each other and agree to trust one another before any conversation could happen.</p>
+      <p class="body-text reveal delay-3">That taught me something I didn't expect going in: "just turn on HTTPS" isn't a single switch, it's an actual trust relationship between a device, a certificate, and a server, and every piece of that chain has to be set up correctly for it to work at all.</p>
+    </div>
+  </section>
+
+  <!-- 08 KEEPING IT RUNNING -->
+  <section class="cs-section">
+    <div class="container-inner container">
+      <span class="section-label reveal"><span class="section-num">08</span>Keeping It Running</span>
+      <h2 class="section-heading reveal delay-1">Turning a script into <em>an actual service</em></h2>
+      <p class="body-text reveal delay-2">I didn't want to have to manually start this server every time I wanted to use the app. So instead of running it as a script in a terminal window, I set it up as a proper background service on the cloud machine it lives on. That means it starts automatically whenever the machine boots, and if it ever crashes, it restarts itself instead of just staying down.</p>
+
+      <div class="arch-diagram reveal delay-2">
+        <div class="arch-row stacked">
+          <div class="arch-box"><span class="arch-label">Server Boots</span><span class="arch-sub">the cloud machine turns on</span></div>
+          <span class="arch-arrow down">&#8595;</span>
+          <div class="arch-box highlight"><span class="arch-label">Service Manager</span><span class="arch-sub">automatically starts my backend</span></div>
+          <span class="arch-arrow down">&#8595;</span>
+          <div class="arch-box"><span class="arch-label">Running Continuously</span><span class="arch-sub">restarts itself automatically if it ever crashes</span></div>
+        </div>
+      </div>
+
+      <p class="body-text reveal delay-2">That's a small change on paper, but it's the difference between "a script I run when I remember to" and "a service that's actually available." It's the same expectation any real product would need to meet.</p>
+    </div>
+  </section>
+
+  <!-- 09 WHAT I LEARNED -->
+  <section class="cs-section">
+    <div class="container-inner container">
+      <span class="section-label reveal"><span class="section-num">09</span>What I Learned</span>
+      <h2 class="section-heading reveal delay-1">What actually stuck with me</h2>
+
+      <div class="cards-3col">
+        <div class="reflect-card reveal delay-1">
+          <div class="reflect-icon-box"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="3" y="3" width="4" height="4" rx="1" stroke="var(--accent)" stroke-width="1.2"/><rect x="9" y="9" width="4" height="4" rx="1" stroke="var(--accent)" stroke-width="1.2" opacity="0.4"/><path d="M7 5h2M5 7v2" stroke="var(--accent)" stroke-width="1.2" stroke-linecap="round"/></svg></div>
+          <h4 class="reflect-title">The interface and the control layer are different jobs</h4>
+          <p class="reflect-body">The app's whole job is showing a conversation and reacting to typing. Every decision about credentials, which model answers, and what happens if something fails belongs on the server. Keeping that boundary clean made both halves easier to reason about.</p>
+        </div>
+        <div class="reflect-card reveal delay-2">
+          <div class="reflect-icon-box"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h3M8 8h3M13 8h1" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+          <h4 class="reflect-title">Streaming changes how you have to think about a response</h4>
+          <p class="reflect-body">A reply isn't one thing that arrives, it's a sequence of small pieces arriving over time. The app has to be built to update itself as new pieces show up, not to wait for a single finished answer.</p>
+        </div>
+        <div class="reflect-card reveal delay-3">
+          <div class="reflect-icon-box"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="3" y="3" width="10" height="3" rx="1" stroke="var(--accent)" stroke-width="1.2"/><rect x="3" y="7.5" width="10" height="3" rx="1" stroke="var(--accent)" stroke-width="1.2" opacity="0.7"/><rect x="3" y="12" width="10" height="1.5" rx="0.75" stroke="var(--accent)" stroke-width="1.2" opacity="0.4"/></svg></div>
+          <h4 class="reflect-title">Networking is layers, and each layer solves a different problem</h4>
+          <p class="reflect-body">Encryption, the actual web server, my application code, and the way requests get routed all solve separate problems that stack on top of each other. Understanding where one layer's job ends and the next one's begins made debugging far less mysterious.</p>
+        </div>
+      </div>
+
+      <div class="pull-quote reveal delay-2" style="margin-top: 40px;">
+        <p>Getting code to run on my laptop and keeping a service reliably available on a machine I don't touch every day turned out to be two very different skills.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 10 WHAT'S NEXT -->
+  <section class="cs-section">
+    <div class="container-inner container">
+      <span class="section-label reveal"><span class="section-num">10</span>What's Next</span>
+      <h2 class="section-heading reveal delay-1">Where this goes from here</h2>
+      <p class="body-text reveal delay-2">Right now the system can securely move a message from a native app, through my own server, to an AI model, and stream the answer back. That's deliberately the simplest possible version of a much bigger idea. I'm continuing to build on this same backend as I explore giving it tools to use, longer memory of a conversation, and more capable mobile AI experiences.</p>
+
+      <div class="scope-note reveal delay-2">
+        <span class="scope-note-label">Current status</span>
+        <p>This is a live, working system, not a mockup, but it's also intentionally early. The core path from app to server to model to streamed reply is fully built. Everything below is what I'm actively building toward next on top of the same foundation.</p>
+      </div>
+
+      <div class="roadmap-row reveal delay-2">
+        <span class="roadmap-chip">Tools the model can use</span>
+        <span class="roadmap-chip">Longer conversation memory</span>
+        <span class="roadmap-chip">Multi-step agent workflows</span>
+        <span class="roadmap-chip">Images &amp; other input types</span>
+        <span class="roadmap-chip">More capable mobile experiences</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 11 STACK -->
+  <section class="cs-section">
+    <div class="container-inner container">
+      <span class="section-label reveal"><span class="section-num">11</span>Stack</span>
+      <h2 class="section-heading reveal delay-1">The tools behind it</h2>
+      <p class="body-text reveal delay-2">The iOS app, the server, the request routing, and the streaming logic were all written by hand, with the AI providers themselves handling only the actual language generation.</p>
+      <div class="stack-row reveal delay-2">
+        <span class="stack-pill">Swift</span>
+        <span class="stack-pill">SwiftUI</span>
+        <span class="stack-pill">Python</span>
+        <span class="stack-pill">Starlette</span>
+        <span class="stack-pill">Granian</span>
+        <span class="stack-pill">HTTP/2</span>
+        <span class="stack-pill">Server-Sent Events</span>
+        <span class="stack-pill">AWS</span>
+        <span class="stack-pill">systemd</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- NEXT PROJECT -->
+  <div class="next-project">
+    <p class="next-label reveal">Next project</p>
+    <h2 class="next-title reveal delay-1">Search Engine</h2>
+    <a href="search-engine.html" class="next-link reveal delay-2">
+      View case study
+      <span class="next-link-arrow">
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+          <path d="M2 6h8M6 2l4 4-4 4" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </span>
+    </a>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="foot-inner">
+      <p class="foot-name">Mahima Shah</p>
+      <p class="foot-sub">always learning</p>
+      <ul class="foot-links">
+        <li><a href="mailto:mahima@mahimashah.xyz">Email</a></li>
+        <li><a href="https://www.linkedin.com/in/shahmahima/" target="_blank" rel="noopener">LinkedIn</a></li>
+        <li><a href="https://x.com/mahimashahh" target="_blank" rel="noopener">X</a></li>
+        <li><a href="https://github.com/mahima-shah" target="_blank" rel="noopener">GitHub</a></li>
+        <li><a href="https://www.youtube.com/@mahimashah" target="_blank" rel="noopener">YouTube</a></li>
+      </ul>
+      <p class="foot-copy">2025 Mahima Shah &nbsp;&middot;&nbsp; Designed with intention</p>
+    </div>
+  </footer>
+
+</div>
+<script>
+  // Scroll reveal
+  var revEls = document.querySelectorAll('.reveal');
+  revEls.forEach(function(el) {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(20px)';
+  });
+  requestAnimationFrame(function() {
+    requestAnimationFrame(function() {
+      revEls.forEach(function(el) {
+        el.style.transition = 'opacity 0.7s cubic-bezier(0.16,1,0.3,1), transform 0.7s cubic-bezier(0.16,1,0.3,1)';
+      });
+      if (!('IntersectionObserver' in window)) {
+        revEls.forEach(function(el) { el.style.opacity='1'; el.style.transform='none'; });
+        return;
+      }
+      var io = new IntersectionObserver(function(entries) {
+        entries.forEach(function(e) {
+          if (e.isIntersecting) {
+            e.target.style.opacity = '1';
+            e.target.style.transform = 'none';
+            io.unobserve(e.target);
+          }
+        });
+      }, { threshold: 0.06, rootMargin: '0px 0px -40px 0px' });
+      revEls.forEach(function(el) { io.observe(el); });
+    });
+  });
+
+  // Orange dot cursor
+  var dot = document.getElementById('cdot');
+  if (dot && window.matchMedia('(pointer: fine)').matches) {
+    var active = false;
+    document.addEventListener('mousemove', function(e) {
+      dot.style.left = e.clientX + 'px';
+      dot.style.top  = e.clientY + 'px';
+      if (!active) {
+        active = true;
+        dot.style.opacity = '1';
+        document.body.classList.add('has-cursor');
+      }
+    }, {passive:true});
+    document.querySelectorAll('a, button, .journey-step-btn').forEach(function(el) {
+      el.addEventListener('mouseenter', function() { dot.classList.add('expand'); });
+      el.addEventListener('mouseleave', function() { dot.classList.remove('expand'); });
+    });
+  }
+
+  // Typewriter heading reveal
+  (function(){
+    var el = document.querySelector('.cs-title');
+    if (!el) return;
+    var text = el.textContent;
+    el.setAttribute('aria-label', text);
+    el.innerHTML = '<span class="tw-text" aria-hidden="true"></span><span class="tw-cursor" aria-hidden="true"></span>';
+    var textSpan = el.querySelector('.tw-text');
+    var cursor = el.querySelector('.tw-cursor');
+    var started = false;
+    function type(){
+      if (started) return;
+      started = true;
+      var i = 0, speed = 46;
+      (function step(){
+        textSpan.textContent = text.slice(0, i);
+        i++;
+        if (i <= text.length) {
+          setTimeout(step, speed);
+        } else {
+          setTimeout(function(){ cursor.classList.add('tw-cursor-fade'); }, 850);
+        }
+      })();
+    }
+    if ('IntersectionObserver' in window) {
+      var io = new IntersectionObserver(function(entries){
+        entries.forEach(function(e){ if (e.isIntersecting) { type(); io.unobserve(el); } });
+      }, {threshold:0.3});
+      io.observe(el);
+    } else {
+      textSpan.textContent = text;
+    }
+  })();
+
+  // Interactive request-journey diagram
+  (function(){
+    var boxes = ['jb-0','jb-1','jb-2','jb-3','jb-4'].map(function(id){ return document.getElementById(id); });
+    var btns = document.querySelectorAll('#journey-steps .journey-step-btn');
+    var captionEl = document.getElementById('journey-caption');
+    if (!captionEl || !boxes[0]) return;
+
+    var steps = [
+      { active: [0], caption: '<strong>You type a message</strong> into the app, the same as texting anyone else.' },
+      { active: [1], caption: '<strong>The app packages it</strong> into a small, structured request: the message itself, the recent conversation, and whether the reply should stream in as it\'s written.' },
+      { active: [1,2], caption: '<strong>It\'s sent to my server</strong> over an encrypted connection. The app never talks to an AI provider directly, only to me.' },
+      { active: [2,3], caption: '<strong>My server picks a model</strong> to answer it, and can fall back to a different one automatically if the first choice is unavailable.' },
+      { active: [3,4], caption: '<strong>The model streams its answer back</strong> in small pieces as it\'s generated, rather than waiting until the whole thing is finished.' },
+      { active: [4], caption: '<strong>The answer appears</strong> in the app, building itself out word by word in real time.' }
+    ];
+
+    function render(i) {
+      boxes.forEach(function(b, idx){
+        b.classList.remove('highlight','pulse');
+        if (steps[i].active.indexOf(idx) >= 0) {
+          b.classList.add('highlight');
+          if (idx === steps[i].active[steps[i].active.length - 1]) b.classList.add('pulse');
+        }
+      });
+      captionEl.innerHTML = steps[i].caption;
+    }
+
+    btns.forEach(function(btn){
+      btn.addEventListener('click', function(){
+        btns.forEach(function(b){ b.classList.remove('active'); });
+        btn.classList.add('active');
+        render(parseInt(btn.getAttribute('data-step'), 10));
+      });
+    });
+
+    render(0);
+  })();
+</script>
+</body>
+</html>

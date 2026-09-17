@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Instagram Clone, Mahima Shah</title>
+  <title>Instagram Clone — Mahima Shah</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet" />
@@ -148,12 +148,11 @@
       width: 9px; height: 9px;
       border-radius: 50%;
       background: var(--accent);
-      border: 1.5px solid transparent;
       pointer-events: none;
       z-index: 9999;
       opacity: 0;
       transform: translate(-50%, -50%);
-      transition: width 0.18s ease, height 0.18s ease, opacity 0.15s ease, background 0.18s ease, border-color 0.18s ease;
+      transition: width 0.18s ease, height 0.18s ease, opacity 0.15s ease;
       will-change: left, top;
     }
     @media (pointer: fine) {
@@ -164,25 +163,7 @@
     body.has-cursor button,
     body.has-cursor .card,
     body.has-cursor .pill { cursor: none; }
-    #cdot.expand { width: 34px; height: 34px; background: transparent; border-color: var(--accent); opacity: 0.9; }
-
-    /* ── Accessibility & motion polish ── */
-    a, button { -webkit-tap-highlight-color: transparent; }
-    a:focus-visible, button:focus-visible, .card:focus-visible,
-    .pill:focus-visible, .exp-tab:focus-visible, .flip-btn:focus-visible,
-    .flip-dot:focus-visible, .project-tile:focus-visible {
-      outline: 2px solid var(--accent);
-      outline-offset: 3px;
-      border-radius: 4px;
-    }
-    @media (prefers-reduced-motion: reduce) {
-      *, *::before, *::after {
-        animation-duration: 0.01ms !important;
-        animation-iteration-count: 1 !important;
-        transition-duration: 0.01ms !important;
-      }
-      html { scroll-behavior: auto !important; }
-    }
+    #cdot.expand { width: 26px; height: 26px; opacity: 0.15; }
   </style>
 </head>
 <body>
@@ -212,7 +193,7 @@
       <div class="cs-meta reveal delay-3">
         <div class="cs-meta-item">
           <span class="cs-meta-label">Role</span>
-          <span class="cs-meta-value">Team of 3, Full Stack</span>
+          <span class="cs-meta-value">Team of 3 — Full Stack</span>
         </div>
         <div class="cs-meta-item">
           <span class="cs-meta-label">Context</span>
@@ -235,7 +216,7 @@
     <div class="container-inner container">
       <span class="section-label reveal"><span class="section-num">01</span>Overview</span>
       <h2 class="section-heading reveal delay-1">Built three times, <em>each time deeper.</em></h2>
-      <p class="body-text reveal delay-2">This was not one project. It was three, each building on the last. The first version was a static site generator written in Python that took JSON data and Jinja2 templates as input and rendered a non-interactive Instagram clone as static HTML files. The second version made it dynamic: Flask served pages from a SQLite database, handling full CRUD for users, posts, likes, comments, and follows, with session-based auth and SHA-512 password hashing.</p>
+      <p class="body-text reveal delay-2">This was not one project — it was three, each building on the last. The first version was a static site generator written in Python that took JSON data and Jinja2 templates as input and rendered a non-interactive Instagram clone as static HTML files. The second version made it dynamic: Flask served pages from a SQLite database, handling full CRUD for users, posts, likes, comments, and follows, with session-based auth and SHA-512 password hashing.</p>
       <p class="body-text reveal delay-3">The third version, the final one, kept the server-side back end and layered client-side rendering on top. React took over the main feed, fetching data from a new REST API and updating the DOM in the browser without any page reloads. The same app, rebuilt at a higher level of complexity each time.</p>
 
       <div class="stat-strip">
@@ -264,7 +245,7 @@
     <div class="container-inner container">
       <span class="section-label reveal"><span class="section-num">02</span>The Three Versions</span>
       <h2 class="section-heading reveal delay-1">Static, server-side, <em>then client-side.</em></h2>
-      <p class="body-text reveal delay-2">Each version was a complete, working application. The progression was not about adding features onto an existing codebase. It was about learning a new rendering model and rebuilding the same app with it.</p>
+      <p class="body-text reveal delay-2">Each version was a complete, working application. The progression was not about adding features onto an existing codebase — it was about learning a new rendering model and rebuilding the same app with it.</p>
 
       <div class="cards-3col">
         <div class="insight-card reveal delay-1">
@@ -483,7 +464,7 @@
 
       <div class="pull-quote reveal delay-2">
         <p>"The page should load without errors even when the REST API takes a long time to respond. React renders components before any data arrives."</p>
-        <cite>Project spec, EECS 485</cite>
+        <cite>— Project spec, EECS 485</cite>
       </div>
     </div>
   </section>
@@ -578,8 +559,8 @@
   <!-- NEXT PROJECT -->
   <div class="next-project">
     <p class="next-label reveal">Next project</p>
-    <h2 class="next-title reveal delay-1">ICU Mortality Prediction</h2>
-    <a href="icu-mortality.html" class="next-link reveal delay-2">
+    <h2 class="next-title reveal delay-1">AI Harness</h2>
+    <a href="ai-harness.html" class="next-link reveal delay-2">
       View case study
       <span class="next-link-arrow">
         <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
@@ -594,9 +575,8 @@
       <p class="foot-name">Mahima Shah</p>
       <p class="foot-sub">always learning</p>
       <ul class="foot-links">
-        <li><a href="mailto:mahima@mahimashah.xyz">Email</a></li>
+        <li><a href="/cdn-cgi/l/email-protection#4a272b2223272b39222b223233300a2d272b232664292527">Email</a></li>
         <li><a href="https://www.linkedin.com/in/shahmahima/" target="_blank" rel="noopener">LinkedIn</a></li>
-        <li><a href="https://x.com/mahimashahh" target="_blank" rel="noopener">X</a></li>
         <li><a href="https://github.com/mahima-shah" target="_blank" rel="noopener">GitHub</a></li>
         <li><a href="https://www.youtube.com/@mahimashah" target="_blank" rel="noopener">YouTube</a></li>
       </ul>
