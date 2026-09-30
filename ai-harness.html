@@ -104,8 +104,8 @@
     .chapter-chip.done { color: var(--text-2); background: var(--bg-card); }
     .chapter-chip.current { color: #fff; background: var(--accent); border-color: var(--accent); }
     .chapter-arrow { color: var(--text-3); font-size: 0.9rem; }
-    .chapter-divider { display: flex; align-items: center; gap: 18px; padding: 40px 40px 0; max-width: 1100px; margin: 0 auto; }
-    @media (max-width:600px) { .chapter-divider { padding: 32px 22px 0; } }
+    .chapter-divider { display: flex; align-items: center; gap: 18px; padding: 32px 40px; max-width: 1100px; margin: 0 auto; }
+    @media (max-width:600px) { .chapter-divider { padding: 24px 22px; } }
     .chapter-divider-line { flex: 1; height: 1px; background: var(--border); }
     .chapter-divider-text { font-size: 0.68rem; font-weight: 500; letter-spacing: 0.16em; text-transform: uppercase; color: var(--accent); white-space: nowrap; }
     .cs-meta { display: flex; flex-wrap: wrap; gap: 32px; padding-top: 36px; border-top: 1px solid var(--border); margin-top: 36px; }
@@ -428,7 +428,9 @@
       <h2 class="section-heading reveal delay-1">Why the reply types itself out</h2>
       <p class="body-text reveal delay-2">An AI model doesn't produce its whole answer instantly, it generates it piece by piece. My server doesn't wait for the whole thing to finish before sending anything back. As soon as the model produces a small chunk of text, the server forwards that chunk straight to the app, which is why the reply appears to type itself onto the screen instead of showing up all at once.</p>
 
-      <div class="cards-2col">
+      <p class="body-text reveal delay-2">Under the hood, this uses a technique called Server-Sent Events: my server keeps the connection to the app open and pushes small pieces of text down it one at a time, instead of closing the connection after a single reply the way a normal web request would.</p>
+
+      <div class="cards-2col" style="margin-bottom:36px;">
         <div class="insight-card reveal delay-1">
           <div class="insight-card-icon"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="5.5" stroke="var(--accent)" stroke-width="1.2"/><path d="M8 5v3l2 2" stroke="var(--accent)" stroke-width="1.2" stroke-linecap="round"/></svg></div>
           <h3 class="insight-card-title">Without streaming</h3>
@@ -441,7 +443,21 @@
         </div>
       </div>
 
-      <p class="body-text reveal delay-2" style="margin-top:8px;">Under the hood, this uses a technique called Server-Sent Events: my server keeps the connection to the app open and pushes small pieces of text down it one at a time, instead of closing the connection after a single reply the way a normal web request would.</p>
+      <p class="body-text reveal delay-2">The parsing turned out trickier than the concept. SSE events are separated by blank lines, but Swift's built-in line reader silently skips empty lines, which means it throws away exactly the delimiter the protocol depends on. I ended up reading the stream byte by byte and building lines myself so I could actually see where one event ended and the next began.</p>
+
+      <div class="code-label reveal delay-2">Rein.swift, manual SSE line buffering</div>
+      <div class="code-block reveal delay-2">
+<span class="cm">// AsyncSequence.lines skips empty lines, which SSE relies on</span><br>
+<span class="cm">// as the delimiter between events, so lines are built by hand instead</span><br>
+<span class="kw">var</span> buffer = Data(capacity: 8192)<br>
+<span class="kw">for try await</span> byte <span class="kw">in</span> bytes {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">if</span> byte == UInt8(ascii: <span class="cm">"\r"</span>) { <span class="kw">continue</span> }<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">if</span> byte != UInt8(ascii: <span class="cm">"\n"</span>) { buffer.append(byte); <span class="kw">continue</span> }<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">let</span> line = String(decoding: buffer, as: UTF8.self)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;buffer.removeAll(keepingCapacity: <span class="kw">true</span>)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="cm">// an empty line here is the real "\n\n" event boundary</span>
+      </div>
     </div>
   </section>
 
@@ -450,30 +466,30 @@
     <div class="container-inner container">
       <span class="section-label reveal"><span class="section-num">06</span>Choosing a Model</span>
       <h2 class="section-heading reveal delay-1">The app doesn't need to know <em>who answered</em></h2>
-      <p class="body-text reveal delay-2">My server isn't locked to one single AI provider. It keeps a list of models it's allowed to use and picks one for each request. If that provider is slow, unavailable, or returns an error, the server can try the next one on the list instead of just failing outright. The app never has to know or care which one actually generated the answer.</p>
+      <p class="body-text reveal delay-2">My server isn't locked to one single AI provider. It keeps a list of providers it's allowed to use, starting with Groq, and picks one for each request. If that provider is slow, unavailable, or returns an error, the server can try the next one on the list instead of just failing outright. The app never has to know or care which one actually generated the answer.</p>
 
       <div class="arch-diagram reveal delay-2">
         <div class="arch-row center">
           <div class="arch-box"><span class="arch-label">iPhone Request</span><span class="arch-sub">just says "please answer this"</span></div>
           <span class="arch-arrow">&#8594;</span>
-          <div class="arch-box highlight"><span class="arch-label">My Server</span><span class="arch-sub">picks the best available model</span></div>
+          <div class="arch-box highlight"><span class="arch-label">My Server</span><span class="arch-sub">picks the best available provider</span></div>
           <span class="arch-arrow">&#8594;</span>
-          <div class="arch-box"><span class="arch-label">Provider A, B, or C</span><span class="arch-sub">whichever actually responds</span></div>
+          <div class="arch-box"><span class="arch-label">Groq or OpenRouter</span><span class="arch-sub">whichever actually responds</span></div>
         </div>
       </div>
 
-      <p class="body-text reveal delay-2">I actually watched this happen while testing: the app asked for one specific model, but by the time the server had picked a provider and something answered, the reply came back identifying itself as a completely different model. That's the whole point, the app's job is to have a conversation, not to babysit which AI is behind the curtain that day.</p>
+      <p class="body-text reveal delay-2">This stopped being theoretical fast. I started with Groq alone, and once I was actually testing regularly, I ran straight into its rate limit. Instead of just waiting it out, I added OpenRouter as a second provider the server could fall back to. That one annoyance is basically why the fallback logic exists in its current form, not because I planned for it up front, but because I hit the exact failure it's meant to handle.</p>
 
       <div class="cards-2col reveal delay-2">
         <div class="insight-card">
           <div class="insight-card-icon"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8l3 3 7-7" stroke="var(--accent)" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
           <h3 class="insight-card-title">Failure is part of the design</h3>
-          <p class="insight-card-body">If a provider is rate-limited or down, the server checks and moves to the next option rather than assuming the first attempt always works. Only if nothing is available does it tell the app so honestly, instead of pretending it succeeded.</p>
+          <p class="insight-card-body">If Groq is rate-limited or down, the server falls back to OpenRouter rather than assuming the first provider always works. Only if nothing responds does it tell the app so honestly, instead of pretending it succeeded.</p>
         </div>
         <div class="insight-card">
           <div class="insight-card-icon"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 8h8M8 4l4 4-4 4" stroke="var(--accent)" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
           <h3 class="insight-card-title">Swappable by design</h3>
-          <p class="insight-card-body">Because the app only ever talks to my server, not to a specific AI company, I can add, remove, or replace models behind the scenes at any time without changing a single line of the iPhone app.</p>
+          <p class="insight-card-body">Because the app only ever talks to my server, not to a specific AI company, I was able to add OpenRouter as a second provider without changing a single line of the iPhone app.</p>
         </div>
       </div>
     </div>
@@ -588,6 +604,25 @@
       </div>
 
       <p class="body-text reveal delay-2">The model never "remembered" the first message on its own. The trick is that the full history gets sent back to it every single time, and that history has to live somewhere between requests since the model itself keeps none of it.</p>
+
+      <div class="code-label reveal delay-2">harnessd, saving a turn and rebuilding history</div>
+      <div class="code-block reveal delay-2">
+<span class="cm"># save the incoming prompt, tagged with appID, before calling the model</span><br>
+<span class="kw">async with</span> rwdb.cursor() <span class="kw">as</span> cur:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">await</span> cur.execute(<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cm">"INSERT INTO turns (appID, prompt) VALUES (?, ?)"</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(openAIRequest.appID, openAIRequest.messages),<br>
+&nbsp;&nbsp;&nbsp;&nbsp;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;turnID = cur.lastrowid<br>
+<br>
+<span class="cm"># then pull every turn that belongs to this appID, oldest first,</span><br>
+<span class="cm"># and hand the model the whole thing as its message history</span><br>
+<span class="kw">async with</span> rwdb.execute(<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="cm">"SELECT turnID, prompt, reasoning, completion FROM turns "</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="cm">"WHERE appID = ? ORDER BY turnID ASC"</span>, (appID,)<br>
+) <span class="kw">as</span> cur:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;turns = [Turn(*row) <span class="kw">for</span> row <span class="kw">in</span> <span class="kw">await</span> cur.fetchall()]
+      </div>
     </div>
   </section>
 
