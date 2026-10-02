@@ -316,7 +316,7 @@
     <div class="cs-hero-inner">
       <span class="cs-tag reveal">Product &amp; Systems</span>
       <h1 class="cs-title reveal delay-1">A2B</h1>
-      <p class="cs-subtitle reveal delay-2">An iOS app being built to guide students from one classroom door to the next. It blends outdoor paths, indoor shortcuts, live buses, and the weather into one route.</p>
+      <p class="cs-subtitle reveal delay-2">Built for Ann Arbor, and for every trip from A to B. This iOS app guides students from one classroom door to the next, blending outdoor paths, indoor shortcuts, live buses, and the weather into one route.</p>
       <p class="cs-working-title reveal delay-2">In progress. The research and design are done, and the build is next.</p>
       <div class="cs-meta reveal delay-3">
         <div class="cs-meta-item">
@@ -634,10 +634,108 @@
     </div>
   </section>
 
-  <!-- 07 ONE TRIP -->
+  <!-- 07 SIZING -->
   <section class="cs-section">
     <div class="container-inner container">
-      <span class="section-label reveal"><span class="section-num">07</span>In Practice</span>
+      <span class="section-label reveal"><span class="section-num">07</span>Sizing the Build</span>
+      <h2 class="section-heading reveal delay-1">Everything we want, <em>and what we build first.</em></h2>
+      <p class="body-text reveal delay-2">The layers above are the full vision. A first version has to be much smaller, so we sized each idea by counting its hard pieces. A hard piece is something that needs live data, an outside service, or memory that lasts across a whole trip. Plain screens and simple saved lists don't count.</p>
+      <p class="body-text reveal delay-3">Each idea also got an importance score from how often students raised the problem it solves, with the most common problem scoring 100. Then we asked how many hard pieces each one needs, and aimed for around four.</p>
+
+      <div class="data-table-wrap reveal delay-2">
+        <table class="data-table">
+          <thead><tr><th>Idea</th><th>Importance</th><th>Hard pieces</th><th>Score</th></tr></thead>
+          <tbody>
+            <tr><td>Transit-aware route comparison</td><td>40</td><td>4</td><td>40.0</td></tr>
+            <tr><td>Classroom-to-classroom indoor navigation</td><td>100</td><td>2</td><td>33.3</td></tr>
+            <tr><td>Context-aware route choice (weather, preferences)</td><td>60</td><td>5</td><td>30.0</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="body-text reveal delay-2">On its own, transit scores highest. But the table hides something important: all three ideas lean on the same foundation, a verified map of the buildings and an engine that finds paths through it. Transit can't compare routes that don't exist yet, and weather can't rank them either.</p>
+      <p class="body-text reveal delay-2">Count that foundation once and the picture is clear. Indoor navigation <em>is</em> the foundation. It solves the problem every student raised, and it needs only two hard pieces. Everything else becomes an add-on with a known price.</p>
+
+      <div class="cards-3col">
+        <div class="insight-card reveal delay-1">
+          <span class="count-chip">Base</span>
+          <h3 class="insight-card-title">Classroom-to-classroom navigation</h3>
+          <ul class="card-list">
+            <li>A verified map of the buildings</li>
+            <li>An engine that finds routes through it</li>
+          </ul>
+        </div>
+        <div class="insight-card reveal delay-2">
+          <span class="count-chip">Add-on 1 &middot; 3 new pieces</span>
+          <h3 class="insight-card-title">Context-aware route choice</h3>
+          <ul class="card-list">
+            <li>Live weather data</li>
+            <li>A ranking engine that compares routes</li>
+            <li>A reader for plain-language requests like “keep me inside today”</li>
+          </ul>
+        </div>
+        <div class="insight-card reveal delay-3">
+          <span class="count-chip">Add-on 2 &middot; 2 new pieces</span>
+          <h3 class="insight-card-title">Transit comparison</h3>
+          <ul class="card-list">
+            <li>Live campus bus data</li>
+            <li>An engine that compares a bus trip with the walking route</li>
+          </ul>
+        </div>
+      </div>
+
+      <h3 class="section-heading reveal delay-2" style="font-size:1.4rem; margin-top:56px;">One direction, so nothing breaks the core</h3>
+      <p class="body-text reveal delay-2">The risk with add-ons is that they quietly become required. If a weather outage could stop you from getting directions, the app would be less reliable than the map it replaced. So the design only allows information to flow one way, and the engine that finds routes is the only part that decides what a valid route is.</p>
+
+      <div class="arch-diagram reveal delay-2">
+        <div class="arch-row center">
+          <div class="arch-box"><span class="arch-label">Verified map</span><span class="arch-sub">rooms, halls, stairs, paths</span></div>
+          <span class="arch-arrow">&#8594;</span>
+          <div class="arch-box highlight"><span class="arch-label">Route engine</span><span class="arch-sub">the part everything leans on</span></div>
+          <span class="arch-arrow">&#8594;</span>
+          <div class="arch-box"><span class="arch-label">Candidate routes</span><span class="arch-sub">only valid ones</span></div>
+          <span class="arch-arrow">&#8594;</span>
+          <div class="arch-box"><span class="arch-label">Optional add-ons</span><span class="arch-sub">rank and compare</span></div>
+          <span class="arch-arrow">&#8594;</span>
+          <div class="arch-box highlight"><span class="arch-label">Route you see</span><span class="arch-sub">with a short explanation</span></div>
+        </div>
+        <p class="arch-caption">Weather, preferences, and bus data come in from the side. They never edit the routes.</p>
+      </div>
+
+      <div class="data-table-wrap reveal delay-2">
+        <table class="data-table">
+          <thead><tr><th>If this goes wrong</th><th>A2B does this</th></tr></thead>
+          <tbody>
+            <tr><td>Weather data is missing or out of date</td><td>Uses the normal route order. Directions keep working.</td></tr>
+            <tr><td>A request like “keep me inside” can't be understood</td><td>Ignores it and keeps the original route.</td></tr>
+            <tr><td>Bus data is missing or out of date</td><td>Leaves the bus option out. The walking and indoor route stays.</td></tr>
+            <tr><td>The ranking or comparison step fails</td><td>Falls back to the route engine's own order.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="cards-2col">
+        <div class="insight-card reveal delay-1">
+          <div class="insight-card-icon"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="3" y="5" width="10" height="7" rx="1.5" stroke="var(--accent)" stroke-width="1.2"/><path d="M6 5V4a2 2 0 014 0v1" stroke="var(--accent)" stroke-width="1.2"/></svg></div>
+          <h3 class="insight-card-title">Verified, not guessed</h3>
+          <p class="insight-card-body">AI should never invent a hallway. The map of the buildings is built and checked by hand first, and ordinary routing code decides which routes exist.</p>
+        </div>
+        <div class="insight-card reveal delay-2">
+          <div class="insight-card-icon"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 4h10v6H8l-3 3v-3H3V4z" stroke="var(--accent)" stroke-width="1.2" stroke-linejoin="round"/></svg></div>
+          <h3 class="insight-card-title">AI stays in its lane</h3>
+          <p class="insight-card-body">AI earns its place where things are fuzzy: understanding “I'm late” or “keep me inside,” weighing competing preferences, and explaining the tradeoff in a sentence. Finding the route is not its job.</p>
+        </div>
+      </div>
+
+      <div class="pull-quote reveal delay-2">
+        <p>Add-ons can rank and compare routes. They can never rewrite them.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 08 ONE TRIP -->
+  <section class="cs-section">
+    <div class="container-inner container">
+      <span class="section-label reveal"><span class="section-num">08</span>In Practice</span>
       <h2 class="section-heading reveal delay-1">One trip, <em>three conditions.</em></h2>
       <p class="body-text reveal delay-2">An illustration of how the route should change. Each version is built from a move a student described to us. It is not a live build.</p>
 
@@ -672,15 +770,15 @@
   <!-- 08 WHERE IT STANDS -->
   <section class="cs-section">
     <div class="container-inner container">
-      <span class="section-label reveal"><span class="section-num">08</span>Where It Stands</span>
+      <span class="section-label reveal"><span class="section-num">09</span>Where It Stands</span>
       <h2 class="section-heading reveal delay-1">Research and design are done. <em>The build is next.</em></h2>
-      <p class="body-text reveal delay-2">We're starting small on purpose: three connected buildings, GGBL, Dow, and EECS, which students called the most confusing. If the map works there, new buildings can be added by mapping them, with no hardware to install.</p>
+      <p class="body-text reveal delay-2">We're starting small on purpose: five connected buildings, the new computer science building (LCSIB), BBB, Dow, GGBL, and EECS, the cluster students found most confusing. The first goal is reliable classroom-to-classroom directions there. If the map works, new buildings can be added by mapping them, with no hardware to install.</p>
 
       <div class="roadmap-row reveal delay-2">
-        <span class="roadmap-chip">Map GGBL, Dow, and EECS</span>
-        <span class="roadmap-chip">Schedule import from .ics</span>
-        <span class="roadmap-chip">Live weather and buses</span>
-        <span class="roadmap-chip">AI route adjustments</span>
+        <span class="roadmap-chip">Verified map of five buildings</span>
+        <span class="roadmap-chip">Classroom-to-classroom directions</span>
+        <span class="roadmap-chip">Weather and preferences</span>
+        <span class="roadmap-chip">Transit comparison</span>
         <span class="roadmap-chip">More buildings</span>
       </div>
 
@@ -701,10 +799,108 @@
     </div>
   </section>
 
-  <!-- 09 REFLECTION -->
+  <!-- 10 WORKING WITH AI -->
   <section class="cs-section">
     <div class="container-inner container">
-      <span class="section-label reveal"><span class="section-num">09</span>Reflection</span>
+      <span class="section-label reveal"><span class="section-num">10</span>Working With AI</span>
+      <h2 class="section-heading reveal delay-1">AI as a sparring partner, <em>not a yes-machine.</em></h2>
+      <p class="body-text reveal delay-2">AI has two habits that quietly ruin planning. It tends to agree with whoever is typing, and a long chat gets attached to its own earlier answers. To plan A2B, I used a method from Dave Rensin's essay on "elephants and goldfish," which is built to work around both.</p>
+
+      <div class="cards-2col">
+        <div class="insight-card reveal delay-1">
+          <span class="count-chip">The Elephant</span>
+          <h3 class="insight-card-title">One long conversation that remembers</h3>
+          <p class="insight-card-body">The elephant holds the whole project in its head and does the drafting. It knows everything we've said. The catch is that it grows attached to its own ideas and starts agreeing with me.</p>
+        </div>
+        <div class="insight-card reveal delay-2">
+          <span class="count-chip">The Goldfish</span>
+          <h3 class="insight-card-title">A brand-new chat with fresh eyes</h3>
+          <p class="insight-card-body">A goldfish sees only the documents I paste in, with no memory of how we got there. It can't be swayed by the conversation. It also tests the writing: if a goldfish can't explain the project from the page, the page is missing something.</p>
+        </div>
+      </div>
+
+      <div class="arch-diagram reveal delay-2">
+        <div class="arch-row center">
+          <div class="arch-box"><span class="arch-label">Elephant drafts</span><span class="arch-sub">builds on everything so far</span></div>
+          <span class="arch-arrow">&#8594;</span>
+          <div class="arch-box highlight"><span class="arch-label">New goldfish critiques</span><span class="arch-sub">sees only the document</span></div>
+          <span class="arch-arrow">&#8594;</span>
+          <div class="arch-box"><span class="arch-label">Elephant revises</span><span class="arch-sub">uses the critique</span></div>
+          <span class="arch-arrow">&#8594;</span>
+          <div class="arch-box"><span class="arch-label">Repeat</span><span class="arch-sub">until the critiques are minor</span></div>
+        </div>
+        <p class="arch-caption">A fresh goldfish every round, so no critic gets used to the plan</p>
+      </div>
+
+      <p class="body-text reveal delay-2">The method only works if the prompts do real work. These are the four I leaned on, and why each one is there.</p>
+
+      <div class="exp-block reveal delay-2">
+        <div class="exp-tabs">
+          <button class="exp-tab active" data-target="rules">Set the rules</button>
+          <button class="exp-tab" data-target="argue">Argue back</button>
+          <button class="exp-tab" data-target="roles">Give critics a job</button>
+          <button class="exp-tab" data-target="parser">Use AI as a parser</button>
+        </div>
+
+        <div class="exp-panel active" data-panel="rules">
+          <h3 class="exp-panel-title">No code, plain English</h3>
+          <p class="exp-panel-body"><strong>The prompt:</strong> every session started by saying we were not writing code. We were having a design discussion, and it should ask clarifying questions and challenge my assumptions instead of accepting them. I also asked for plain English with minimal jargon.</p>
+          <p class="exp-panel-body"><strong>Why:</strong> AI jumps to building before the problem is understood, so this keeps it in the thinking phase. The plain English rule matters just as much. Jargon makes weak ideas sound solid, and if I can't read an answer easily, I can't judge it.</p>
+          <div class="exp-pill-row"><span class="exp-pill">Design before code</span><span class="exp-pill">Readable output</span></div>
+        </div>
+
+        <div class="exp-panel" data-panel="argue">
+          <h3 class="exp-panel-title">Ask why, and call out flattery</h3>
+          <p class="exp-panel-body"><strong>The prompts:</strong> "Why do you think that?" whenever an answer sounded confident. And when the AI started praising my ideas, I told it that its best use was challenging my thinking.</p>
+          <p class="exp-panel-body"><strong>Why:</strong> agreement feels good and teaches nothing. Asking why forces the reasoning into the open where I can check it, and naming the flattery pulls the conversation back to being useful.</p>
+          <div class="exp-pill-row"><span class="exp-pill">Resisting sycophancy</span><span class="exp-pill">Checkable reasoning</span></div>
+        </div>
+
+        <div class="exp-panel" data-panel="roles">
+          <h3 class="exp-panel-title">A different critic for each question</h3>
+          <p class="exp-panel-body"><strong>The prompts:</strong> each fresh goldfish got one job and only the documents it needed.</p>
+          <ol class="q-list">
+            <li><strong>Senior product manager:</strong> are these pain points really in the interviews, or did our solution color how we read them?</li>
+            <li><strong>Staff engineer:</strong> explain what this project is trying to do using only these documents.</li>
+            <li><strong>Systems architect:</strong> are the "hard pieces" actually hard, and did we miss any dependencies?</li>
+            <li><strong>Engineering manager:</strong> could an add-on break the core app?</li>
+          </ol>
+          <p class="exp-panel-body" style="margin-top:18px;"><strong>Why:</strong> "review this" gets vague feedback. A specific role asks a specific question, and a fresh chat can't be talked out of its answer.</p>
+        </div>
+
+        <div class="exp-panel" data-panel="parser">
+          <h3 class="exp-panel-title">AI reads, a script calculates</h3>
+          <p class="exp-panel-body"><strong>The prompt:</strong> for sizing, I told the elephant to act as a strict data parser. Read the finished documents, then output only a structured list of ideas, importance scores, and hard pieces, with no commentary. A small script did the scoring math.</p>
+          <p class="exp-panel-body"><strong>Why:</strong> AI is good at reading messy text and unreliable as a calculator. Splitting the job meant the numbers were repeatable, and I could change one input and rerun them. It is the same rule A2B follows: AI interprets, ordinary code decides.</p>
+          <div class="exp-pill-row"><span class="exp-pill">Structured output</span><span class="exp-pill">Deterministic scoring</span></div>
+        </div>
+      </div>
+
+      <h3 class="section-heading reveal delay-2" style="font-size:1.4rem; margin-top:56px;">What the critics caught</h3>
+      <p class="body-text reveal delay-2">A review is only worth running if it changes something. These are four places where it did.</p>
+
+      <div class="data-table-wrap reveal delay-2">
+        <table class="data-table">
+          <thead><tr><th>What a critic found</th><th>What changed</th></tr></thead>
+          <tbody>
+            <tr><td>The pain list mixed what students said with what we guessed, and assumed everyone wants the fastest route.</td><td>We split observed pain from inference, and treated weather and transit as things that change which route is best.</td></tr>
+            <tr><td>The AI concept had seven overlapping features, and some didn't need AI at all.</td><td>We merged them into three systems and kept AI only where plain code can't do the job.</td></tr>
+            <tr><td>The scoring ignored that every idea needs the same routing foundation.</td><td>We counted the shared parts once and reran the math.</td></tr>
+            <tr><td>A weather or bus outage could have broken basic navigation.</td><td>We made the add-ons optional layers, each with a fallback.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="pull-quote reveal delay-2">
+        <p>If a fresh reader can't explain the plan, the plan isn't finished.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 11 REFLECTION -->
+  <section class="cs-section">
+    <div class="container-inner container">
+      <span class="section-label reveal"><span class="section-num">11</span>Reflection</span>
       <h2 class="section-heading reveal delay-1">What I've <em>learned so far.</em></h2>
 
       <div class="cards-3col">
@@ -716,7 +912,7 @@
         <div class="reflect-card reveal delay-2">
           <span class="reflect-icon">&#127919;</span>
           <h4 class="reflect-title">Scope is a design decision</h4>
-          <p class="reflect-body">Shrinking the first version to three buildings is what makes this buildable. We also pushed back on treating schedule import as optional, because the schedule is what turns a map into a plan for the day.</p>
+          <p class="reflect-body">Counting the hard pieces of each idea showed that one job, finding the way to the room, carries most of the value for the least work. Everything else became an add-on that can fail without breaking it.</p>
         </div>
         <div class="reflect-card reveal delay-3">
           <span class="reflect-icon">&#128172;</span>
