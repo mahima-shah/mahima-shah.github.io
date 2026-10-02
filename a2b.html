@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>A2B, Mahima Shah</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; font-size: 16px; }
+
+    :root {
+      --bg:          #f5f5f7;
+      --bg-card:     rgba(255,255,255,0.68);
+      --bg-nav:      rgba(245,245,247,0.75);
+      --bg-tint:     rgba(123,45,62,0.04);
+      --border:      rgba(0,0,0,0.08);
+      --text:        #1d1d1f;
+      --text-2:      #515154;
+      --text-3:      #86868b;
+      --accent:      #7B2D3E;
+      --accent-hi:   #93394C;
+      --accent-dim:  rgba(123,45,62,0.09);
+      --accent-tag:  rgba(123,45,62,0.16);
+      --good:        #4caf7d;
+      --shadow-sm:   0 2px 16px rgba(0,0,0,0.06);
+      --shadow-md:   0 4px 32px rgba(0,0,0,0.09);
+      --shadow-lg:   0 20px 60px rgba(0,0,0,0.11);
+      --blur:        blur(24px);
+      --radius:      18px;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg:          #000000;
+        --bg-card:     rgba(28,28,30,0.82);
+        --bg-nav:      rgba(0,0,0,0.75);
+        --bg-tint:     rgba(184,83,104,0.07);
+        --border:      rgba(255,255,255,0.1);
+        --text:        #f5f5f7;
+        --text-2:      #a1a1a6;
+        --text-3:      #636366;
+        --accent:      #B85368;
+        --accent-hi:   #C96479;
+        --accent-dim:  rgba(184,83,104,0.12);
+        --accent-tag:  rgba(184,83,104,0.2);
+        --good:        #5fcf95;
+        --shadow-sm:   0 2px 16px rgba(0,0,0,0.35);
+        --shadow-md:   0 4px 32px rgba(0,0,0,0.45);
+        --shadow-lg:   0 20px 60px rgba(0,0,0,0.65);
+      }
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', -apple-system, sans-serif;
+      font-weight: 300;
+      line-height: 1.6;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* cursor dot */
+    #cdot { display:none; position:fixed; width:9px; height:9px; border-radius:50%; background:var(--accent); pointer-events:none; z-index:9999; opacity:0; transform:translate(-50%,-50%); transition:width .18s,height .18s,opacity .15s; left:-100px; top:-100px; }
+    @media (pointer:fine) { #cdot { display:block; } }
+    body.has-cursor { cursor:none; }
+    body.has-cursor a, body.has-cursor button { cursor:none; }
+    #cdot.expand { width:26px; height:26px; opacity:0.15; }
+
+    /* NAV */
+    nav { position:fixed; top:0; left:0; right:0; z-index:800; height:52px; display:flex; align-items:center; justify-content:space-between; padding:0 52px; background:var(--bg-nav); backdrop-filter:var(--blur); -webkit-backdrop-filter:var(--blur); border-bottom:1px solid var(--border); }
+    @media (max-width:600px) { nav { padding:0 22px; } }
+    .nav-links { display:flex; gap:36px; list-style:none; align-items:center; }
+    .nav-links a { font-size:0.78rem; font-weight:400; letter-spacing:0.04em; color:var(--text-3); text-decoration:none; position:relative; transition:color 0.2s; }
+    .nav-links a::after { content:''; position:absolute; bottom:-2px; left:0; width:0; height:1px; background:var(--accent); transition:width 0.25s cubic-bezier(0.16,1,0.3,1); }
+    .nav-links a:hover { color:var(--text); }
+    .nav-links a:hover::after { width:100%; }
+    .nav-back { display:inline-flex; align-items:center; gap:6px; font-size:0.78rem; font-weight:400; letter-spacing:0.04em; color:var(--text-3); text-decoration:none; transition:color 0.2s; }
+    .nav-back:hover { color:var(--accent); }
+    .nav-back svg { transition:transform 0.2s; }
+    .nav-back:hover svg { transform:translateX(-3px); }
+
+    /* LAYOUT */
+    .page { padding-top: 52px; }
+    .container { max-width: 1100px; margin: 0 auto; padding: 0 40px; }
+    @media (max-width:600px) { .container { padding: 0 22px; } }
+
+    /* HERO */
+    .cs-hero { padding: 80px 40px 72px; border-bottom: 1px solid var(--border); position: relative; overflow: hidden; }
+    @media (max-width:600px) { .cs-hero { padding: 60px 22px 52px; } }
+    .cs-hero::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 70% 50%, var(--accent-dim), transparent 65%); pointer-events: none; }
+    .cs-hero-inner { max-width: 1100px; margin: 0 auto; position: relative; z-index: 1; }
+    .cs-tag { display: inline-block; font-size: 0.64rem; font-weight: 500; letter-spacing: 0.16em; text-transform: uppercase; color: var(--accent); background: var(--accent-dim); border: 1px solid var(--accent-tag); padding: 4px 12px; border-radius: 100px; margin-bottom: 20px; }
+    .cs-title { font-family: 'DM Serif Display', Georgia, serif; font-size: clamp(2.8rem, 7vw, 5.5rem); font-weight: 600; line-height: 1.0; letter-spacing: -0.02em; color: var(--text); margin-bottom: 20px; }
+    .cs-title .tw-cursor { display:inline-block; width:3px; height:0.72em; margin-left:4px; background:var(--accent); vertical-align:-0.05em; animation:tw-blink 0.9s step-end infinite; }
+    .cs-title .tw-cursor.tw-cursor-fade { animation:none; opacity:0; transition:opacity 0.6s ease; }
+    @keyframes tw-blink { 50% { opacity:0; } }
+    .cs-subtitle { font-size: clamp(1rem, 2vw, 1.15rem); color: var(--text-2); line-height: 1.7; max-width: 680px; }
+    .cs-working-title { font-family:'DM Serif Display',Georgia,serif; font-style:italic; font-size:0.95rem; color:var(--text-3); margin-top:14px; }
+    .cs-meta { display: flex; flex-wrap: wrap; gap: 32px; padding-top: 36px; border-top: 1px solid var(--border); margin-top: 36px; }
+    .cs-meta-item { display: flex; flex-direction: column; gap: 4px; }
+    .cs-meta-label { font-size: 0.62rem; font-weight: 500; letter-spacing: 0.16em; text-transform: uppercase; color: var(--text-3); }
+    .cs-meta-value { font-size: 0.88rem; font-weight: 400; color: var(--text); }
+
+    /* SECTIONS */
+    .cs-section { padding: 80px 40px; border-bottom: 1px solid var(--border); }
+    .cs-section:last-of-type { border-bottom: none; }
+    @media (max-width:600px) { .cs-section { padding: 56px 22px; } }
+    .container-inner { max-width: 1100px; margin: 0 auto; }
+    .section-label { display: inline-flex; align-items:center; gap:10px; font-size: 0.62rem; font-weight: 500; letter-spacing: 0.18em; text-transform: uppercase; color: var(--accent); margin-bottom: 12px; }
+    .section-num { font-size: 0.62rem; font-weight: 400; letter-spacing: 0.1em; color: var(--text-3); }
+    .section-heading { font-family: 'DM Serif Display', Georgia, serif; font-size: clamp(1.7rem, 3.6vw, 2.6rem); font-weight: 500; line-height: 1.14; letter-spacing: -0.015em; color: var(--text); margin-bottom: 22px; }
+    .section-heading em { font-style: italic; color: var(--accent); }
+    .body-text { font-size: 1rem; color: var(--text-2); line-height: 1.82; max-width: 680px; }
+    .body-text + .body-text { margin-top: 14px; }
+
+    /* STAT STRIP */
+    .stat-strip { display: flex; flex-wrap: wrap; gap: 2px; margin: 40px 0; }
+    .stat-card { flex: 1; min-width: 150px; background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 22px 20px; backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur); }
+    .stat-val { font-family: 'DM Serif Display', Georgia, serif; font-size: 1.9rem; font-weight: 500; color: var(--accent); line-height: 1; display: block; margin-bottom: 6px; }
+    .stat-desc { font-size: 0.78rem; font-weight: 400; color: var(--text-3); line-height: 1.4; }
+
+    /* CARDS */
+    .cards-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 36px; }
+    @media (max-width:640px) { .cards-2col { grid-template-columns: 1fr; } }
+    .cards-3col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-top: 36px; }
+    @media (max-width:720px) { .cards-3col { grid-template-columns: 1fr; } }
+    .insight-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 26px 24px; backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur); }
+    .insight-card-icon { width: 34px; height: 34px; border-radius: 10px; background: var(--accent-dim); border: 1px solid var(--accent-tag); display: flex; align-items: center; justify-content: center; margin-bottom: 14px; }
+    .insight-card-title { font-family: 'DM Serif Display', Georgia, serif; font-size: 1.05rem; font-weight: 500; color: var(--text); margin-bottom: 8px; line-height: 1.2; }
+    .insight-card-body { font-size: 0.87rem; color: var(--text-2); line-height: 1.7; }
+    .insight-card-body code, .body-text code { font-family:'SF Mono','Fira Code',monospace; font-size:0.82em; background:var(--accent-dim); padding:1px 5px; border-radius:4px; color:var(--accent); }
+
+    /* CODE BLOCK */
+    .code-block { margin: 26px 0; background: rgba(0,0,0,0.04); border: 1px solid var(--border); border-radius: 12px; padding: 20px 24px; overflow-x: auto; font-family: 'SF Mono','Fira Code',monospace; font-size: 0.78rem; color: var(--text-2); line-height: 1.75; }
+    @media (prefers-color-scheme:dark) { .code-block { background: rgba(255,255,255,0.04); } }
+    .code-block .kw { color: var(--accent); }
+    .code-block .cm { color: var(--text-3); font-style: italic; }
+    .code-label { font-size: 0.64rem; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-3); margin: 26px 0 -12px; display:block; }
+
+    /* ARCH DIAGRAM */
+    .arch-diagram { margin: 32px 0; background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 36px 32px; backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur); overflow-x: auto; }
+    .arch-row { display: flex; align-items: center; justify-content: flex-start; gap: 0; flex-wrap: nowrap; min-width: max-content; }
+    .arch-row.stacked { flex-direction: column; align-items: stretch; min-width: 0; }
+    .arch-box { background: var(--accent-dim); border: 1px solid var(--accent-tag); border-radius: 12px; padding: 14px 18px; text-align: center; min-width: 150px; flex-shrink: 0; }
+    .arch-box.highlight { background: var(--accent); border-color: var(--accent); }
+    .arch-box.highlight .arch-label { color: #fff; }
+    .arch-box.highlight .arch-sub { color: rgba(255,255,255,0.7); }
+    .arch-label { font-family: 'DM Serif Display', Georgia, serif; font-size: 0.9rem; font-weight: 500; color: var(--text); display: block; margin-bottom: 4px; }
+    .arch-sub { font-size: 0.68rem; color: var(--text-3); letter-spacing: 0.03em; display: block; }
+    .arch-arrow { color: var(--accent); font-size: 1.1rem; padding: 0 10px; flex-shrink: 0; opacity: 0.6; }
+    .arch-arrow.down { padding: 8px 0; text-align: center; transform: rotate(90deg); align-self: center; }
+    @media (max-width:640px) { .arch-diagram { padding: 28px 18px; } }
+
+    /* ENDPOINT GRID */
+    .endpoint-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 10px; margin-top: 24px; }
+    .endpoint-pill { background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; display: flex; flex-direction: column; gap: 3px; backdrop-filter: var(--blur); }
+    .endpoint-path { font-family: 'SF Mono','Fira Code',monospace; font-size: 0.78rem; color: var(--accent); }
+    .endpoint-desc { font-size: 0.72rem; color: var(--text-3); line-height: 1.4; }
+
+    /* PULL QUOTE */
+    .pull-quote { margin: 32px 0; padding: 26px 30px; border-left: 3px solid var(--accent); background: var(--bg-tint); border-radius: 0 var(--radius) var(--radius) 0; max-width: 680px; }
+    .pull-quote p { font-family: 'DM Serif Display', Georgia, serif; font-style: italic; font-size: 1.08rem; color: var(--text); line-height: 1.58; }
+
+    /* STACK PILLS */
+    .stack-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 28px; }
+    .stack-pill { font-size: 0.75rem; font-weight: 400; color: var(--text-2); background: var(--bg-card); border: 1px solid var(--border); padding: 5px 14px; border-radius: 100px; backdrop-filter: var(--blur); }
+
+    /* PROCESS STEPS */
+    .process-steps { display: flex; flex-direction: column; gap: 2px; margin-top: 36px; }
+    .process-step { display: grid; grid-template-columns: 48px 1fr; gap: 20px; align-items: start; background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 26px 30px; backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur); }
+    .step-num { font-family: 'DM Serif Display', Georgia, serif; font-size: 1.3rem; font-weight: 500; color: var(--accent); line-height: 1; padding-top: 2px; }
+    .step-title { font-family: 'DM Serif Display', Georgia, serif; font-size: 1rem; font-weight: 500; color: var(--text); margin-bottom: 6px; }
+    .step-body { font-size: 0.86rem; color: var(--text-2); line-height: 1.72; }
+
+    /* FEATURE EXPLORER (interactive tabs) */
+    .exp-block { margin: 32px 0; background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 30px; backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur); }
+    @media (max-width:600px) { .exp-block { padding: 20px; } }
+    .exp-tabs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 26px; }
+    .exp-tab { font-size: 0.78rem; font-weight: 500; color: var(--text-2); background: transparent; border: 1px solid var(--border); padding: 8px 16px; border-radius: 100px; cursor: pointer; transition: all 0.2s; font-family: 'DM Sans', sans-serif; }
+    .exp-tab:hover { border-color: var(--accent-tag); color: var(--text); }
+    .exp-tab.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+    .exp-panel { display: none; }
+    .exp-panel.active { display: block; animation: fadein-panel 0.35s ease; }
+    @keyframes fadein-panel { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+    .exp-panel-title { font-family: 'DM Serif Display', Georgia, serif; font-size: 1.2rem; font-weight: 500; color: var(--text); margin-bottom: 10px; }
+    .exp-panel-body { font-size: 0.9rem; color: var(--text-2); line-height: 1.75; max-width: 640px; margin-bottom: 18px; }
+    .exp-pill-row { display: flex; flex-wrap: wrap; gap: 8px; }
+    .exp-pill { font-size: 0.72rem; font-weight: 400; color: var(--accent); background: var(--accent-dim); border: 1px solid var(--accent-tag); padding: 4px 11px; border-radius: 100px; }
+
+    /* SEVERITY CHIPS (monochrome by weight, not hue) */
+    .sev-chip { display: inline-flex; align-items: center; gap: 6px; font-size: 0.66rem; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; padding: 3px 10px; border-radius: 100px; }
+    .sev-high { background: var(--accent); color: #fff; }
+    .sev-medium { background: var(--accent-dim); color: var(--accent); border: 1px solid var(--accent-tag); }
+    .sev-low { background: transparent; color: var(--text-3); border: 1px solid var(--border); }
+
+    /* FINDING CARD */
+    .finding-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 22px 24px; margin-top: 14px; backdrop-filter: var(--blur); }
+    .finding-top { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; flex-wrap: wrap; }
+    .finding-title { font-family: 'DM Serif Display', Georgia, serif; font-size: 1rem; font-weight: 500; color: var(--text); }
+    .finding-body { font-size: 0.85rem; color: var(--text-2); line-height: 1.7; }
+    .finding-tag { font-size: 0.64rem; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-3); }
+
+    /* INTERACTIVE SUGGESTED-CHANGE DEMO */
+    .diff-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur); margin: 32px 0; transition: opacity 0.3s; }
+    .diff-head { display: flex; align-items: center; justify-content: space-between; padding: 18px 24px; border-bottom: 1px solid var(--border); flex-wrap: wrap; gap: 10px; }
+    .diff-head-title { font-family: 'DM Serif Display', Georgia, serif; font-size: 1rem; font-weight: 500; color: var(--text); }
+    .diff-status { font-size: 0.62rem; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-3); padding: 4px 10px; border: 1px solid var(--border); border-radius: 100px; transition: all 0.25s; }
+    .diff-status.pending { color: var(--accent); border-color: var(--accent-tag); background: var(--accent-dim); }
+    .diff-status.accepted { color: var(--good); border-color: var(--good); background: transparent; }
+    .diff-status.rejected { color: var(--text-3); }
+    .diff-body { padding: 24px; }
+    .diff-line { display: flex; gap: 12px; padding: 12px 14px; border-radius: 10px; margin-bottom: 8px; font-size: 0.88rem; line-height: 1.6; }
+    .diff-removed { background: rgba(134,134,139,0.08); color: var(--text-3); text-decoration: line-through; text-decoration-thickness: 1px; }
+    .diff-added { background: var(--accent-dim); color: var(--text); }
+    .diff-marker { font-family: 'SF Mono','Fira Code',monospace; font-size: 0.78rem; flex-shrink: 0; opacity: 0.7; }
+    .diff-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 18px; padding-top: 18px; border-top: 1px solid var(--border); }
+    @media (max-width:560px) { .diff-meta { grid-template-columns: 1fr; } }
+    .diff-meta-label { font-size: 0.62rem; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-3); margin-bottom: 4px; }
+    .diff-meta-val { font-size: 0.85rem; color: var(--text-2); line-height: 1.6; }
+    .diff-actions { display: flex; gap: 10px; padding: 0 24px 24px; }
+    .diff-btn { font-family: 'DM Sans', sans-serif; font-size: 0.8rem; font-weight: 500; padding: 9px 18px; border-radius: 100px; cursor: pointer; border: 1px solid var(--border); background: transparent; color: var(--text-2); transition: all 0.2s; }
+    .diff-btn:hover { border-color: var(--accent-tag); color: var(--text); }
+    .diff-btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+    .diff-btn.primary:hover { background: var(--accent-hi); }
+    .diff-btn:disabled { opacity: 0.4; pointer-events: none; }
+    .diff-note { font-size: 0.72rem; color: var(--text-3); padding: 0 24px 22px; line-height: 1.6; }
+    .diff-history-line { display: none; align-items: center; gap: 8px; padding: 0 24px 22px; font-size: 0.76rem; color: var(--text-3); }
+    .diff-history-line.show { display: flex; }
+    .diff-history-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--good); flex-shrink: 0; }
+    .diff-history-dot.rej { background: var(--text-3); }
+
+    /* REFLECT */
+    .reflect-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px 22px; backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur); }
+    .reflect-icon { font-size: 1.15rem; margin-bottom: 12px; display: block; }
+    .reflect-title { font-family: 'DM Serif Display', Georgia, serif; font-size: 1rem; font-weight: 500; color: var(--text); margin-bottom: 8px; }
+    .reflect-body { font-size: 0.83rem; color: var(--text-2); line-height: 1.7; }
+
+    /* SCOPE NOTE */
+    .scope-note { background: var(--bg-tint); border: 1px solid var(--accent-tag); border-radius: var(--radius); padding: 22px 26px; margin-top: 28px; }
+    .scope-note-label { font-size: 0.62rem; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); margin-bottom: 8px; display: block; }
+    .scope-note p { font-size: 0.87rem; color: var(--text-2); line-height: 1.75; }
+
+    /* NEXT PROJECT */
+    .next-project { padding: 72px 40px; text-align: center; border-top: 1px solid var(--border); }
+    .next-label { font-size: 0.64rem; font-weight: 500; letter-spacing: 0.18em; text-transform: uppercase; color: var(--text-3); margin-bottom: 12px; }
+    .next-title { font-family: 'DM Serif Display', Georgia, serif; font-size: clamp(1.8rem, 4vw, 2.8rem); font-weight: 500; color: var(--text); margin-bottom: 24px; }
+    .next-link { display: inline-flex; align-items: center; gap: 8px; font-size: 0.82rem; font-weight: 400; color: var(--text); text-decoration: none; transition: gap 0.25s; }
+    .next-link:hover { gap: 14px; }
+    .next-link-arrow { width: 30px; height: 30px; border-radius: 50%; background: var(--accent); display: flex; align-items: center; justify-content: center; transition: transform 0.25s; }
+    .next-link:hover .next-link-arrow { transform: scale(1.1); }
+
+    /* FOOTER */
+    footer { border-top: 1px solid var(--border); padding: 48px 40px 36px; text-align: center; }
+    .foot-inner { max-width: 1100px; margin: 0 auto; }
+    .foot-name { font-family:'DM Serif Display',Georgia,serif; font-size:1.5rem; font-weight:500; color:var(--text); margin-bottom:4px; }
+    .foot-sub { font-family:'DM Serif Display',Georgia,serif; font-style:italic; font-weight:300; font-size:0.9rem; color:var(--text-3); margin-bottom:24px; }
+    .foot-links { display:flex; gap:28px; justify-content:center; list-style:none; flex-wrap:wrap; margin-bottom:20px; }
+    .foot-links a { font-size:0.78rem; font-weight:400; letter-spacing:0.04em; color:var(--text-2); text-decoration:none; transition:color 0.2s; }
+    .foot-links a:hover { color:var(--accent); }
+    .foot-copy { font-size:0.64rem; color:var(--text-3); letter-spacing:0.06em; }
+
+    .reveal { opacity: 1; transform: none; }
+    .delay-1 { transition-delay: 0.08s; }
+    .delay-2 { transition-delay: 0.18s; }
+    .delay-3 { transition-delay: 0.28s; }
+  
+    /* A2B additions */
+    .roadmap-row { display:flex; flex-wrap:wrap; gap:10px; margin-top:28px; }
+    .roadmap-chip { font-size:0.78rem; font-weight:400; color:var(--text-3); background:transparent; border:1px dashed var(--border); padding:7px 15px; border-radius:100px; }
+    .count-chip { display:inline-block; font-size:0.62rem; font-weight:500; letter-spacing:0.12em; text-transform:uppercase; color:var(--accent); background:var(--accent-dim); border:1px solid var(--accent-tag); padding:3px 10px; border-radius:100px; margin-bottom:12px; }
+    .group-head { display:flex; align-items:center; gap:16px; margin:56px 0 0; }
+    .group-head:first-of-type { margin-top:36px; }
+    .group-head-text { font-family:'DM Serif Display',Georgia,serif; font-size:1.3rem; font-weight:500; color:var(--text); white-space:nowrap; }
+    .group-head-line { flex:1; height:1px; background:var(--border); }
+    .quote-line { font-family:'DM Serif Display',Georgia,serif; font-style:italic; font-size:0.9rem; color:var(--text); line-height:1.55; margin-top:14px; padding-top:14px; border-top:1px solid var(--border); }
+    .card-list { list-style:none; display:flex; flex-direction:column; gap:10px; margin-top:4px; }
+    .card-list li { font-size:0.87rem; color:var(--text-2); line-height:1.65; padding-left:16px; position:relative; }
+    .card-list li::before { content:''; position:absolute; left:0; top:0.62em; width:6px; height:6px; border-radius:50%; background:var(--accent); opacity:0.7; }
+    .q-list { list-style:none; counter-reset:q; display:flex; flex-direction:column; gap:12px; max-width:700px; }
+    .q-list li { counter-increment:q; font-size:0.92rem; color:var(--text-2); line-height:1.7; padding-left:36px; position:relative; }
+    .q-list li::before { content:counter(q); position:absolute; left:0; top:1px; width:24px; height:24px; border-radius:50%; background:var(--accent-dim); border:1px solid var(--accent-tag); color:var(--accent); font-size:0.7rem; font-weight:500; display:flex; align-items:center; justify-content:center; }
+    .data-table { width:100%; border-collapse:collapse; margin:28px 0; font-size:0.88rem; background:var(--bg-card); border-radius:var(--radius); overflow:hidden; border:1px solid var(--border); }
+    .data-table th, .data-table td { padding:14px 18px; text-align:left; border-bottom:1px solid var(--border); vertical-align:top; line-height:1.6; }
+    .data-table th { font-size:0.64rem; font-weight:500; letter-spacing:0.1em; text-transform:uppercase; color:var(--text-3); }
+    .data-table td { color:var(--text-2); }
+    .data-table td:first-child { color:var(--text); font-weight:400; width:38%; }
+    .data-table tr:last-child td { border-bottom:none; }
+    .data-table-wrap { overflow-x:auto; }
+    .arch-caption { font-size:0.72rem; color:var(--text-3); letter-spacing:0.03em; margin-top:18px; text-align:center; }
+  </style>
+</head>
+<body>
+<div id="cdot"></div>
+<div class="page">
+
+  <!-- NAV -->
+  <nav>
+    <a href="index.html" class="nav-back">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+        <path d="M9 2L4 7l5 5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      Back
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html#about">About</a></li>
+      <li><a href="index.html#work">Work</a></li>
+      <li><a href="index.html#contact">Contact</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <header class="cs-hero">
+    <div class="cs-hero-inner">
+      <span class="cs-tag reveal">Product &amp; Systems</span>
+      <h1 class="cs-title reveal delay-1">A2B</h1>
+      <p class="cs-subtitle reveal delay-2">An iOS app being built to guide students from one classroom door to the next. It blends outdoor paths, indoor shortcuts, live buses, and the weather into one route.</p>
+      <p class="cs-working-title reveal delay-2">In progress. The research and design are done, and the build is next.</p>
+      <div class="cs-meta reveal delay-3">
+        <div class="cs-meta-item">
+          <span class="cs-meta-label">Role</span>
+          <span class="cs-meta-value">UX research &amp; design</span>
+        </div>
+        <div class="cs-meta-item">
+          <span class="cs-meta-label">Team</span>
+          <span class="cs-meta-value">4 people, miseenplace</span>
+        </div>
+        <div class="cs-meta-item">
+          <span class="cs-meta-label">Status</span>
+          <span class="cs-meta-value">Research done, build starting</span>
+        </div>
+        <div class="cs-meta-item">
+          <span class="cs-meta-label">Timeline</span>
+          <span class="cs-meta-value">Fall 2026, ongoing</span>
+        </div>
+        <div class="cs-meta-item">
+          <span class="cs-meta-label">Planned stack</span>
+          <span class="cs-meta-value">iOS &middot; Maps, weather &amp; MBus APIs &middot; LLM</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- 01 OVERVIEW -->
+  <section class="cs-section">
+    <div class="container-inner container">
+      <span class="section-label reveal"><span class="section-num">01</span>Overview</span>
+      <h2 class="section-heading reveal delay-1">A map gets you to the building. <em>Not to the room.</em></h2>
+      <p class="body-text reveal delay-2">University of Michigan students often have ten minutes to get from one class to the next, sometimes across two campuses. The maps they use will point at a building. They won't say that the third floor is really the main floor, or that you can cross three buildings without stepping outside.</p>
+      <p class="body-text reveal delay-3">A2B is built around that gap. It plans one door-to-door route that can walk outside, cut through buildings, ride a bus, and change its mind when the weather or the bus does.</p>
+
+      <div class="stat-strip reveal delay-1">
+        <div class="stat-card">
+          <span class="stat-val">5</span>
+          <span class="stat-desc">student interviews, every question open-ended</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-val">5/5</span>
+          <span class="stat-desc">named a building where floors and room numbers didn't make sense</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-val">4/5</span>
+          <span class="stat-desc">change how they travel when the weather turns</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-val">0</span>
+          <span class="stat-desc">beacons or new hardware needed inside buildings</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 02 RESEARCH -->
+  <section class="cs-section">
+    <div class="container-inner container">
+      <span class="section-label reveal"><span class="section-num">02</span>Research</span>
+      <h2 class="section-heading reveal delay-1">Asking for stories, <em>not opinions.</em></h2>
+      <p class="body-text reveal delay-2">Ask someone what's wrong with campus navigation and they'll shrug. Ask about the last time they got lost and you get a story. So every question starts with "tell me about a time," and none of them can be answered with a yes or no.</p>
+      <p class="body-text reveal delay-3">We planned to find students where the problem actually happens: Shapiro Library, the CCCB atrium, the Diag, DUDE, the BBB atrium, and Ross, ideally during the ten-minute gap between classes when the trip is still fresh. We wanted four kinds of people:</p>
+
+      <div class="stack-row reveal delay-2">
+        <span class="stack-pill">Back-to-back classes across buildings</span>
+        <span class="stack-pill">New and transfer students</span>
+        <span class="stack-pill">North to Central commuters</span>
+        <span class="stack-pill">Grad students and GSIs</span>
+      </div>
+
+      <div class="exp-block reveal delay-2">
+        <div class="exp-tabs">
+          <button class="exp-tab active" data-target="warm">Warm-up</button>
+          <button class="exp-tab" data-target="current">Current experience</button>
+          <button class="exp-tab" data-target="wrap">Wrap-up</button>
+        </div>
+
+        <div class="exp-panel active" data-panel="warm">
+          <h3 class="exp-panel-title">Warm-up</h3>
+          <p class="exp-panel-body">Easy questions first, to hear how a normal day actually runs.</p>
+          <ol class="q-list">
+            <li>Walk me through a typical day on campus this semester. Where do you usually need to go, and how do you decide how to get there?</li>
+            <li>Think back to when you were first learning campus. How did you figure out where your classes were?</li>
+            <li>What parts of a navigation app do you like?</li>
+          </ol>
+        </div>
+
+        <div class="exp-panel" data-panel="current">
+          <h3 class="exp-panel-title">Current experience</h3>
+          <p class="exp-panel-body">The heart of the interview: real moments, good and bad.</p>
+          <ol class="q-list">
+            <li>Tell me about the last time you used a navigation app on campus. What worked, and what didn't?</li>
+            <li>What's a shortcut or trick that took you a while to discover?</li>
+            <li>Tell me about a time an app gave you a route you didn't follow. What did you do instead?</li>
+            <li>Tell me about a time you had trouble finding a classroom, entrance, or route inside a building.</li>
+            <li>Think about a day with several places to be. How did you decide the order and timing?</li>
+            <li>Tell me about a time the weather changed how you got around.</li>
+          </ol>
+        </div>
+
+        <div class="exp-panel" data-panel="wrap">
+          <h3 class="exp-panel-title">Wrap-up</h3>
+          <p class="exp-panel-body">Two broad questions to catch anything we didn't think to ask.</p>
+          <ol class="q-list">
+            <li>Describe the most confusing building you've had to navigate. What made it difficult?</li>
+            <li>If you could change one thing about getting around campus, what would it be and why? Is there anything else we haven't covered?</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 03 WHAT WE HEARD -->
+  <section class="cs-section">
+    <div class="container-inner container">
+      <span class="section-label reveal"><span class="section-num">03</span>What We Heard</span>
+      <h2 class="section-heading reveal delay-1">What students need, <em>what gets in the way, and what they like.</em></h2>
+      <p class="body-text reveal delay-2">Counts show how many of the five students raised each point. Every one of these comes straight from the interviews.</p>
+
+      <div class="group-head reveal"><span class="group-head-text">What they need</span><span class="group-head-line"></span></div>
+      <div class="cards-3col">
+        <div class="insight-card reveal delay-1">
+          <span class="count-chip">4 of 5</span>
+          <h3 class="insight-card-title">Adapt the route to the weather</h3>
+          <p class="insight-card-body">When it's cold or wet, students stay indoors whenever they can.</p>
+          <p class="quote-line">“The colder it is, the more likely I am to use buildings as a tunnel...”</p>
+        </div>
+        <div class="insight-card reveal delay-2">
+          <span class="count-chip">4 of 5</span>
+          <h3 class="insight-card-title">Mix buses and walking</h3>
+          <p class="insight-card-body">The fastest trip is often a bus, a switch, and a cut-through, not one straight route.</p>
+          <p class="quote-line">“I’d rather take a faster bus... and then switch over to Commuter North.”</p>
+        </div>
+        <div class="insight-card reveal delay-3">
+          <span class="count-chip">5 of 5</span>
+          <h3 class="insight-card-title">Make sense of connected buildings</h3>
+          <p class="insight-card-body">Floors, rooms, and entrances don't line up from one building to the next.</p>
+          <p class="quote-line">“It’s built into a hill so the floors make no sense...”</p>
+        </div>
+      </div>
+
+      <div class="group-head reveal"><span class="group-head-text">What gets in the way</span><span class="group-head-line"></span></div>
+      <div class="cards-3col">
+        <div class="insight-card reveal delay-1">
+          <span class="count-chip">5 of 5</span>
+          <h3 class="insight-card-title">Maps stop working indoors</h3>
+          <p class="insight-card-body">Inside big buildings, everything looks the same and it's easy to lose track of where you are.</p>
+          <p class="quote-line">“You’ll enter on the third floor and it becomes the first floor.”</p>
+        </div>
+        <div class="insight-card reveal delay-2">
+          <span class="count-chip">4 of 5</span>
+          <h3 class="insight-card-title">The good routes are secret</h3>
+          <p class="insight-card-body">Shortcuts are learned by trial and error, or by asking someone who already knows.</p>
+          <p class="quote-line">“Navigation apps don’t really tell you that you can switch.”</p>
+        </div>
+        <div class="insight-card reveal delay-3">
+          <span class="count-chip">3 of 5</span>
+          <h3 class="insight-card-title">Buses are hard to trust</h3>
+          <p class="insight-card-body">Arrival times slip, buses skip stops when full, and one delay can sink the day.</p>
+          <p class="quote-line">“It says it’ll be there in two minutes and it won’t come.”</p>
+        </div>
+      </div>
+
+      <div class="group-head reveal"><span class="group-head-text">What they like</span><span class="group-head-line"></span></div>
+      <div class="cards-3col">
+        <div class="insight-card reveal delay-1">
+          <span class="count-chip">5 of 5</span>
+          <h3 class="insight-card-title">Guidance like a local friend</h3>
+          <p class="insight-card-body">Signs, arrows on walls, and asking around all worked. Students want that feeling in an app.</p>
+          <p class="quote-line">“[You] can go from GGBL to EECS without exiting the building, following the arrows next to the walls.”</p>
+        </div>
+        <div class="insight-card reveal delay-2">
+          <span class="count-chip">3 of 5</span>
+          <h3 class="insight-card-title">Seeing the bus</h3>
+          <p class="insight-card-body">Watching where a bus really is helps them decide when to leave or wait.</p>
+          <p class="quote-line">“It even has a live bus view, so you can see where the buses are at on campus.”</p>
+        </div>
+        <div class="insight-card reveal delay-3">
+          <span class="count-chip">3 of 5</span>
+          <h3 class="insight-card-title">A simple map</h3>
+          <p class="insight-card-body">Easy to follow, and clear about which entrance to use.</p>
+          <p class="quote-line">“I like having a map with routes and directions. Usually one that’s more simple...”</p>
+        </div>
+      </div>
+
+      <div class="pull-quote reveal delay-2">
+        <p>“I literally had to ask around... and then, yeah, I made it.”</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 04 INSIDER ROUTES -->
+  <section class="cs-section">
+    <div class="container-inner container">
+      <span class="section-label reveal"><span class="section-num">04</span>The Insight</span>
+      <h2 class="section-heading reveal delay-1">Routes no map shows. <em>Students learned them the hard way.</em></h2>
+      <p class="body-text reveal delay-2">The best routes on campus aren't missing from campus. They're missing from the apps. Every example below was figured out by trial and error, or by asking someone. A2B's job is to know them on day one.</p>
+
+      <div class="cards-2col">
+        <div class="insight-card reveal delay-1">
+          <div class="insight-card-icon"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 5h8l-2-2M13 11H5l2 2" stroke="var(--accent)" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <h3 class="insight-card-title">Switch buses halfway</h3>
+          <p class="insight-card-body">The direct bus to the far end of North Campus goes the long way around the hospital. One student rides a faster bus first, then switches. The app only says to take the slow one.</p>
+        </div>
+        <div class="insight-card reveal delay-2">
+          <div class="insight-card-icon"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="3" y="3" width="10" height="10" rx="1.5" stroke="var(--accent)" stroke-width="1.2"/><path d="M3 8h10" stroke="var(--accent)" stroke-width="1.2"/></svg></div>
+          <h3 class="insight-card-title">Use buildings as tunnels</h3>
+          <p class="insight-card-body">In the cold, students walk through the Chemistry Building to reach the Dow or the CCTC instead of crossing outside.</p>
+        </div>
+        <div class="insight-card reveal delay-1">
+          <div class="insight-card-icon"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="var(--accent)" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <h3 class="insight-card-title">Follow the arrows inside</h3>
+          <p class="insight-card-body">You can get from the GGBL to EECS without ever going outside, if you know to follow the arrows next to the walls.</p>
+        </div>
+        <div class="insight-card reveal delay-2">
+          <div class="insight-card-icon"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="5.5" stroke="var(--accent)" stroke-width="1.2"/><path d="M8 5v3l2 1.5" stroke="var(--accent)" stroke-width="1.2" stroke-linecap="round"/></svg></div>
+          <h3 class="insight-card-title">Skip the bus that won't stop</h3>
+          <p class="insight-card-body">During the career fair, full buses drove past one stop. One student walked to the CCTC stop and boarded there instead of waiting 30 minutes.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 05 THE IDEA -->
+  <section class="cs-section">
+    <div class="container-inner container">
+      <span class="section-label reveal"><span class="section-num">05</span>The Idea</span>
+      <h2 class="section-heading reveal delay-1">One route, <em>built from every way to move.</em></h2>
+      <p class="body-text reveal delay-2">Under the hood, A2B treats campus as a graph: a web of points and lines where every hallway, sidewalk, stairwell, and bus stop is a possible step. Because indoor corridors and outdoor paths live in the same web, the app can plan one trip that goes inside, outside, onto a bus, and back inside.</p>
+
+      <div class="arch-diagram reveal delay-2">
+        <div class="arch-row center">
+          <div class="arch-box"><span class="arch-label">Your schedule</span><span class="arch-sub">.ics file or typed in</span></div>
+          <span class="arch-arrow">&#8594;</span>
+          <div class="arch-box highlight"><span class="arch-label">Campus graph</span><span class="arch-sub">corridors, paths, bus stops</span></div>
+          <span class="arch-arrow">&#8594;</span>
+          <div class="arch-box"><span class="arch-label">Route planner</span><span class="arch-sub">weather and live buses weigh in</span></div>
+          <span class="arch-arrow">&#8594;</span>
+          <div class="arch-box highlight"><span class="arch-label">One route</span><span class="arch-sub">classroom door to classroom door</span></div>
+        </div>
+        <p class="arch-caption">Planned design</p>
+      </div>
+
+      <div class="cards-3col">
+        <div class="insight-card reveal delay-1">
+          <div class="insight-card-icon"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="4" cy="8" r="1.8" stroke="var(--accent)" stroke-width="1.2"/><circle cx="12" cy="4" r="1.8" stroke="var(--accent)" stroke-width="1.2"/><circle cx="12" cy="12" r="1.8" stroke="var(--accent)" stroke-width="1.2"/><path d="M5.6 7.3l4.8-2.6M5.6 8.7l4.8 2.6" stroke="var(--accent)" stroke-width="1.2" stroke-linecap="round"/></svg></div>
+          <h3 class="insight-card-title">One graph, inside and out</h3>
+          <p class="insight-card-body">Campus shortcuts and building connections are part of the map from the start, so the app can say things like “Cut through EECS to stay indoors.”</p>
+        </div>
+        <div class="insight-card reveal delay-2">
+          <div class="insight-card-icon"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 4h10v6H8l-3 3v-3H3V4z" stroke="var(--accent)" stroke-width="1.2" stroke-linejoin="round"/></svg></div>
+          <h3 class="insight-card-title">Plain-language preferences</h3>
+          <p class="insight-card-body">Built-in AI reads what you say, like “It's freezing, keep me inside,” and adjusts the route using live weather and campus bus data.</p>
+        </div>
+        <div class="insight-card reveal delay-3">
+          <div class="insight-card-icon"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="3" y="2" width="10" height="12" rx="1.5" stroke="var(--accent)" stroke-width="1.2"/><path d="M6 6h4M6 9h4" stroke="var(--accent)" stroke-width="1.2" stroke-linecap="round"/></svg></div>
+          <h3 class="insight-card-title">Room-level mapping</h3>
+          <p class="insight-card-body">Each classroom number is tied to an exact spot in the map, so directions end at the room, even where floor numbering is confusing.</p>
+        </div>
+      </div>
+
+      <div class="data-table-wrap reveal delay-2">
+        <table class="data-table">
+          <thead><tr><th>What students told us</th><th>How A2B answers</th></tr></thead>
+          <tbody>
+            <tr><td>Maps stop working indoors (5 of 5)</td><td>Indoor maps of corridors and floors, with room numbers tied to exact spots.</td></tr>
+            <tr><td>The good routes are secret (4 of 5)</td><td>Cut-throughs, side entrances, and building connections live in the map from day one.</td></tr>
+            <tr><td>Buses are hard to trust (3 of 5)</td><td>Live bus positions and the weather decide whether a bus or a walk wins.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="pull-quote reveal delay-2">
+        <p>Door to door, not just building to building.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 06 LAYERS -->
+  <section class="cs-section">
+    <div class="container-inner container">
+      <span class="section-label reveal"><span class="section-num">06</span>How It's Layered</span>
+      <h2 class="section-heading reveal delay-1">Start simple, <em>then add the clever part.</em></h2>
+      <p class="body-text reveal delay-2">The app is built in three layers, so there is always something useful working before the harder ideas arrive.</p>
+
+      <div class="cards-3col">
+        <div class="insight-card reveal delay-1">
+          <span class="count-chip">The basics</span>
+          <h3 class="insight-card-title">Plan your day</h3>
+          <ul class="card-list">
+            <li>Bring in your class schedule from an .ics file, or type it in</li>
+            <li>See the day as a timeline</li>
+            <li>Confirm or adjust the route between back-to-back classes on a map</li>
+            <li>Ask for directions from any point A to any point B</li>
+          </ul>
+        </div>
+        <div class="insight-card reveal delay-2">
+          <span class="count-chip">Live data</span>
+          <h3 class="insight-card-title">Know what's happening now</h3>
+          <ul class="card-list">
+            <li>Google Maps for outdoor routes, addresses, and the base map</li>
+            <li>WeatherKit or OpenWeather for current conditions</li>
+            <li>MBus, the campus bus system, for live bus positions and arrival times</li>
+          </ul>
+        </div>
+        <div class="insight-card reveal delay-3">
+          <span class="count-chip">The new part</span>
+          <h3 class="insight-card-title">Inside, with no beacons</h3>
+          <ul class="card-list">
+            <li>Indoor walking paths learned for corridors, shortcuts, and connected basements, with no hardware installed</li>
+            <li>One optimized route that blends walking, building shortcuts, and buses, weighted by weather and bus availability</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 07 ONE TRIP -->
+  <section class="cs-section">
+    <div class="container-inner container">
+      <span class="section-label reveal"><span class="section-num">07</span>In Practice</span>
+      <h2 class="section-heading reveal delay-1">One trip, <em>three conditions.</em></h2>
+      <p class="body-text reveal delay-2">An illustration of how the route should change. Each version is built from a move a student described to us. It is not a live build.</p>
+
+      <div class="exp-block reveal delay-2">
+        <div class="exp-tabs">
+          <button class="exp-tab active" data-target="clear">Clear day</button>
+          <button class="exp-tab" data-target="snow">Snowing</button>
+          <button class="exp-tab" data-target="late">Bus running late</button>
+        </div>
+
+        <div class="exp-panel active" data-panel="clear">
+          <h3 class="exp-panel-title">Central Campus to the Naval Building</h3>
+          <p class="exp-panel-body">Take the faster bus to North Campus, then switch to Commuter North for the last stretch. No need to sit on the slow direct route.</p>
+          <div class="exp-pill-row"><span class="exp-pill">Bus</span><span class="exp-pill">Bus switch</span></div>
+        </div>
+
+        <div class="exp-panel" data-panel="snow">
+          <h3 class="exp-panel-title">Central Campus to the Naval Building</h3>
+          <p class="exp-panel-body">Same ride north, then stay out of the cold: cut through EECS and FXB to reach the Naval Building without going back outside.</p>
+          <div class="exp-pill-row"><span class="exp-pill">Bus</span><span class="exp-pill">Indoor cut-through</span></div>
+        </div>
+
+        <div class="exp-panel" data-panel="late">
+          <h3 class="exp-panel-title">Central Campus to the Naval Building</h3>
+          <p class="exp-panel-body">Don't wait at a stop that keeps getting skipped. Walk to a stop where a bus is actually due, the way one student did at the CCTC.</p>
+          <div class="exp-pill-row"><span class="exp-pill">Walk</span><span class="exp-pill">Live bus data</span><span class="exp-pill">Bus</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 08 WHERE IT STANDS -->
+  <section class="cs-section">
+    <div class="container-inner container">
+      <span class="section-label reveal"><span class="section-num">08</span>Where It Stands</span>
+      <h2 class="section-heading reveal delay-1">Research and design are done. <em>The build is next.</em></h2>
+      <p class="body-text reveal delay-2">We're starting small on purpose: three connected buildings, GGBL, Dow, and EECS, which students called the most confusing. If the map works there, new buildings can be added by mapping them, with no hardware to install.</p>
+
+      <div class="roadmap-row reveal delay-2">
+        <span class="roadmap-chip">Map GGBL, Dow, and EECS</span>
+        <span class="roadmap-chip">Schedule import from .ics</span>
+        <span class="roadmap-chip">Live weather and buses</span>
+        <span class="roadmap-chip">AI route adjustments</span>
+        <span class="roadmap-chip">More buildings</span>
+      </div>
+
+      <div class="scope-note reveal delay-2">
+        <span class="scope-note-label">Current status</span>
+        <p>The interviews, the problem definition, the product design, and the plan are finished. Code is not written yet. Everything on this page about how A2B behaves describes the design we're about to build, and I'll update this page as the build moves forward.</p>
+      </div>
+
+      <div class="stack-row reveal delay-2">
+        <span class="stack-pill">iOS</span>
+        <span class="stack-pill">Google Maps API</span>
+        <span class="stack-pill">WeatherKit / OpenWeather</span>
+        <span class="stack-pill">MBus API</span>
+        <span class="stack-pill">LLM</span>
+        <span class="stack-pill">Graph routing</span>
+        <span class="stack-pill">Figma</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 09 REFLECTION -->
+  <section class="cs-section">
+    <div class="container-inner container">
+      <span class="section-label reveal"><span class="section-num">09</span>Reflection</span>
+      <h2 class="section-heading reveal delay-1">What I've <em>learned so far.</em></h2>
+
+      <div class="cards-3col">
+        <div class="reflect-card reveal delay-1">
+          <span class="reflect-icon">&#128269;</span>
+          <h4 class="reflect-title">Students already know the answer</h4>
+          <p class="reflect-body">The best routes weren't missing from campus, they were missing from the apps. The interviews changed our question from "how do we draw a better map" to "how do we capture what students already know."</p>
+        </div>
+        <div class="reflect-card reveal delay-2">
+          <span class="reflect-icon">&#127919;</span>
+          <h4 class="reflect-title">Scope is a design decision</h4>
+          <p class="reflect-body">Shrinking the first version to three buildings is what makes this buildable. We also pushed back on treating schedule import as optional, because the schedule is what turns a map into a plan for the day.</p>
+        </div>
+        <div class="reflect-card reveal delay-3">
+          <span class="reflect-icon">&#128172;</span>
+          <h4 class="reflect-title">Every feature should trace to a sentence</h4>
+          <p class="reflect-body">If I can't point to something a student said, the feature doesn't belong in the plan. That rule kept the idea small and honest.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- NEXT PROJECT -->
+  <div class="next-project">
+    <p class="next-label reveal">Next project</p>
+    <h2 class="next-title reveal delay-1">Search Engine</h2>
+    <a href="search-engine.html" class="next-link reveal delay-2">
+      View case study
+      <span class="next-link-arrow">
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+          <path d="M2 6h8M6 2l4 4-4 4" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </span>
+    </a>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="foot-inner">
+      <p class="foot-name">Mahima Shah</p>
+      <p class="foot-sub">always learning</p>
+      <ul class="foot-links">
+        <li><a href="mailto:mahima@mahimashah.xyz">Email</a></li>
+        <li><a href="https://www.linkedin.com/in/shahmahima/" target="_blank" rel="noopener">LinkedIn</a></li>
+        <li><a href="https://x.com/mahimashahh" target="_blank" rel="noopener">X</a></li>
+        <li><a href="https://github.com/mahima-shah" target="_blank" rel="noopener">GitHub</a></li>
+        <li><a href="https://www.youtube.com/@mahimashah" target="_blank" rel="noopener">YouTube</a></li>
+      </ul>
+      <p class="foot-copy">2025 Mahima Shah &nbsp;&middot;&nbsp; Designed with intention</p>
+    </div>
+  </footer>
+
+</div>
+<script>
+  // Scroll reveal
+  var revEls = document.querySelectorAll('.reveal');
+  revEls.forEach(function(el) {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(20px)';
+  });
+  requestAnimationFrame(function() {
+    requestAnimationFrame(function() {
+      revEls.forEach(function(el) {
+        el.style.transition = 'opacity 0.7s cubic-bezier(0.16,1,0.3,1), transform 0.7s cubic-bezier(0.16,1,0.3,1)';
+      });
+      if (!('IntersectionObserver' in window)) {
+        revEls.forEach(function(el) { el.style.opacity='1'; el.style.transform='none'; });
+        return;
+      }
+      var io = new IntersectionObserver(function(entries) {
+        entries.forEach(function(e) {
+          if (e.isIntersecting) {
+            e.target.style.opacity = '1';
+            e.target.style.transform = 'none';
+            io.unobserve(e.target);
+          }
+        });
+      }, { threshold: 0.06, rootMargin: '0px 0px -40px 0px' });
+      revEls.forEach(function(el) { io.observe(el); });
+    });
+  });
+
+  // Cursor dot
+  var dot = document.getElementById('cdot');
+  if (dot && window.matchMedia('(pointer: fine)').matches) {
+    var active = false;
+    document.addEventListener('mousemove', function(e) {
+      dot.style.left = e.clientX + 'px';
+      dot.style.top  = e.clientY + 'px';
+      if (!active) {
+        active = true;
+        dot.style.opacity = '1';
+        document.body.classList.add('has-cursor');
+      }
+    }, {passive:true});
+    document.querySelectorAll('a, button, .exp-tab').forEach(function(el) {
+      el.addEventListener('mouseenter', function() { dot.classList.add('expand'); });
+      el.addEventListener('mouseleave', function() { dot.classList.remove('expand'); });
+    });
+  }
+
+  // Typewriter heading reveal
+  (function(){
+    var el = document.querySelector('.cs-title');
+    if (!el) return;
+    var text = el.textContent;
+    el.setAttribute('aria-label', text);
+    el.innerHTML = '<span class="tw-text" aria-hidden="true"></span><span class="tw-cursor" aria-hidden="true"></span>';
+    var textSpan = el.querySelector('.tw-text');
+    var cursor = el.querySelector('.tw-cursor');
+    var started = false;
+    function type(){
+      if (started) return;
+      started = true;
+      var i = 0, speed = 46;
+      (function step(){
+        textSpan.textContent = text.slice(0, i);
+        i++;
+        if (i <= text.length) {
+          setTimeout(step, speed);
+        } else {
+          setTimeout(function(){ cursor.classList.add('tw-cursor-fade'); }, 850);
+        }
+      })();
+    }
+    if ('IntersectionObserver' in window) {
+      var io = new IntersectionObserver(function(entries){
+        entries.forEach(function(e){ if (e.isIntersecting) { type(); io.unobserve(el); } });
+      }, {threshold:0.3});
+      io.observe(el);
+    } else {
+      textSpan.textContent = text;
+    }
+  })();
+
+  // Tab blocks (each block switches its own panels)
+  document.querySelectorAll('.exp-block').forEach(function(block){
+    var tabs = block.querySelectorAll('.exp-tab');
+    var panels = block.querySelectorAll('.exp-panel');
+    tabs.forEach(function(tab){
+      tab.addEventListener('click', function(){
+        tabs.forEach(function(t){ t.classList.remove('active'); });
+        panels.forEach(function(p){ p.classList.remove('active'); });
+        tab.classList.add('active');
+        var target = block.querySelector('.exp-panel[data-panel="' + tab.getAttribute('data-target') + '"]');
+        if (target) target.classList.add('active');
+      });
+    });
+  });
+</script>
+</body>
+</html>
