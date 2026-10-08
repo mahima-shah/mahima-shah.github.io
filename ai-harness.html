@@ -258,6 +258,31 @@
     .delay-1 { transition-delay: 0.08s; }
     .delay-2 { transition-delay: 0.18s; }
     .delay-3 { transition-delay: 0.28s; }
+
+    /* Chapter 03 */
+    @media (max-width:700px) {
+
+
+
+
+
+    .kind-chip { display:inline-block; font-size:0.62rem; font-weight:500; letter-spacing:0.12em; text-transform:uppercase; padding:3px 10px; border-radius:100px; border:1px solid var(--accent-tag); color:var(--accent); background:var(--accent-dim); margin-right:8px; }
+    .split { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:32px; }
+    @media (max-width:700px) { .split { grid-template-columns:1fr; } }
+    .split-col { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius); padding:26px 24px; }
+    .split-col .arch-box { min-width:0; margin-bottom:8px; width:100%; }
+    .split-badge { display:inline-block; font-size:0.62rem; font-weight:500; letter-spacing:0.14em; text-transform:uppercase; padding:3px 10px; border-radius:100px; background:var(--accent); color:#fff; margin-bottom:12px; }
+    .path-line { font-size:0.8rem; color:var(--text-2); line-height:1.9; margin-top:12px; font-family:'SF Mono','Fira Code',monospace; }
+    .sse-tab { font-size:0.78rem; font-weight:500; color:var(--text-2); background:transparent; border:1px solid var(--border); padding:8px 16px; border-radius:100px; cursor:pointer; font-family:'DM Sans',sans-serif; transition:all 0.2s; }
+    .sse-tab.active { background:var(--accent); border-color:var(--accent); color:#fff; }
+    .sse-panel { display:none; }
+    .sse-panel.active { display:block; animation:fadein-panel 0.35s ease; }
+    .chk-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:10px; margin-top:28px; }
+    .chk { display:flex; gap:10px; align-items:flex-start; background:var(--bg-card); border:1px solid var(--border); border-radius:12px; padding:12px 14px; font-size:0.84rem; color:var(--text-2); line-height:1.5; }
+    .chk-dot { width:18px; height:18px; border-radius:50%; background:var(--accent); color:#fff; font-size:0.65rem; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:1px; }
+    .shot-ph { border:1px dashed var(--accent-tag); border-radius:14px; padding:40px 20px; text-align:center; color:var(--text-3); font-size:0.82rem; background:var(--bg-tint); }
+    .shot-wrap { max-width:300px; margin-top:28px; }
+    .shot-wrap img { width:100%; border-radius:14px; border:1px solid var(--border); display:block; }
   </style>
 </head>
 <body>
@@ -284,12 +309,14 @@
     <div class="cs-hero-inner">
       <span class="cs-tag reveal">Systems & Infrastructure</span>
       <h1 class="cs-title reveal delay-1">AI Harness</h1>
-      <p class="cs-subtitle reveal delay-2">A native iOS app that talks to a server I built and run myself, which routes messages to a language model, streams the answer back word by word, and now remembers what was already said. The interesting part isn't the app, it's everything that happens in between.</p>
+      <p class="cs-subtitle reveal delay-2">A native iOS app that talks to a server I built and run myself, which routes messages to a language model, streams the answer back word by word, remembers what was already said, and now lets the model call tools that run on the phone or on the server. The interesting part isn't the app, it's everything that happens in between.</p>
       <p class="cs-working-title reveal delay-2">The foundation for a system I'm still actively building on, not a finished chatbot.</p>
       <div class="chapter-row reveal delay-2">
         <span class="chapter-chip done">Chapter 01 &middot; llmPrompt</span>
         <span class="chapter-arrow">&#8594;</span>
-        <span class="chapter-chip current">Chapter 02 &middot; llmChat</span>
+        <span class="chapter-chip done">Chapter 02 &middot; llmChat</span>
+        <span class="chapter-arrow">&#8594;</span>
+        <span class="chapter-chip current">Chapter 03 &middot; llmTools</span>
       </div>
       <div class="cs-meta reveal delay-3">
         <div class="cs-meta-item">
@@ -298,11 +325,11 @@
         </div>
         <div class="cs-meta-item">
           <span class="cs-meta-label">What it is</span>
-          <span class="cs-meta-value">Native app + self-hosted backend + AI routing layer + conversation memory</span>
+          <span class="cs-meta-value">Native app + self-hosted backend + AI routing layer + conversation memory + tool calling</span>
         </div>
         <div class="cs-meta-item">
           <span class="cs-meta-label">Stack</span>
-          <span class="cs-meta-value">Swift &middot; SwiftUI &middot; Python &middot; Starlette &middot; SQLite &middot; AWS</span>
+          <span class="cs-meta-value">Swift &middot; SwiftUI &middot; Core Location &middot; Python &middot; Starlette &middot; SQLite &middot; AWS</span>
         </div>
         <div class="cs-meta-item">
           <span class="cs-meta-label">Status</span>
@@ -523,6 +550,7 @@
       </div>
 
       <p class="body-text reveal delay-2">That's a small change on paper, but it's the difference between "a script I run when I remember to" and "a service that's actually available." It's the same expectation any real product would need to meet.</p>
+      <p class="body-text reveal delay-2">The connection now worked, but every message was still a one-off. That is where Chapter 02 starts.</p>
     </div>
   </section>
 
@@ -686,50 +714,202 @@
       </div>
 
       <p class="body-text reveal delay-2">Because the app never talks to a provider directly, swapping which model answered a given conversation doesn't change anything about how that conversation's memory is stored or retrieved. The context layer sits below the model, not inside it.</p>
+      <p class="body-text reveal delay-2">Memory only covers what has already been said. It cannot help when the model needs something nobody has told it yet, like where I am right now. That is where Chapter 03 starts.</p>
     </div>
   </section>
 
-  <!-- 13 WHY EACH PIECE EXISTS -->
+  <!-- CHAPTER 03 DIVIDER -->
+  <div class="chapter-divider reveal">
+    <span class="chapter-divider-line"></span>
+    <span class="chapter-divider-text">Chapter 03 &middot; llmTools</span>
+    <span class="chapter-divider-line"></span>
+  </div>
+
+  <!-- 15 FROM ANSWERING TO ACTING -->
   <section class="cs-section">
     <div class="container-inner container">
-      <span class="section-label reveal"><span class="section-num">13</span>Why Each Piece Exists</span>
-      <h2 class="section-heading reveal delay-1">Every part is answering <em>a specific question</em></h2>
+      <span class="section-label reveal"><span class="section-num">13</span>From Answering to Acting</span>
+      <h2 class="section-heading reveal delay-1">What if the model needs <em>something it doesn't have?</em></h2>
+      <p class="body-text reveal delay-2">Take a simple question: "What's the weather at my location?" The model is stuck. It does not know where my phone is, and it cannot see today's weather.</p>
+      <p class="body-text reveal delay-3">The fix is called <strong>tool calling</strong> (also known as function calling). I describe a few functions to the model. When it needs one, it asks for it by name, my code runs it, and the model uses the result to finish its answer. The model never runs anything itself. It only asks.</p>
+    </div>
+  </section>
 
-      <div class="cards-3col">
-        <div class="insight-card reveal delay-1">
-          <div class="insight-card-icon"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="4" y="6" width="8" height="7" rx="1.5" stroke="var(--accent)" stroke-width="1.2"/><path d="M6 6V5a2 2 0 014 0v1" stroke="var(--accent)" stroke-width="1.2"/></svg></div>
-          <h3 class="insight-card-title">Why SQLite?</h3>
-          <p class="insight-card-body">Because conversation history has to live somewhere between one request and the next. The model doesn't hold onto it, so something persistent has to.</p>
+  <!-- 16 ONE QUESTION, TWO TOOLS -->
+  <section class="cs-section">
+    <div class="container-inner container">
+      <span class="section-label reveal"><span class="section-num">14</span>Following One Question</span>
+      <h2 class="section-heading reveal delay-1">One question, <em>two tools.</em></h2>
+      <p class="body-text reveal delay-2">The answer needs two facts that live in two different places. My location is on the iPhone. The weather is on a weather service. And the order matters: the model needs the coordinates before it can ask about the weather. Click through to follow the whole trip.</p>
+
+      <div class="journey-block reveal delay-2">
+        <div class="journey-steps" id="t-steps">
+          <button class="journey-step-btn active" data-t="0">1. You ask</button>
+          <button class="journey-step-btn" data-t="1">2. Model sees tools</button>
+          <button class="journey-step-btn" data-t="2">3. Needs location</button>
+          <button class="journey-step-btn" data-t="3">4. Phone replies</button>
+          <button class="journey-step-btn" data-t="4">5. Needs weather</button>
+          <button class="journey-step-btn" data-t="5">6. Server fetches</button>
+          <button class="journey-step-btn" data-t="6">7. Final answer</button>
         </div>
-        <div class="insight-card reveal delay-2">
-          <div class="insight-card-icon"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="5.5" stroke="var(--accent)" stroke-width="1.2"/><path d="M8 5v3l2 1.5" stroke="var(--accent)" stroke-width="1.2" stroke-linecap="round"/></svg></div>
-          <h3 class="insight-card-title">Why an appID?</h3>
-          <p class="insight-card-body">Because the backend is shared. Without a way to separate conversations, one app's history could bleed into another's.</p>
+        <div class="arch-diagram" style="margin:0;">
+          <div class="arch-row">
+            <div class="arch-box" id="tb-0"><span class="arch-label">iPhone</span><span class="arch-sub">SwiftUI + Core Location</span></div>
+            <span class="arch-arrow">&#8596;</span>
+            <div class="arch-box" id="tb-1"><span class="arch-label">My Server</span><span class="arch-sub">Python on AWS</span></div>
+            <span class="arch-arrow">&#8596;</span>
+            <div class="arch-box" id="tb-2"><span class="arch-label">The Model</span><span class="arch-sub">decides which tool</span></div>
+            <span class="arch-arrow">&#8596;</span>
+            <div class="arch-box" id="tb-3"><span class="arch-label">Weather API</span><span class="arch-sub">Open-Meteo</span></div>
+          </div>
         </div>
-        <div class="insight-card reveal delay-3">
-          <div class="insight-card-icon"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h3M8 8h3M13 8h1" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round"/></svg></div>
-          <h3 class="insight-card-title">Why SSE?</h3>
-          <p class="insight-card-body">Because a model generates its answer piece by piece. Streaming lets the app show those pieces as they're produced instead of waiting on all of them.</p>
+        <p class="journey-caption" id="t-cap"></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 17 TWO ENVIRONMENTS -->
+  <section class="cs-section">
+    <div class="container-inner container">
+      <span class="section-label reveal"><span class="section-num">15</span>Where Tools Run</span>
+      <h2 class="section-heading reveal delay-1">One agent, <em>two places to run code.</em></h2>
+      <p class="body-text reveal delay-2">The key design choice is deciding where each tool lives. I used two terms for it. A <strong>resident</strong> tool lives on my server, so the server can run it directly. A <strong>non-resident</strong> tool lives somewhere else, here on the phone, so the server has to pass the request along and wait for the answer.</p>
+
+      <div class="split reveal delay-2">
+        <div class="split-col">
+          <span class="split-badge">Non-resident</span>
+          <div class="arch-box"><span class="arch-label">iPhone</span><span class="arch-sub">SwiftUI app</span></div>
+          <div class="arch-box"><span class="arch-label">Toolbox.swift</span><span class="arch-sub">finds the right Swift function</span></div>
+          <div class="arch-box highlight"><span class="arch-label">get_location()</span><span class="arch-sub">reads GPS through Core Location</span></div>
+          <p class="path-line">Model &rarr; Server &rarr; iPhone &rarr; Server &rarr; Model</p>
         </div>
-        <div class="insight-card reveal delay-1">
-          <div class="insight-card-icon"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="3" y="5" width="10" height="7" rx="1.5" stroke="var(--accent)" stroke-width="1.2"/><path d="M6 5V4a2 2 0 014 0v1" stroke="var(--accent)" stroke-width="1.2"/></svg></div>
-          <h3 class="insight-card-title">Why a backend at all?</h3>
-          <p class="insight-card-body">Because provider credentials, routing decisions, and now conversation storage shouldn't live inside a mobile app that anyone can take apart.</p>
-        </div>
-        <div class="insight-card reveal delay-2">
-          <div class="insight-card-icon"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 8h8M8 4l4 4-4 4" stroke="var(--accent)" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-          <h3 class="insight-card-title">Why async?</h3>
-          <p class="insight-card-body">Because the server shouldn't sit idle waiting on one model to finish generating while a second request is trying to come in.</p>
-        </div>
-        <div class="insight-card reveal delay-3">
-          <div class="insight-card-icon"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 3v10M4 9l4 4 4-4" stroke="var(--accent)" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-          <h3 class="insight-card-title">Why systemd?</h3>
-          <p class="insight-card-body">Because a server that only runs while a terminal window happens to be open isn't a server the app can actually depend on.</p>
+        <div class="split-col">
+          <span class="split-badge">Resident</span>
+          <div class="arch-box"><span class="arch-label">My Server</span><span class="arch-sub">Python + Starlette</span></div>
+          <div class="arch-box"><span class="arch-label">toolbox.py</span><span class="arch-sub">finds the right Python function</span></div>
+          <div class="arch-box highlight"><span class="arch-label">get_weather(lat, lon)</span><span class="arch-sub">asks Open-Meteo for the weather</span></div>
+          <p class="path-line">Model &rarr; Server &rarr; Weather API &rarr; Model</p>
         </div>
       </div>
 
-      <div class="pull-quote reveal delay-2" style="margin-top:40px;">
-        <p>llmPrompt proved I could connect an app to an LLM. llmChat turned that connection into a system that could hold an actual conversation.</p>
+      <div class="pull-quote reveal delay-2">
+        <p>One agent, two execution environments. The model coordinates both as if they were one workflow.</p>
+      </div>
+
+      <p class="body-text reveal delay-2">Each side has a <strong>Toolbox</strong>, a simple lookup table from a tool's name to the code that runs it. Every tool also has a <strong>schema</strong>, a small JSON file that tells the model what the tool is called, what it does, and what inputs it takes. The model reads the schema. My code supplies the actual behavior. That is why the model never touches the GPS. It can only ask for <code>get_location</code>, and the app decides how that works.</p>
+
+      <div class="code-label reveal delay-2">Toolbox.swift, simplified for display</div>
+      <div class="code-block reveal delay-2">
+<span class="kw">struct</span> Tool {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">let</span> schema: OpenAIToolSchema&nbsp;&nbsp;<span class="cm">// what the model reads</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">let</span> function: ToolFunction&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cm">// what actually runs</span><br>
+}<br>
+<br>
+<span class="kw">struct</span> Toolbox {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">let</span> tools: [String: Tool] = [<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cm">"get_location"</span>: Tool(schema: jsonToSchema(<span class="cm">"get_location"</span>), function: getLocation)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;]<br>
+}
+      </div>
+      <p class="body-text reveal delay-2">The payoff is that the networking code does not need special handling for each new tool. It looks up the name, reads the arguments, and runs the match. Adding a tool later means adding one entry.</p>
+    </div>
+  </section>
+
+  <!-- 18 SSE INSPECTOR -->
+  <section class="cs-section">
+    <div class="container-inner container">
+      <span class="section-label reveal"><span class="section-num">16</span>When the Model Asks for Help</span>
+      <h2 class="section-heading reveal delay-1">The stream now carries <em>two kinds of messages.</em></h2>
+      <p class="body-text reveal delay-2">In Chapter 01 the stream only delivered words. Now the same open connection can also deliver a request: "please run this function." The Swift parser I wrote for Chapter 01 learned a new event type, <code>tool_calls</code>. When one arrives, the app does not show it on screen. It runs the tool. Toggle between the two below.</p>
+
+      <div class="exp-block reveal delay-2">
+        <div class="exp-tabs" id="sse-tabs">
+          <button class="sse-tab active" data-sse="text">Text response</button>
+          <button class="sse-tab" data-sse="tool">Tool call</button>
+        </div>
+        <div class="sse-panel active" data-sse-panel="text">
+          <div class="code-block" style="margin-top:0;">
+<span class="cm">event: message</span><br>
+data: { <span class="kw">"content"</span>: <span class="cm">"It is 18 degrees"</span> }
+          </div>
+          <p class="exp-panel-body"><span class="kind-chip">For the user</span>The app appends these words to the chat bubble as they arrive.</p>
+        </div>
+        <div class="sse-panel" data-sse-panel="tool">
+          <div class="code-block" style="margin-top:0;">
+<span class="cm">event: tool_calls</span><br>
+data: { <span class="kw">"turnID"</span>: 123,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">"tool_calls"</span>: [ { <span class="kw">"name"</span>: <span class="cm">"get_location"</span> } ] }
+          </div>
+          <p class="exp-panel-body"><span class="kind-chip">For the app</span>The app decodes this, looks up <code>get_location</code> in its Toolbox, and runs it. Nothing appears in the chat.</p>
+        </div>
+        <p class="phone-shot-cap" style="text-align:left;">Illustrative payloads, simplified for this page. They are examples, not recorded output.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 19 TURN ID -->
+  <section class="cs-section">
+    <div class="container-inner container">
+      <span class="section-label reveal"><span class="section-num">17</span>Picking Up Where It Left Off</span>
+      <h2 class="section-heading reveal delay-1">A tool call pauses the answer. <em>How does it resume?</em></h2>
+      <p class="body-text reveal delay-2">When the model asks for the phone's location, its answer is only half finished. The phone runs the tool, but then the result has to land in the right conversation. The server solves this with a <strong>turnID</strong>, a number that marks the paused turn. It builds directly on the SQLite memory from Chapter 02.</p>
+
+      <div class="cards-2col reveal delay-2">
+        <div class="insight-card">
+          <h3 class="insight-card-title">First request</h3>
+          <p class="insight-card-body">The app sends the question and the list of tools it can run.</p>
+          <div class="code-block" style="margin:16px 0 0;font-size:0.72rem;">
+{ <span class="kw">"messages"</span>: [ { <span class="kw">"role"</span>: <span class="cm">"user"</span>,<br>
+&nbsp;&nbsp;<span class="kw">"content"</span>: <span class="cm">"What's the weather at my location?"</span> } ],<br>
+&nbsp;<span class="kw">"tools"</span>: [ <span class="cm">"get_location schema"</span> ] }
+          </div>
+        </div>
+        <div class="insight-card">
+          <h3 class="insight-card-title">Follow-up request</h3>
+          <p class="insight-card-body">Only the turn number and the tool's result. No history, no tool list.</p>
+          <div class="code-block" style="margin:16px 0 0;font-size:0.72rem;">
+{ <span class="kw">"turnID"</span>: 123,<br>
+&nbsp;<span class="kw">"messages"</span>: [ { <span class="kw">"role"</span>: <span class="cm">"tool"</span>,<br>
+&nbsp;&nbsp;<span class="kw">"content"</span>: <span class="cm">"latitude: ..., longitude: ..."</span> } ] }
+          </div>
+        </div>
+      </div>
+      <p class="phone-shot-cap" style="text-align:left;margin-top:10px;">Illustrative payloads. The turn number is an example, not a recorded value.</p>
+
+      <div class="arch-diagram reveal delay-2">
+        <div class="arch-row center">
+          <div class="arch-box"><span class="arch-label">appID</span><span class="arch-sub">which app</span></div>
+          <span class="arch-arrow">&#8594;</span>
+          <div class="arch-box"><span class="arch-label">Turn</span><span class="arch-sub">the paused answer</span></div>
+          <span class="arch-arrow">&#8594;</span>
+          <div class="arch-box highlight"><span class="arch-label">Tool calls</span><span class="arch-sub">what was asked</span></div>
+          <span class="arch-arrow">&#8594;</span>
+          <div class="arch-box"><span class="arch-label">Results</span><span class="arch-sub">what came back</span></div>
+        </div>
+      </div>
+      <p class="body-text reveal delay-2">To store this I added <code>tools</code> and <code>calls</code> tables to the database. When a result arrives, the server finds the turn, rebuilds the conversation from SQLite, and hands it all back to the model to continue.</p>
+    </div>
+  </section>
+
+  <!-- 20 TESTED -->
+  <section class="cs-section">
+    <div class="container-inner container">
+      <span class="section-label reveal"><span class="section-num">18</span>Tested End to End</span>
+      <h2 class="section-heading reveal delay-1">Built in stages, <em>checked at each one.</em></h2>
+      <p class="body-text reveal delay-2">I tested the backend on its own first, then connected the app. That way, when something broke, I knew which half to look at.</p>
+
+      <div class="chk-grid reveal delay-2">
+        <div class="chk"><span class="chk-dot">&#10003;</span>Backend /weather endpoint, tested directly with coordinates</div>
+        <div class="chk"><span class="chk-dot">&#10003;</span>Backend resident get_weather tool call</div>
+        <div class="chk"><span class="chk-dot">&#10003;</span>SwiftUI app builds and runs in the simulator</div>
+        <div class="chk"><span class="chk-dot">&#10003;</span>Full location and weather flow on the course backend</div>
+        <div class="chk"><span class="chk-dot">&#10003;</span>Same flow against my own AWS backend</div>
+        <div class="chk"><span class="chk-dot">&#10003;</span>Fresh GitHub clone builds in Xcode</div>
+      </div>
+
+      <div class="shot-wrap reveal delay-2">
+        <img src="llmtools-weather.png" alt="iOS simulator showing the weather answer from the llmTools app" onerror="this.outerHTML='<div class=&quot;shot-ph&quot;>Add llmtools-weather.png: a simulator screenshot of the weather answer</div>'" />
+        <p class="phone-shot-cap">Real simulator run, frontend tested with qwen3.5:9b</p>
       </div>
     </div>
   </section>
@@ -737,10 +917,10 @@
   <!-- 14 WHAT I LEARNED -->
   <section class="cs-section">
     <div class="container-inner container">
-      <span class="section-label reveal"><span class="section-num">14</span>What I Learned</span>
+      <span class="section-label reveal"><span class="section-num">19</span>What I Learned</span>
       <h2 class="section-heading reveal delay-1">What actually stuck with me</h2>
 
-      <div class="cards-3col">
+      <div class="cards-2col">
         <div class="reflect-card reveal delay-1">
           <div class="reflect-icon-box"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="3" y="3" width="4" height="4" rx="1" stroke="var(--accent)" stroke-width="1.2"/><rect x="9" y="9" width="4" height="4" rx="1" stroke="var(--accent)" stroke-width="1.2" opacity="0.4"/><path d="M7 5h2M5 7v2" stroke="var(--accent)" stroke-width="1.2" stroke-linecap="round"/></svg></div>
           <h4 class="reflect-title">The interface and the control layer are different jobs</h4>
@@ -756,30 +936,37 @@
           <h4 class="reflect-title">Networking is layers, and each layer solves a different problem</h4>
           <p class="reflect-body">Encryption, the actual web server, my application code, and the way requests get routed all solve separate problems that stack on top of each other. Understanding where one layer's job ends and the next one's begins made debugging far less mysterious.</p>
         </div>
+        <div class="reflect-card reveal delay-3">
+          <div class="reflect-icon-box"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8l3 3 7-7" stroke="var(--accent)" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <h4 class="reflect-title">The model asks, my code decides</h4>
+          <p class="reflect-body">A tool call is only a request. The model names a function, and my code chooses whether and how to run it, on the phone or on the server. Keeping that line clear is what made it safe to give the model more abilities.</p>
+        </div>
       </div>
 
       <div class="pull-quote reveal delay-2" style="margin-top: 40px;">
-        <p>Getting code to run on my laptop and keeping a service reliably available on a machine I don't touch every day turned out to be two very different skills.</p>
+        <p>Each chapter added one ability to the same system: it connected, then remembered, and now it acts. Getting it to run on my laptop and keeping it reliably available turned out to be two very different skills.</p>
       </div>
     </div>
   </section>
 
+
+
   <!-- 10 WHAT'S NEXT -->
   <section class="cs-section">
     <div class="container-inner container">
-      <span class="section-label reveal"><span class="section-num">15</span>What's Next</span>
+      <span class="section-label reveal"><span class="section-num">20</span>What's Next</span>
       <h2 class="section-heading reveal delay-1">Where this goes from here</h2>
-      <p class="body-text reveal delay-2">Right now the system can securely move a message from a native app, through my own server, to an AI model, and stream the answer back. That's deliberately the simplest possible version of a much bigger idea. I'm continuing to build on this same backend as I explore giving it tools to use, longer memory of a conversation, and more capable mobile AI experiences.</p>
+      <p class="body-text reveal delay-2">I connected the app, gave it memory, and now it can use tools on both the phone and the server. The foundation is in place, so each new ability builds on the same system instead of starting a new app. Next I want to give the agent more tools to choose from, harder tasks, and richer input than text.</p>
 
       <div class="scope-note reveal delay-2">
         <span class="scope-note-label">Current status</span>
-        <p>The system can securely move a message from a native app to my own server to a model and back, stream that answer in as it's generated, and remember the conversation it's part of. Everything below is what I'm actively building toward next on top of the same foundation.</p>
+        <p>The system streams answers, remembers conversations, and runs multi-step tool workflows across an iPhone and my own server. It began as a university tutorial series that I implemented and extended. Everything below is what I am building toward next.</p>
       </div>
 
       <div class="roadmap-row reveal delay-2">
-        <span class="roadmap-chip">Tools the model can use</span>
+        <span class="roadmap-chip">More device-side tools</span>
         <span class="roadmap-chip">Memory beyond one conversation</span>
-        <span class="roadmap-chip">Multi-step agent workflows</span>
+        <span class="roadmap-chip">More complex agent workflows</span>
         <span class="roadmap-chip">Images &amp; other input types</span>
         <span class="roadmap-chip">More capable mobile experiences</span>
       </div>
@@ -789,9 +976,9 @@
   <!-- 15 STACK -->
   <section class="cs-section">
     <div class="container-inner container">
-      <span class="section-label reveal"><span class="section-num">16</span>Stack</span>
+      <span class="section-label reveal"><span class="section-num">21</span>Stack</span>
       <h2 class="section-heading reveal delay-1">The tools behind it</h2>
-      <p class="body-text reveal delay-2">The system spans a native SwiftUI client, a Python backend, SQLite persistence, model routing, and SSE streaming. I wrote the client, the server, the conversation storage, and the routing logic myself, with the AI providers handling only the actual language generation.</p>
+      <p class="body-text reveal delay-2">The system spans a native SwiftUI client, a Python backend, SQLite persistence, model routing, and SSE streaming, and tool calling across both sides. I wrote the client, the server, the conversation storage, and the routing logic myself, with the AI providers handling only the actual language generation.</p>
       <div class="stack-row reveal delay-2">
         <span class="stack-pill">Swift</span>
         <span class="stack-pill">SwiftUI</span>
@@ -802,6 +989,10 @@
         <span class="stack-pill">Server-Sent Events</span>
         <span class="stack-pill">AWS</span>
         <span class="stack-pill">systemd</span>
+        <span class="stack-pill">Core Location</span>
+        <span class="stack-pill">Function calling</span>
+        <span class="stack-pill">SQLite</span>
+        <span class="stack-pill">Open-Meteo</span>
       </div>
     </div>
   </section>
@@ -1037,6 +1228,54 @@
         tab.classList.add('active');
         var target = document.querySelector('.exp-panel[data-panel="' + tab.getAttribute('data-demo') + '"]');
         if (target) target.classList.add('active');
+      });
+    });
+  })();
+
+  // Chapter 03: tool journey
+  (function(){
+    var boxes = [0,1,2,3].map(function(i){ return document.getElementById('tb-'+i); });
+    var btns = document.querySelectorAll('#t-steps .journey-step-btn');
+    var cap = document.getElementById('t-cap');
+    if (!cap || !boxes[0]) return;
+    var steps = [
+      { a:[0], k:'User text', c:'<strong>You ask</strong> "What\'s the weather at my location?" in the app.' },
+      { a:[1,2], k:'Request', c:'<strong>My server passes the question to the model</strong>, along with a list of the tools it may ask for.' },
+      { a:[2,1,0], k:'Tool call', c:'<strong>The model asks for get_location.</strong> That tool lives on the phone, so the server forwards the request to the app.' },
+      { a:[0,1], k:'Tool result', c:'<strong>The phone reads its coordinates</strong> with Core Location and sends them back with the turnID, so the server knows which conversation to resume.' },
+      { a:[1,2], k:'Tool call', c:'<strong>The model now asks for get_weather</strong> using those coordinates. The location had to come first.' },
+      { a:[1,3], k:'Tool result', c:'<strong>My server runs this tool itself</strong> because it lives there. It calls Open-Meteo and hands the weather to the model.' },
+      { a:[2,0], k:'Final text', c:'<strong>The model writes the answer</strong> using both results, and it streams back to the phone word by word.' }
+    ];
+    function render(i){
+      boxes.forEach(function(b, idx){
+        b.classList.remove('highlight','pulse');
+        if (steps[i].a.indexOf(idx) >= 0) { b.classList.add('highlight'); }
+      });
+      boxes[steps[i].a[steps[i].a.length-1]].classList.add('pulse');
+      cap.innerHTML = '<span class="kind-chip">' + steps[i].k + '</span>' + steps[i].c;
+    }
+    btns.forEach(function(btn){
+      btn.addEventListener('click', function(){
+        btns.forEach(function(b){ b.classList.remove('active'); });
+        btn.classList.add('active');
+        render(parseInt(btn.getAttribute('data-t'), 10));
+      });
+    });
+    render(0);
+  })();
+
+  // Chapter 03: SSE inspector
+  (function(){
+    var tabs = document.querySelectorAll('#sse-tabs .sse-tab');
+    var panels = document.querySelectorAll('.sse-panel');
+    tabs.forEach(function(tab){
+      tab.addEventListener('click', function(){
+        tabs.forEach(function(t){ t.classList.remove('active'); });
+        panels.forEach(function(p){ p.classList.remove('active'); });
+        tab.classList.add('active');
+        var t = document.querySelector('.sse-panel[data-sse-panel="' + tab.getAttribute('data-sse') + '"]');
+        if (t) t.classList.add('active');
       });
     });
   })();
